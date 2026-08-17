@@ -1,0 +1,260 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Site-wide fixed palette — neutral black/white, works with any agent branding */
+  --primary-bg: #111111;
+  --accent: #111111;
+  --accent-rgb: 17, 17, 17;
+
+  /* Per-agent brand colours — injected by layout, used ONLY in conversion zones
+     (sticky bar, request showing, home evaluation, contact sidebar). */
+  --brand-bg: #111111;
+  --brand-accent: #111111;
+  --brand-text: #ffffff;
+  --brand-overlay-rgb: 255, 255, 255;
+  --brand-bg-rgb: 17, 17, 17;
+
+  /* CTA token layer — change these two lines to retheme all buttons site-wide */
+  --cta-primary: var(--brand-accent);       /* primary button fill — LIGHT backgrounds only */
+  --cta-primary-text: #ffffff;              /* text on primary buttons */
+  --cta-secondary-text: var(--primary-bg);  /* outline button text */
+  --cta-secondary-border: var(--primary-bg);/* outline button border */
+  --cta-chip: #6b7280;                      /* nav chip text (grey, not brand) */
+
+  /* Dark-surface tokens — use these when the section background is var(--brand-bg),
+     var(--primary-bg), or any other dark colour. NEVER use --brand-accent or
+     --cta-primary on dark backgrounds — they are for LIGHT backgrounds only. */
+  --cta-on-dark: #ffffff;
+  --cta-on-dark-text: var(--brand-bg);
+  --photo-ring-on-dark: rgba(255, 255, 255, 0.28);
+
+  /* Static colours */
+  --white: #ffffff;
+  --off-white: #ffffff;
+  --text: #1c1c1c;
+  --text-muted: #4b5563;
+  --border: #e5e7eb;
+  --surface: #ffffff;
+  --surface-alt: #f9fafb;
+
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-size-base: 16px;
+  --line-height-base: 1.6;
+
+  /* Spacing */
+  --nav-height: 58px;
+  --sticky-footer-height: 64px;
+  --container-max: 1280px;
+  --container-padding: clamp(16px, 4vw, 48px);
+
+  /* ─── Agent popup / overlay semantic tokens ───────────────────────────────
+     These are derived from the per-agent --brand-* vars so that popups and
+     overlays automatically use the correct agent palette regardless of which
+     agent is active.  Fallbacks are a safe dark-surface default that keeps
+     text readable when the layout has not yet injected --brand-* values.
+     Do NOT hardcode these here — they are intended to be overridden by the
+     agent layout's inline style block.
+  */
+  --popup-bg:       var(--brand-bg,     #14213d);
+  --popup-text:     var(--brand-text,   #ffffff);
+  --popup-accent:   var(--brand-accent, #c9a84c);
+  --popup-cta:      var(--brand-accent, #c9a84c);
+  --popup-cta-text: #000000;
+}
+
+html {
+  font-size: var(--font-size-base);
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ─── Agent popup / overlay utility class ────────────────────────────────────
+   RULE: All agent popups and overlays MUST extend `.agent-popup` or reference
+   the `--popup-*` custom properties below.  Never use `--accent`, `--primary-bg`,
+   or hardcoded hex colours inside a popup/overlay component — those values are
+   for the fixed site chrome and will look wrong on light-palette agents.
+
+   The `--popup-*` vars are set in :root (above) and map through to the
+   per-agent `--brand-*` vars injected by the agent layout.  Any new popup
+   therefore picks up the correct palette automatically, with a safe dark-surface
+   fallback when no agent layout is present.
+
+   Example usage:
+     <div className="agent-popup" style={{ ... positionStyles ... }}>
+       <h2 style={{ color: 'var(--popup-accent)' }}>…</h2>
+       <a style={{ background: 'var(--popup-cta)', color: 'var(--popup-cta-text)' }}>CTA</a>
+     </div>
+*/
+.agent-popup {
+  background: var(--popup-bg);
+  color:      var(--popup-text);
+}
+
+/* Palette: dark — agent sites that opt into a dark-background canvas.
+   Applies to the layout wrapper div tagged data-palette="dark".
+   Individual sections that already paint --primary-bg are unaffected. */
+[data-palette="dark"] {
+  background: var(--primary-bg);
+  color: rgba(255, 255, 255, 0.87);
+}
+/* Light palette is the default (white body) — no extra rules needed. */
+
+/* Font pairs — applied via data-font-pair on the agent layout wrapper.
+   serif-sans (default): Playfair Display headings + Inter body — no attribute needed.
+   all-sans: Inter for both headings and body.
+   geometric: DM Sans loaded from Google Fonts via a conditional <link> in layout. */
+[data-font-pair="all-sans"] h1,
+[data-font-pair="all-sans"] h2,
+[data-font-pair="all-sans"] h3,
+[data-font-pair="all-sans"] h4 {
+  font-family: 'Inter', 'Helvetica Neue', sans-serif !important;
+  letter-spacing: -0.02em !important;
+}
+[data-font-pair="geometric"] h1,
+[data-font-pair="geometric"] h2,
+[data-font-pair="geometric"] h3,
+[data-font-pair="geometric"] h4 {
+  font-family: 'DM Sans', 'Helvetica Neue', sans-serif !important;
+  letter-spacing: -0.03em !important;
+}
+[data-font-pair="geometric"] body,
+[data-font-pair="geometric"] p,
+[data-font-pair="geometric"] li,
+[data-font-pair="geometric"] input,
+[data-font-pair="geometric"] button {
+  font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: var(--line-height-base);
+  color: var(--text);
+  background: var(--off-white);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+input, textarea, select {
+  font-family: inherit;
+}
+
+.container {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 0 var(--container-padding);
+}
+
+/* Accent utilities */
+.accent { color: var(--accent); }
+.bg-primary { background: var(--primary-bg); }
+.bg-accent { background: var(--accent); }
+
+/* ── CTA button utilities ─────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--cta-primary);
+  color: var(--cta-primary-text);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.88; }
+.btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--primary-bg);
+  color: #ffffff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.btn-secondary:hover { opacity: 0.85; }
+
+/* Plain text link with trailing arrow — for nav cross-links, not primary actions */
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.15s;
+  padding: 2px 0;
+}
+.link-arrow:hover { color: var(--text); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.2); border-radius: 3px; }
+
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Image shimmer skeleton — used by ListingCard and BuildingCard while photo loads */
+@keyframes img-shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.img-shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: img-shimmer 1.4s infinite linear;
+}
+
+/* Residencity hub CTA button */
+.residencity-cta-btn {
+  display: inline-block;
+  font-size: 15px;
+  font-weight: 700;
+  background: #c9a84c;
+  color: #14213d;
+  border-radius: 10px;
+  padding: 14px 32px;
+  text-decoration: none;
+  transition: opacity 0.15s;
+}
+.residencity-cta-btn:hover { opacity: 0.88; }
