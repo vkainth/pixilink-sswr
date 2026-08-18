@@ -69,7 +69,7 @@ export default async function HomesSubareaPage({ params, searchParams }: Props) 
       {topRealtorUrl && (
         <a href={topRealtorUrl} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, background: '#fff', border: '1px solid #e5e7eb', borderRadius: 10, padding: '18px 20px', textDecoration: 'none' }}>
           <div>
-            <div style={{ fontSize: 13.5, fontWeight: 700, color: '#14213d', marginBottom: 3 }}>Thinking of selling in {area}?</div>
+            <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>Thinking of selling in {area}?</div>
             <div style={{ fontSize: 12.5, color: '#6b7280' }}>See the top-rated REALTOR® credentials, sold results &amp; reviews</div>
           </div>
           <span style={{ color: 'var(--accent)', fontWeight: 700, fontSize: 13, whiteSpace: 'nowrap', flexShrink: 0 }}>Learn more →</span>

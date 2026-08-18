@@ -225,7 +225,7 @@ export default async function HomeEvaluationPage({ params }: Props) {
                     {i < steps.length - 1 && (
                       <div style={{ position: 'absolute', left: 20, top: 44, bottom: 0, width: 2, background: 'var(--border)' }} />
                     )}
-                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: agent.theme_color || '#b8972a', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 13, color: agent.primary_bg_color || '#14213d', flexShrink: 0 }}>
+                    <div style={{ width: 40, height: 40, borderRadius: '50%', background: agent.theme_color || '#111111', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 13, color: agent.primary_bg_color || '#14213d', flexShrink: 0 }}>
                       {s.n}
                     </div>
                     <div style={{ paddingTop: 8 }}>

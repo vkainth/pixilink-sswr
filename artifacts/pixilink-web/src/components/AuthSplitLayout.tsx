@@ -37,7 +37,7 @@ export default function AuthSplitLayout({ agent, steps, stepLabel, children }: P
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 16px', background: '#0f1923' }}>
       <div className="auth-split-grid" style={{ width: '100%', maxWidth: 900, display: 'grid', gridTemplateColumns: '300px 1fr', borderRadius: 16, overflow: 'hidden', boxShadow: '0 24px 80px rgba(0,0,0,0.5)' }}>
         {/* ── LEFT PANEL ── */}
-        <div className="auth-split-left" style={{ background: bgColor || '#14213d', padding: '40px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="auth-split-left" style={{ background: bgColor, padding: '40px 32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', borderRight: '1px solid rgba(255,255,255,0.08)' }}>
           {/* Agent photo */}
           <div style={{ width: 100, height: 100, borderRadius: '50%', border: `3px solid ${accentColor}`, overflow: 'hidden', marginBottom: 16, flexShrink: 0, background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {photo ? (

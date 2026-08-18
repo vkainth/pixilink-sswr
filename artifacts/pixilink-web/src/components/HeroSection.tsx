@@ -119,7 +119,7 @@ export default function HeroSection(props: Props) {
                         {agent.name.charAt(0)}
                       </div>
                     )}
-                    <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: -0.3, color: '#14213d' }}>
+                    <div style={{ fontSize: 20, fontWeight: 700, letterSpacing: -0.3, color: 'var(--text)' }}>
                       {isDualAgent && coAgent ? `${agent.name} & ${coAgent.name}` : agent.name}
                     </div>
                     <div style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 600, letterSpacing: 1.2, textTransform: 'uppercase', marginTop: 3 }}>

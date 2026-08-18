@@ -36,8 +36,8 @@ export default function SoldListingError({
         style={{
           appearance: 'none',
           border: 'none',
-          background: '#14213d',
-          color: '#fff',
+          background: 'var(--brand-bg, #111111)',
+          color: 'var(--brand-text, #ffffff)',
           fontWeight: 600,
           fontSize: 15,
           padding: '12px 28px',
