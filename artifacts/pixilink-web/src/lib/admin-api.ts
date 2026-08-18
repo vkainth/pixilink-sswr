@@ -121,6 +121,25 @@ export async function getLeadPropertyViews(userId: number, agentId?: number): Pr
   }
 }
 
+/**
+ * Thrown when the Laravel admin API answers with a non-2xx status.
+ *
+ * Carries the status and the parsed body so callers can tell a real 422
+ * validation failure apart from a 500/404/401. Without the status, a backend
+ * crash was being reported to the user as "Validation failed".
+ */
+export class AdminApiError extends Error {
+  readonly status: number
+  readonly body: unknown
+
+  constructor(status: number, body: unknown) {
+    super(JSON.stringify(body))
+    this.name = 'AdminApiError'
+    this.status = status
+    this.body = body
+  }
+}
+
 function adminHeaders(extra?: Record<string, string>): Record<string, string> {
   const h: Record<string, string> = {
     'Accept': 'application/json',
@@ -163,7 +182,7 @@ export async function createAgent(data: Record<string, unknown>): Promise<AdminA
   const res = await adminFetch('/agents', { method: 'POST', body: JSON.stringify(data) })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error(JSON.stringify(err))
+    throw new AdminApiError(res.status, err)
   }
   return res.json()
 }
@@ -172,7 +191,7 @@ export async function updateAgent(id: number, data: Record<string, unknown>): Pr
   const res = await adminFetch(`/agents/${id}`, { method: 'PUT', body: JSON.stringify(data) })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error(JSON.stringify(err))
+    throw new AdminApiError(res.status, err)
   }
   return res.json()
 }
@@ -194,7 +213,7 @@ export async function updateAgentIntegrations(id: number, data: Record<string, u
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error(JSON.stringify(err))
+    throw new AdminApiError(res.status, err)
   }
 }
 
@@ -343,7 +362,7 @@ export async function createAdminLandingPage(agentId: number, data: Partial<Admi
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error(JSON.stringify(err))
+    throw new AdminApiError(res.status, err)
   }
   return res.json()
 }
@@ -355,7 +374,7 @@ export async function updateAdminLandingPage(agentId: number, pageId: number, da
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error(JSON.stringify(err))
+    throw new AdminApiError(res.status, err)
   }
   return res.json()
 }
@@ -402,7 +421,7 @@ export async function createAdminAreaComparison(agentId: number, data: Partial<A
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error(JSON.stringify(err))
+    throw new AdminApiError(res.status, err)
   }
   return res.json()
 }
@@ -414,7 +433,7 @@ export async function updateAdminAreaComparison(agentId: number, comparisonId: n
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error(JSON.stringify(err))
+    throw new AdminApiError(res.status, err)
   }
   return res.json()
 }
@@ -460,7 +479,7 @@ export async function createAdminBestOfList(agentId: number, data: Partial<Admin
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error(JSON.stringify(err))
+    throw new AdminApiError(res.status, err)
   }
   return res.json()
 }
@@ -472,7 +491,7 @@ export async function updateAdminBestOfList(agentId: number, listId: number, dat
   })
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
-    throw new Error(JSON.stringify(err))
+    throw new AdminApiError(res.status, err)
   }
   return res.json()
 }

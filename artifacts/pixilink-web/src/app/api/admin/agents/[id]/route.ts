@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/admin-auth'
-import { getAgent, updateAgent, deleteAgent } from '@/lib/admin-api'
+import { getAgent, updateAgent, deleteAgent, AdminApiError } from '@/lib/admin-api'
 
 export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await getAdminSession()
@@ -27,13 +27,26 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const agent = await getAgent(Number(id))
     return NextResponse.json(agent)
   } catch (e) {
-    const msg = e instanceof Error ? e.message : 'Server error'
-    try {
-      const parsed = JSON.parse(msg)
-      return NextResponse.json({ error: 'Validation failed', details: parsed }, { status: 422 })
-    } catch {
-      return NextResponse.json({ error: msg }, { status: 500 })
+    if (e instanceof AdminApiError) {
+      const body = e.body as { errors?: Record<string, string[]>; message?: string } | null
+
+      // Only a genuine 422 carrying field errors is a validation failure.
+      if (e.status === 422 && body?.errors) {
+        return NextResponse.json({ error: 'Validation failed', details: body }, { status: 422 })
+      }
+
+      // Anything else (500, 404, 401, ...) is a backend fault. Report it as
+      // itself — labelling it "Validation failed" sends people looking for bad
+      // input when the real cause is server-side.
+      const detail = body?.message || 'unexpected response from the backend'
+      return NextResponse.json(
+        { error: `Save failed — ${detail} (HTTP ${e.status})`, details: body },
+        { status: e.status },
+      )
     }
+
+    const msg = e instanceof Error ? e.message : 'Server error'
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }
 
