@@ -50,7 +50,9 @@ export default function SoldGate({ rows, accentColor, primaryBg, totalCount, slu
           gap: 16,
         }}>
           <span style={{ fontSize: 14, color: 'var(--text)' }}>
-            Complete your registration to unlock all {totalCount} sold prices.
+            {totalCount === 1
+              ? 'Complete your registration to see what this unit sold for.'
+              : `Complete your registration to see all ${totalCount} sold prices.`}
           </span>
           <a href={nextUrl}
             style={{
