@@ -75,7 +75,13 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
 
   if (done) {
     return (
-      <div style={{ borderRadius: 12, overflow: 'hidden' }}>
+      <div style={{
+        borderRadius: 10,
+        overflow: 'hidden',
+        border: '1px solid var(--border)',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05)',
+        background: '#fff',
+      }}>
         <div style={{ background: 'var(--primary-bg)', padding: '24px 24px 20px', textAlign: 'center' }}>
           <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: '2px solid #16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto', fontSize: 22, color: '#16a34a' }}>✓</div>
         </div>
@@ -100,7 +106,13 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
   }
 
   return (
-    <div style={{ borderRadius: 12, overflow: 'hidden' }}>
+    <div style={{
+      borderRadius: 10,
+      overflow: 'hidden',
+      border: '1px solid var(--border)',
+      boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05)',
+      background: '#fff',
+    }}>
       <input type="text" name="website_url" value={hp} onChange={e => setHp(e.target.value)} style={{ display: 'none' }} tabIndex={-1} autoComplete="off" aria-hidden="true" />
 
       {/* Agent header strip — always dark navy so white text is readable */}

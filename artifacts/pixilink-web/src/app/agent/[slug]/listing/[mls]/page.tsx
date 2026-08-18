@@ -1012,11 +1012,11 @@ export default async function ListingDetailPage({ params }: Props) {
             )}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
-              <a href={ap('/homes-for-sale')} style={{ background: '#fff', border: '1px solid var(--border)', color: 'var(--text)', padding: '12px', borderRadius: 7, fontWeight: 600, fontSize: 13, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <a href={ap('/homes-for-sale')} style={{ background: '#fff', border: '1px solid var(--border)', color: 'var(--text)', padding: '12px', borderRadius: 10, fontWeight: 600, fontSize: 13, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 16 }}>🔔</span>
                 <span><span style={{ display: 'block', fontWeight: 700 }}>Alert me of new listings</span><span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Get notified when similar homes list</span></span>
               </a>
-              <a href={ap('/home-evaluation')} style={{ background: '#fff', border: '1px solid var(--border)', color: 'var(--text)', padding: '12px', borderRadius: 7, fontWeight: 600, fontSize: 13, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <a href={ap('/home-evaluation')} style={{ background: '#fff', border: '1px solid var(--border)', color: 'var(--text)', padding: '12px', borderRadius: 10, fontWeight: 600, fontSize: 13, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 16 }}>🏠</span>
                 <span><span style={{ display: 'block', fontWeight: 700 }}>What&apos;s my home worth?</span><span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Free market valuation from {agent.name.split(' ')[0]}</span></span>
               </a>

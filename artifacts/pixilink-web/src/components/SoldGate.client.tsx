@@ -80,7 +80,9 @@ export default function SoldGate({ rows, accentColor, primaryBg, totalCount, slu
           gap: 16,
         }}>
           <span style={{ fontSize: 14, color: 'var(--text)' }}>
-            Sign in to unlock all {totalCount} sold prices — free.
+            {totalCount === 1
+              ? 'Sign in to see what this unit sold for — free.'
+              : `Sign in to see all ${totalCount} sold prices — free.`}
           </span>
           <a href={agentPrefix ? `${agentPrefix}/sign-in` : (slug ? `/agent/${slug}/sign-in` : '/sign-in')}
             style={{
@@ -93,7 +95,7 @@ export default function SoldGate({ rows, accentColor, primaryBg, totalCount, slu
               fontSize: 13,
               whiteSpace: 'nowrap',
             }}>
-            Sign In
+            {totalCount === 1 ? 'View Sold Price' : 'View Sold Prices'}
           </a>
         </div>
       )}

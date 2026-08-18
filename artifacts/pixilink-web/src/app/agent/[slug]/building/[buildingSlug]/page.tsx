@@ -637,11 +637,6 @@ export default async function BuildingDetailPage({ params }: Props) {
                   </p>
                 )
               })()}
-              {building.recent_sold.length > 0 && (
-                <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 12 }}>
-                  Sign in to see full sold prices — free and instant.
-                </div>
-              )}
               <SoldGate
                 rows={building.recent_sold}
                 accentColor={'var(--accent)'}
@@ -656,14 +651,6 @@ export default async function BuildingDetailPage({ params }: Props) {
           {/* ── Building sold price / neighbour sold offers ─────────────────── */}
           {building.recent_sold.length > 0 && (
             <div style={{ display: 'grid', gap: 14, marginBottom: 36 }}>
-              <LeadOfferCapture
-                slug={slug}
-                offerType="building_sold"
-                offerContext={displayName}
-                title={`Get sold prices in ${displayName}`}
-                subtitle="See every recent sale in this building — sent straight to your inbox."
-                buttonLabel="Get Sold Prices"
-              />
               <LeadOfferCapture
                 slug={slug}
                 offerType="neighbour_sold"
