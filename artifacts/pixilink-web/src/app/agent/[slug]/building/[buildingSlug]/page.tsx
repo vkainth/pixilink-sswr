@@ -35,10 +35,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const hdrs = await headers()
   const agentPrefix = resolveAgentPrefix(slug, hdrs.get('x-agent-prefix'))
   const ap = (p: string) => `${agentPrefix}${p}`
-  const [agent, building] = await Promise.all([
-    getAgent(slug),
-    getBuildingDetail(slug, buildingSlug),
-  ])
+  // getBuildingDetail throws when Laravel is unreachable (429/5xx/timeout) so
+  // that the page component can answer 5xx instead of a misleading 404. Metadata
+  // must not be the thing that takes the page down, so a failure here degrades
+  // to a bare title and lets the component below decide the real outcome.
+  let agent: Awaited<ReturnType<typeof getAgent>> = null
+  let building: Awaited<ReturnType<typeof getBuildingDetail>> = null
+  try {
+    ;[agent, building] = await Promise.all([
+      getAgent(slug),
+      getBuildingDetail(slug, buildingSlug),
+    ])
+  } catch {
+    return { title: 'Building' }
+  }
   if (!building) return { title: 'Building Not Found' }
   const agentName = agent?.name || ''
   const displayName = buildingDisplayName(building)

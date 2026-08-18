@@ -111,17 +111,27 @@ export async function POST(
       active_listings?: unknown[]; stats?: { sold_count?: number | null; avg_sold_price?: number | null; avg_per_sqft?: number | null; avg_dom?: number | null } | null
     } = {}
 
+    // Whether we actually learned the building's current state. If this stays
+    // false the skip guard below has nothing to judge, and guessing costs money.
+    let detailKnown = false
+
     if (agentSlug && buildingSlug) {
-      try {
-        const detailRes = await fetch(
-          `${LARAVEL_URL}/api-internal/agent/${agentSlug}/building/${buildingSlug}`,
-          { headers: laravelHeaders, cache: 'no-store' }
-        )
-        if (detailRes.ok) {
-          const d = await detailRes.json()
-          if (d && d.id) richData = d
+      const detailRes = await fetchRetryingOn429(
+        `${LARAVEL_URL}/api-internal/agent/${agentSlug}/building/${buildingSlug}`,
+        { headers: laravelHeaders, cache: 'no-store' },
+      ).catch(() => null)
+
+      if (detailRes && detailRes.ok) {
+        const d = await detailRes.json().catch(() => null)
+        if (d && d.id) {
+          richData = d
+          detailKnown = true
         }
-      } catch {}
+      } else if (detailRes && detailRes.status === 404) {
+        // A definite answer: the building is unknown upstream, so there is
+        // nothing to preserve and generating is the right call.
+        detailKnown = true
+      }
     }
 
     // ── Skip-if-exists guard ──────────────────────────────────────────────
@@ -132,6 +142,20 @@ export async function POST(
     const hasDescription = !!(richData.description && richData.description.trim().length > 10)
     if (!force && hasTagline && hasDescription) {
       return NextResponse.json({ id: Number(id), skipped: true, reason: 'already_has_content' })
+    }
+
+    // Fail CLOSED. Previously any failure to read the building left richData
+    // empty, both flags false, and the guard waved the request through — so a
+    // throttled or timed-out lookup silently paid Claude to rewrite content that
+    // already existed, then overwrote it. Declining costs nothing and the item
+    // can simply be re-run.
+    if (!force && !detailKnown) {
+      return NextResponse.json({
+        id: Number(id),
+        skipped: true,
+        reason: 'state_unknown',
+        detail: 'Could not read the building from Laravel, so skipping rather than risk regenerating existing content. Re-run this building.',
+      })
     }
 
     // Merge: rich data takes priority over body fields

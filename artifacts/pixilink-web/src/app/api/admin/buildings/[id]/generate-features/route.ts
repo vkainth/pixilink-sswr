@@ -238,30 +238,34 @@ export async function POST(
     let fetchedStrataNo = ''
     let existingFeaturesData: { type?: string } | null = null
 
+    // Whether the building's current state was actually read. False means the
+    // skip guard below is judging on no information.
+    let detailKnown = false
+
     if (agentSlug && buildingSlug) {
-      try {
-        const detailRes = await fetch(
-          `${LARAVEL_URL}/api-internal/agent/${agentSlug}/building/${buildingSlug}`,
-          { headers: laravelHeaders, cache: 'no-store' }
-        )
-        if (detailRes.ok) {
-          const d = await detailRes.json()
-          if (d && d.id) {
-            if (Array.isArray(d.features) && d.features.length > 0) {
-              rawFeatures = (d.features as unknown[])
-                .filter((f): f is string => typeof f === 'string' && f.trim() !== '')
-            }
-            if (!name && d.name) name = String(d.name).trim()
-            if (!city && d.city) city = String(d.city)
-            if (!subarea && d.subarea) subarea = String(d.subarea)
-            if (!name && d.strata_no) fetchedStrataNo = String(d.strata_no).trim()
-            // Capture existing AI features for the skip guard
-            if (d.features_data && typeof d.features_data === 'object' && d.features_data.type) {
-              existingFeaturesData = d.features_data as { type?: string }
-            }
+      const detailRes = await fetchRetryingOn429(
+        `${LARAVEL_URL}/api-internal/agent/${agentSlug}/building/${buildingSlug}`,
+        { headers: laravelHeaders, cache: 'no-store' },
+      ).catch(() => null)
+      if (detailRes && detailRes.status === 404) detailKnown = true
+      if (detailRes && detailRes.ok) {
+        const d = await detailRes.json().catch(() => null)
+        if (d && d.id) {
+          detailKnown = true
+          if (Array.isArray(d.features) && d.features.length > 0) {
+            rawFeatures = (d.features as unknown[])
+              .filter((f): f is string => typeof f === 'string' && f.trim() !== '')
+          }
+          if (!name && d.name) name = String(d.name).trim()
+          if (!city && d.city) city = String(d.city)
+          if (!subarea && d.subarea) subarea = String(d.subarea)
+          if (!name && d.strata_no) fetchedStrataNo = String(d.strata_no).trim()
+          // Capture existing AI features for the skip guard
+          if (d.features_data && typeof d.features_data === 'object' && d.features_data.type) {
+            existingFeaturesData = d.features_data as { type?: string }
           }
         }
-      } catch {}
+      }
     }
 
     // ── Skip-if-exists guard ──────────────────────────────────────────────
@@ -269,6 +273,19 @@ export async function POST(
     // return a skipped response so the batch runner marks it done without a Claude call.
     if (!force && !dryRun && existingFeaturesData && existingFeaturesData.type) {
       return NextResponse.json({ id: Number(id), skipped: true, reason: 'already_has_content' })
+    }
+
+    // Fail CLOSED, as in generate-description: an unreadable building used to
+    // leave existingFeaturesData null, which the guard above reads as "no
+    // features yet", so a throttled lookup paid Claude to redo work already
+    // done. Declining is free and the item can be re-run.
+    if (!force && !dryRun && !detailKnown) {
+      return NextResponse.json({
+        id: Number(id),
+        skipped: true,
+        reason: 'state_unknown',
+        detail: 'Could not read the building from Laravel, so skipping rather than risk regenerating existing features. Re-run this building.',
+      })
     }
 
     if (!name) {

@@ -61,13 +61,38 @@ function laravelHeaders(): Record<string, string> {
   return h
 }
 
+/**
+ * Backoff for a 429 from Laravel. Deliberately short: this runs during server
+ * rendering, so a long wait would only trade a fast wrong answer for a slow
+ * one. Two quick retries clear the brief collisions that happen when a bulk
+ * admin job and visitor traffic share the api group's rate-limit bucket; a
+ * sustained overload still fails, and the caller decides what that means.
+ */
+const READ_RETRY_DELAYS_MS = [300, 900]
+
 async function laravelFetch(path: string, opts: RequestInit = {}): Promise<Response> {
-  const signal = opts.signal ?? AbortSignal.timeout(4000)
-  return fetch(`${LARAVEL_URL}${path}`, {
+  const url = `${LARAVEL_URL}${path}`
+  const headers = { ...laravelHeaders(), ...((opts.headers as Record<string, string>) || {}) }
+
+  // A fresh timeout per attempt: AbortSignal.timeout() starts counting the
+  // moment it is created, so reusing one signal would abort a retry before it
+  // was even sent. A caller-supplied signal is respected as-is.
+  const attempt = () => fetch(url, {
     ...opts,
-    signal,
-    headers: { ...laravelHeaders(), ...((opts.headers as Record<string, string>) || {}) },
+    signal: opts.signal ?? AbortSignal.timeout(4000),
+    headers,
   })
+
+  let res = await attempt()
+
+  // GETs here are idempotent, so retrying is safe. Only 429 is retried: a 404
+  // is an answer, and a 500 will not fix itself in 300ms.
+  for (let i = 0; i < READ_RETRY_DELAYS_MS.length && res.status === 429; i++) {
+    await new Promise(resolve => setTimeout(resolve, READ_RETRY_DELAYS_MS[i]))
+    res = await attempt()
+  }
+
+  return res
 }
 
 // Maps internal agent slug → region preview prefix (for website.pixilink.com/path-mode agents).
@@ -468,17 +493,50 @@ export async function getBuildings(slug: string, limit?: number): Promise<AgentB
   return FALLBACK_BUILDINGS
 }
 
-export async function getBuildingDetail(slug: string, buildingSlug: string): Promise<BuildingDetail | null> {
-  try {
-    const res = await laravelFetch(`/api-internal/agent/${slug}/building/${buildingSlug}`, { next: { revalidate: 300 } })
-    if (res.ok) {
-      const data = await res.json()
-      if (data && data.id) return { features: [], amenities: [], maintenance_fee_includes: [], photos: [], features_data: null, walk_score: null, transit_score: null, bike_score: null, developer: null, suite_sizes: null, agent_take: null, ...data } as BuildingDetail
-    }
-  } catch {
-    // fall through
+/**
+ * Thrown when Laravel could not answer — a 429, a 5xx, a timeout. Distinct from
+ * "no such building", which is a null return.
+ *
+ * The distinction is the whole point: this function used to swallow every
+ * failure into null, and the building page turns null into notFound(). So a
+ * throttled fetch served a 404 for a building that exists, telling visitors it
+ * was gone and inviting Google to deindex it. Letting this propagate renders a
+ * 5xx instead, which is honest and does not cost the page its ranking.
+ */
+export class UpstreamUnavailableError extends Error {
+  readonly status: number
+
+  constructor(path: string, status: number) {
+    super(`Upstream ${status} for ${path}`)
+    this.name = 'UpstreamUnavailableError'
+    this.status = status
   }
-  return null
+}
+
+export async function getBuildingDetail(slug: string, buildingSlug: string): Promise<BuildingDetail | null> {
+  const path = `/api-internal/agent/${slug}/building/${buildingSlug}`
+  let res: Response
+  try {
+    res = await laravelFetch(path, { next: { revalidate: 300 } })
+  } catch (e) {
+    // Network error or timeout — absence of an answer, not an answer of absence.
+    throw new UpstreamUnavailableError(path, 0)
+  }
+
+  if (res.ok) {
+    const data = await res.json()
+    if (data && data.id) {
+      return { features: [], amenities: [], maintenance_fee_includes: [], photos: [], features_data: null, walk_score: null, transit_score: null, bike_score: null, developer: null, suite_sizes: null, agent_take: null, ...data } as BuildingDetail
+    }
+    // 200 with no id: the endpoint answered, and the answer is "nothing here".
+    return null
+  }
+
+  // Laravel returns 404 with {"error":"Building not found"} when the slug is
+  // genuinely unknown. That is the only status that should become a 404 page.
+  if (res.status === 404) return null
+
+  throw new UpstreamUnavailableError(path, res.status)
 }
 
 export async function getMarketStats(slug: string): Promise<MarketStats> {
