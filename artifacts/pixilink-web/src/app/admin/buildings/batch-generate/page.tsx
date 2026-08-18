@@ -71,6 +71,33 @@ interface FeatureSection {
   items: string[]
 }
 
+/**
+ * adminAgentBuildings() clamps limit to 300 server-side. The input used to
+ * default to 500, so asking for 500 silently returned 300 and the queue looked
+ * complete when it was not.
+ */
+const SERVER_MAX_LIMIT = 300
+
+interface CoverageBucket {
+  generated: number
+  remaining: number
+}
+
+interface BuildingCoverage {
+  total: number
+  cities: string[]
+  subarea_whitelist_count: number
+  description: CoverageBucket
+  features: CoverageBucket
+  tags: CoverageBucket
+}
+
+const COVERAGE_ROWS: Array<{ key: 'description' | 'features' | 'tags'; label: string; color: string }> = [
+  { key: 'description', label: 'Descriptions', color: '#16a34a' },
+  { key: 'features',    label: 'Features',     color: '#23a9e1' },
+  { key: 'tags',        label: 'Persona tags', color: '#8b5cf6' },
+]
+
 interface QueueItem {
   building: QueueBuilding
   status: QueueStatus
@@ -112,10 +139,11 @@ export default function BatchGeneratePage() {
   const initialSlug = searchParams.get('agentSlug') || 'randy'
   const [agentSlug, setAgentSlug] = useState(initialSlug)
   const [inputSlug, setInputSlug] = useState(initialSlug)
-  const [queueLimit, setQueueLimit] = useState(500)
+  const [queueLimit, setQueueLimit] = useState(SERVER_MAX_LIMIT)
   const [generateMode, setGenerateMode] = useState<GenerateMode>('description')
   const [missingOnly, setMissingOnly] = useState(true)
   const [forceRegenerate, setForceRegenerate] = useState(false)
+  const [coverage, setCoverage] = useState<BuildingCoverage | null>(null)
   const [loadingBuildings, setLoadingBuildings] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
   const [queue, setQueue] = useState<QueueItem[]>([])
@@ -127,6 +155,16 @@ export default function BatchGeneratePage() {
   const pauseRef = useRef(false)
   const activeCountRef = useRef(0)
   const processingRef = useRef(false)
+
+  // Coverage describes every building in the agent's territory, not just the
+  // slice currently queued -- that is the whole point of it.
+  const loadCoverage = useCallback((slug: string) => {
+    if (!slug.trim()) return
+    fetch(apiPath(`/api/admin/buildings/stats?agentSlug=${encodeURIComponent(slug.trim())}`))
+      .then(r => r.json())
+      .then(d => { if (!d?.error) setCoverage(d as BuildingCoverage) })
+      .catch(() => { /* coverage is informational; a failure must not block the queue */ })
+  }, [])
 
   function loadBuildings(slug: string) {
     if (!slug.trim()) return
@@ -163,13 +201,17 @@ export default function BatchGeneratePage() {
           })))
           setAgentSlug(data.agent_slug || slug)
           setRunStatus('idle')
+          loadCoverage(data.agent_slug || slug)
         }
       })
       .catch(() => setLoadError('Network error — could not load buildings'))
       .finally(() => setLoadingBuildings(false))
   }
 
-  useEffect(() => { loadBuildings(initialSlug) }, [])
+  useEffect(() => { loadBuildings(initialSlug); loadCoverage(initialSlug) }, [])
+
+  // A finished run has changed the underlying counts.
+  useEffect(() => { if (runStatus === 'done') loadCoverage(agentSlug) }, [runStatus, agentSlug, loadCoverage])
 
   const doneCount = queue.filter(q => q.status === 'done' || q.status === 'skipped').length
   const errorCount = queue.filter(q => q.status === 'error').length
@@ -410,6 +452,14 @@ export default function BatchGeneratePage() {
 
   const progressPct = queue.length > 0 ? Math.round(((doneCount + errorCount) / queue.length) * 100) : 0
 
+  // Outstanding work for the mode being generated, across ALL of the agent's
+  // buildings. 'both' is gated on a description existing, so it tracks that.
+  const activeRemaining = coverage
+    ? (generateMode === 'features' ? coverage.features.remaining
+      : generateMode === 'tags' ? coverage.tags.remaining
+      : coverage.description.remaining)
+    : null
+
   const missingOnlyLabel =
     generateMode === 'description' ? 'Missing descriptions only' :
     generateMode === 'features' ? 'Missing features only' :
@@ -495,10 +545,13 @@ export default function BatchGeneratePage() {
               <input
                 type="number"
                 min={1}
+                max={SERVER_MAX_LIMIT}
                 value={queueLimit}
-                onChange={e => setQueueLimit(Math.max(1, parseInt(e.target.value, 10) || 1))}
+                onChange={e => setQueueLimit(Math.min(SERVER_MAX_LIMIT, Math.max(1, parseInt(e.target.value, 10) || 1)))}
+                title={`The server returns at most ${SERVER_MAX_LIMIT} buildings per load`}
                 style={{ padding: '8px 10px', border: `1px solid ${P.border}`, borderRadius: 8, fontSize: 13, width: 80, fontFamily: 'inherit', outline: 'none' }}
               />
+              <span style={{ fontSize: 11, color: P.muted }}>max {SERVER_MAX_LIMIT}</span>
             </label>
             <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: P.text, cursor: 'pointer' }}>
               <input
@@ -607,12 +660,50 @@ export default function BatchGeneratePage() {
           </div>
         </div>
 
+        {/* Coverage — the whole job, not just the loaded batch */}
+        {coverage && (
+          <div style={{ background: P.white, border: `1px solid ${P.border}`, borderRadius: 10, padding: '16px 24px', marginBottom: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 14, gap: 12, flexWrap: 'wrap' }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: P.text }}>
+                Coverage — {coverage.total.toLocaleString()} buildings for {agentSlug}
+              </div>
+              <div style={{ fontSize: 12, color: P.muted }}>
+                {coverage.cities.join(', ')}
+                {coverage.subarea_whitelist_count > 0 && ` · ${coverage.subarea_whitelist_count} subareas`}
+              </div>
+            </div>
+
+            {COVERAGE_ROWS.map(row => {
+              const bucket = coverage[row.key]
+              const pct = coverage.total > 0 ? Math.round((bucket.generated / coverage.total) * 100) : 0
+              const active = generateMode === row.key
+                || (generateMode === 'both' && (row.key === 'description' || row.key === 'features'))
+              return (
+                <div key={row.key} style={{ marginBottom: 12, opacity: active ? 1 : 0.5 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: 12, marginBottom: 5, gap: 12 }}>
+                    <span style={{ fontWeight: active ? 700 : 500, color: P.text }}>{row.label}</span>
+                    <span style={{ color: P.muted, whiteSpace: 'nowrap' }}>
+                      <strong style={{ color: '#15803d' }}>{bucket.generated.toLocaleString()}</strong> generated
+                      {' · '}
+                      <strong style={{ color: bucket.remaining > 0 ? P.warning : '#15803d' }}>{bucket.remaining.toLocaleString()}</strong> left
+                      {' · '}{pct}%
+                    </span>
+                  </div>
+                  <div style={{ background: P.bg, borderRadius: 6, height: 8, overflow: 'hidden' }}>
+                    <div style={{ height: '100%', borderRadius: 6, background: row.color, width: `${pct}%`, transition: 'width 0.3s ease' }} />
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        )}
+
         {/* Progress */}
         {queue.length > 0 && (runStatus !== 'idle' || doneCount > 0 || errorCount > 0) && (
           <div style={{ background: P.white, border: `1px solid ${P.border}`, borderRadius: 10, padding: '16px 24px', marginBottom: 20 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
               <div style={{ fontSize: 14, fontWeight: 600, color: P.text }}>
-                {doneCount + errorCount} / {queue.length} buildings processed
+                {doneCount + errorCount} / {queue.length} in this batch
                 {runStatus === 'running' && <span style={{ color: P.primary, marginLeft: 8, fontSize: 12 }}>• Running</span>}
                 {runStatus === 'paused' && <span style={{ color: P.warning, marginLeft: 8, fontSize: 12 }}>• Paused</span>}
                 {runStatus === 'done' && <span style={{ color: '#16a34a', marginLeft: 8, fontSize: 12 }}>• Complete</span>}
@@ -627,6 +718,14 @@ export default function BatchGeneratePage() {
             <div style={{ background: P.bg, borderRadius: 6, height: 10, overflow: 'hidden' }}>
               <div style={{ height: '100%', borderRadius: 6, background: errorCount > 0 && doneCount === 0 ? P.error : '#16a34a', width: `${progressPct}%`, transition: 'width 0.3s ease' }} />
             </div>
+            {activeRemaining !== null && (
+              <div style={{ fontSize: 12, color: P.muted, marginTop: 10 }}>
+                This batch is {queue.length.toLocaleString()} of {activeRemaining.toLocaleString()} outstanding.
+                {activeRemaining > queue.length && (
+                  <span> {(activeRemaining - queue.length).toLocaleString()} will still be left after this run — load the queue again to continue.</span>
+                )}
+              </div>
+            )}
           </div>
         )}
 
