@@ -8,6 +8,7 @@ export type LeadOfferType =
   | 'building_sold'
   | 'neighbour_sold'
   | 'school_catchment'
+  | 'building_valuation'
 
 interface Props {
   slug: string
@@ -18,6 +19,8 @@ interface Props {
   subtitle?: string
   buttonLabel?: string
   successMessage?: string
+  /** Tint the card with the agent's brand accent so it reads as a distinct offer, not another neutral row. */
+  accent?: boolean
 }
 
 export default function LeadOfferCapture({
@@ -28,6 +31,7 @@ export default function LeadOfferCapture({
   subtitle,
   buttonLabel = 'Sign Me Up',
   successMessage = "You're on the list! We'll be in touch soon.",
+  accent = false,
 }: Props) {
   const [email, setEmail] = useState('')
   const [sent, setSent] = useState(false)
@@ -90,7 +94,9 @@ export default function LeadOfferCapture({
         }
       `}</style>
       <form onSubmit={handleSubmit} className="loc-card" style={{
-        background: '#fff', border: '1px solid var(--border)', borderRadius: 10,
+        background: accent ? 'rgba(var(--brand-accent-rgb),0.06)' : '#fff',
+        border: accent ? '1px solid rgba(var(--brand-accent-rgb),0.35)' : '1px solid var(--border)',
+        borderRadius: 10,
         padding: '18px 22px',
         display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap',
       }}>

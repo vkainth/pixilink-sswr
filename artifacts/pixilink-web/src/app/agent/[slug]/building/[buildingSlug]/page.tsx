@@ -648,27 +648,29 @@ export default async function BuildingDetailPage({ params }: Props) {
             </section>
           )}
 
-          {/* ── Building sold price / neighbour sold offers ─────────────────── */}
-          {building.recent_sold.length > 0 && (
-            <div style={{ display: 'grid', gap: 14, marginBottom: 36 }}>
-              <LeadOfferCapture
-                slug={slug}
-                offerType="building_sold"
-                offerContext={displayName}
-                title={`Get sold prices in ${displayName}`}
-                subtitle="See every recent sale in this building — sent straight to your inbox."
-                buttonLabel="Get Sold Prices"
-              />
-              <LeadOfferCapture
-                slug={slug}
-                offerType="neighbour_sold"
-                offerContext={displayName}
-                title="Find out what my neighbour sold for"
-                subtitle="Curious what a unit near you sold for? We'll look it up and send you the details."
-                buttonLabel="Find Out"
-              />
-            </div>
-          )}
+          {/* ── Owner valuation offer ─ one CTA, distinct from the sold-price gate ─── */}
+          {building.recent_sold.length > 0 && (() => {
+            const vCount = stats?.sold_count_6m ?? building.recent_sold.length
+            const vAvg = stats?.avg_sold_price ? formatPriceFull(stats.avg_sold_price) : null
+            const vDom = stats?.avg_dom ? Math.round(stats.avg_dom) : null
+            const proof = vAvg
+              ? `${vCount} unit${vCount !== 1 ? 's' : ''} sold here in the past 6 months, averaging ${vAvg}${vDom ? ` in ${vDom} days` : ''}. `
+              : ''
+            return (
+              <div style={{ marginBottom: 36 }}>
+                <LeadOfferCapture
+                  slug={slug}
+                  offerType="building_valuation"
+                  offerContext={displayName}
+                  accent
+                  title={`What's your unit at ${displayName} worth?`}
+                  subtitle={`${proof}Get a free, no-obligation valuation based on what's actually selling in this building.`}
+                  buttonLabel="Get My Valuation"
+                  successMessage={`Thanks — we'll send your ${displayName} valuation shortly.`}
+                />
+              </div>
+            )
+          })()}
         </div>
       )}
 

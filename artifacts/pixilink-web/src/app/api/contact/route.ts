@@ -14,6 +14,7 @@ const OFFER_FORM_TYPES = new Set([
   'building_sold',
   'neighbour_sold',
   'school_catchment',
+  'building_valuation',
 ])
 
 export async function POST(request: Request) {
