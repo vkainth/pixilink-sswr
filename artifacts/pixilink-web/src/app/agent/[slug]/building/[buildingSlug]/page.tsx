@@ -6,6 +6,7 @@ import PhotoGallery from '@/components/PhotoGallery.client'
 import BuildingComparisonTable from '@/components/BuildingComparisonTable'
 import SoldGate from '@/components/SoldGate.client'
 import AgentSidebar from '@/components/AgentSidebar'
+import Sparkline from '@/components/Sparkline'
 import W3MortgagePreQual from '@/components/W3MortgagePreQual.client'
 import NearbyWidget from '@/components/NearbyWidget.client'
 import LazyMap from '@/components/LazyMap.client'
@@ -225,6 +226,36 @@ export default async function BuildingDetailPage({ params }: Props) {
     if (valid.length === 0) return null
     const avg = valid.reduce((sum, l) => sum + (l.sold_price! / l.list_price * 100), 0) / valid.length
     return Math.round(avg * 10) / 10
+  })()
+
+  // Sold-price trend for this specific building, oldest → newest.
+  //
+  // Uses recent_sold, which the endpoint already returns, so this costs no extra
+  // query. Rendered as a server-side inline SVG sparkline plus text labels, so
+  // the figures are in the HTML for crawlers and AI answer engines rather than
+  // locked behind client JS. Needs at least three sales to say anything about a
+  // direction; below that the stat tiles above already tell the story.
+  const soldTrend = (() => {
+    const points = building.recent_sold
+      .filter(l => l.sold_price != null && l.sold_price > 0 && !!l.sold_date)
+      .map(l => ({ price: l.sold_price as number, date: l.sold_date as string }))
+      .sort((a, b) => a.date.localeCompare(b.date))
+
+    if (points.length < 3) return null
+
+    const first = points[0]
+    const last = points[points.length - 1]
+    const changePct = Math.round(((last.price - first.price) / first.price) * 1000) / 10
+
+    return {
+      values: points.map(p => p.price),
+      firstPrice: first.price,
+      lastPrice: last.price,
+      firstDate: first.date.slice(0, 7),
+      lastDate: last.date.slice(0, 7),
+      changePct,
+      count: points.length,
+    }
   })()
 
   // Quick Answers — derived strictly from real building data
@@ -545,6 +576,34 @@ export default async function BuildingDetailPage({ params }: Props) {
               )
             })}
           </div>
+        )}
+
+        {soldTrend && (
+          <section
+            aria-label={`Sold price trend at ${displayName}`}
+            style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, padding: '16px 18px', marginBottom: 24 }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+              <div>
+                <div style={{ fontSize: 10.5, color: 'var(--text-muted)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 5 }}>
+                  Sold Price Trend
+                </div>
+                {/* Stated in text as well as drawn, so the figures survive for crawlers and answer engines. */}
+                <div style={{ fontSize: 14, color: 'var(--text)' }}>
+                  {soldTrend.count} recorded sales, {formatPrice(soldTrend.firstPrice)} ({soldTrend.firstDate}) → {formatPrice(soldTrend.lastPrice)} ({soldTrend.lastDate}){' '}
+                  <strong style={{ color: soldTrend.changePct >= 0 ? '#15803d' : '#b91c1c' }}>
+                    {soldTrend.changePct >= 0 ? '+' : ''}{soldTrend.changePct}%
+                  </strong>
+                </div>
+              </div>
+              <Sparkline
+                values={soldTrend.values}
+                color={soldTrend.changePct >= 0 ? '#15803d' : '#b91c1c'}
+                width={160}
+                height={44}
+              />
+            </div>
+          </section>
         )}
 
       </div>
