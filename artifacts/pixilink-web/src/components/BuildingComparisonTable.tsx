@@ -208,12 +208,12 @@ export default function BuildingComparisonTable({ rows, sold, isLoggedIn, highli
                               href={ap('/sign-in')}
                               style={{
                                 display: 'inline-block',
-                                background: '#1d4ed8', color: '#fff',
+                                background: 'var(--cta-primary)', color: 'var(--cta-primary-text)',
                                 textDecoration: 'none', fontSize: 11, fontWeight: 600,
                                 padding: '3px 10px', borderRadius: 12, whiteSpace: 'nowrap',
                               }}
                             >
-                              Sign in →
+                              View →
                             </a>
                           ) : renderVsAsking(pct)}
                         </td>
@@ -223,12 +223,12 @@ export default function BuildingComparisonTable({ rows, sold, isLoggedIn, highli
                               href={ap('/sign-in')}
                               style={{
                                 display: 'inline-block',
-                                background: '#1d4ed8', color: '#fff',
+                                background: 'var(--cta-primary)', color: 'var(--cta-primary-text)',
                                 textDecoration: 'none', fontSize: 11, fontWeight: 600,
                                 padding: '3px 10px', borderRadius: 12, whiteSpace: 'nowrap',
                               }}
                             >
-                              Sign in →
+                              View Sold Price →
                             </a>
                           ) : (
                             formatPriceFull(r.sold_price ?? 0)
