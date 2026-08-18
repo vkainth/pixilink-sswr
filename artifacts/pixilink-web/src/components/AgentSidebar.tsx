@@ -18,6 +18,14 @@ interface Props {
   listingAddress?: string
   listingCity?: string
   coAgents?: CoAgent[]
+  /**
+   * Names the thing being asked about, e.g. a building. Used in contact mode so
+   * the heading reads "Ask about Terrane" rather than a generic "Ask a
+   * Question" — the visitor is already looking at it, and naming it is the
+   * difference between a form that belongs on the page and one that is merely
+   * present.
+   */
+  contextLabel?: string
 }
 
 const inp: React.CSSProperties = {
@@ -27,7 +35,7 @@ const inp: React.CSSProperties = {
   fontFamily: 'inherit',
 }
 
-export default function AgentSidebar({ agent, mode = 'contact', listingAddress, listingCity, coAgents }: Props) {
+export default function AgentSidebar({ agent, mode = 'contact', listingAddress, listingCity, coAgents, contextLabel }: Props) {
   const [step, setStep] = useState(1)
   const [sent, setSent] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -241,7 +249,9 @@ export default function AgentSidebar({ agent, mode = 'contact', listingAddress, 
         ) : (
           <>
             <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)', marginBottom: 14 }}>
-              {mode === 'showing' ? 'Book a Showing' : 'Ask a Question'}
+              {mode === 'showing'
+                ? 'Book a Showing'
+                : contextLabel ? `Ask about ${contextLabel}` : 'Ask a Question'}
             </div>
             <input placeholder="Your name" value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} style={inp} />
             <input placeholder="Phone number" type="tel" value={form.phone} onChange={e => setForm(p => ({ ...p, phone: e.target.value }))} style={inp} />

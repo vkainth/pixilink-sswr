@@ -1128,9 +1128,23 @@ export default async function BuildingDetailPage({ params }: Props) {
           </div>
 
           {/* Sidebar — sticky */}
-          <div className="bldg-sidebar" id="home-eval" style={{ position: 'sticky', top: 'calc(var(--nav-height, 58px) + 16px)', display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div className="bldg-sidebar" id="ask-about-building" style={{ position: 'sticky', top: 'calc(var(--nav-height, 58px) + 16px)', display: 'flex', flexDirection: 'column', gap: 14 }}>
 
-            <AgentSidebar agent={agent} mode="eval" listingAddress={streetOnly} listingCity={building.city} coAgents={getCoAgents(agent)} />
+            {/*
+              Buyer intent, not seller intent. This sidebar ran in "eval" mode —
+              a "what's your home worth?" form — on every building page. Someone
+              reading about a specific building is researching it as a buyer, and
+              across the platform's entire history that form produced zero leads,
+              while the contact form it shares code with produced 15 (13 with a
+              phone number). Sellers already have a dedicated /home-evaluation
+              page linked from the nav, the footer and ~40 other places, so
+              nothing is lost by asking buyers a buyer's question here.
+
+              Contact mode still forwards listing_address and source_url, so the
+              agent sees which building the enquiry came from, and its submit
+              button requires name + phone before it will send.
+            */}
+            <AgentSidebar agent={agent} mode="contact" contextLabel={displayName} listingAddress={streetOnly} listingCity={building.city} coAgents={getCoAgents(agent)} />
 
             {topRealtorUrl && (
               <a href={topRealtorUrl} style={{ display: 'block', background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '18px 20px', textDecoration: 'none' }}>
