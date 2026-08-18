@@ -46,7 +46,7 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
       const message = isFindSimilar
         ? `Interested in finding similar homes to ${address}${subarea ? ` in ${subarea}` : ''}.`
         : `Showing request — preferred time: ${time}; has agent: ${realtor}; financing: ${approved}.`
-      const res = await fetch('/api/contact', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

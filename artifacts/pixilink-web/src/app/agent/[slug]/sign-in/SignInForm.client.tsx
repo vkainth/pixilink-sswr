@@ -53,7 +53,7 @@ function SignInInner() {
     setLoading(true)
     try {
       const returnTo = searchParams.get('return_to') || searchParams.get('return') || ''
-      const res = await fetch('/api/auth/send-magic-link', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/auth/send-magic-link`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, agent_slug: slug, return_to: returnTo }),
@@ -81,7 +81,7 @@ function SignInInner() {
     try {
       const sourceCtx = parseSourceContext(peekReturnTo())
       const phoneDigits = regPhone.replace(/\D/g, '')
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

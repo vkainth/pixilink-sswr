@@ -37,7 +37,7 @@ export default function FavoritesProvider({ children, signInUrl, initialIsLogged
       setLoading(false)
       return
     }
-    fetch('/api/user/favourites', { credentials: 'include' })
+    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/user/favourites`, { credentials: 'include' })
       .then(r => {
         if (r.status === 401) { setIsLoggedIn(false); return null }
         if (!r.ok) return null

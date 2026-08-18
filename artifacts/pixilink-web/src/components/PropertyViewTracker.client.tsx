@@ -22,7 +22,7 @@ export default function PropertyViewTracker({ listingId, buildingSlug, addressLa
     const body: Record<string, string> = { address_label: addressLabel }
     if (listingId)    body.listing_id    = listingId
     if (buildingSlug) body.building_slug = buildingSlug
-    fetch('/api/user/property-view', {
+    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/user/property-view`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),

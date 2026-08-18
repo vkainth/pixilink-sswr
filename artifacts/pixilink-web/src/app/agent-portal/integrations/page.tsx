@@ -88,7 +88,7 @@ export default function AgentPortalIntegrationsPage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    fetch('/api/agent-portal/integrations')
+    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/agent-portal/integrations`)
       .then(r => r.json())
       .then((data: Integrations) => {
         setIntegrations(data)
@@ -105,7 +105,7 @@ export default function AgentPortalIntegrationsPage() {
     setSaving(true)
     setError('')
     try {
-      const res = await fetch('/api/agent-portal/integrations', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/agent-portal/integrations`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

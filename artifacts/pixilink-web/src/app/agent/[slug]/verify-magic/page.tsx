@@ -24,7 +24,7 @@ function VerifyMagicInner() {
       return
     }
 
-    fetch('/api/auth/verify-magic', {
+    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/auth/verify-magic`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ token, agent_slug: slug }),

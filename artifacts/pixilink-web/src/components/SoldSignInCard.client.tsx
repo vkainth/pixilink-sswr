@@ -26,7 +26,7 @@ export default function SoldSignInCard({ agent, slug, agentPrefix, subarea, retu
 
   function recordClick(dest: 'register' | 'login') {
     try {
-      fetch('/api/sold-gate-event', {
+      fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/sold-gate-event`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ event: dest, agent_slug: slug, mls, subarea }),

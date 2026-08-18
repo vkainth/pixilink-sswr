@@ -64,7 +64,7 @@ export default function AgentBillingClient({ billing, agentName }: Props) {
     setPortalLoading(true)
     setPortalError('')
     try {
-      const res = await fetch('/api/agent-portal/billing-portal', { method: 'POST' })
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/agent-portal/billing-portal`, { method: 'POST' })
       const json = await res.json().catch(() => ({}))
       if (res.ok && json.url) {
         window.location.href = json.url

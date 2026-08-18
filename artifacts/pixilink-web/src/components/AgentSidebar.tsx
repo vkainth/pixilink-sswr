@@ -53,7 +53,7 @@ export default function AgentSidebar({ agent, mode = 'contact', listingAddress, 
       setSubmitError('')
       try {
         const propertyAddress = [property.unit && `${property.unit} –`, property.address, property.city].filter(Boolean).join(' ')
-        const res = await fetch('/api/contact', {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/contact`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -85,7 +85,7 @@ export default function AgentSidebar({ agent, mode = 'contact', listingAddress, 
     setSubmitting(true)
     setSubmitError('')
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

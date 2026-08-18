@@ -44,7 +44,7 @@ export default function AskRandyForm({ agent, areaLabel, agentSlug }: Props) {
     setBusy(true)
     setError('')
     try {
-      const res = await fetch('/api/contact', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

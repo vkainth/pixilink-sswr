@@ -276,7 +276,7 @@ export default function W3MortgagePreQual({ agent }: Props) {
                   ? { flow: 'qualify', price_range: priceRange, down_payment: down, property_type: propType, income, employment, credit }
                   : { flow: 'refinance', home_value: homeValue, mortgage_balance: mortgageBalance, city: refCity, goal: refGoal, timeline, income: refIncome, employment: refEmployment, credit: refCredit }
                 try {
-                  const res = await fetch('/api/contact', {
+                  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/contact`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({

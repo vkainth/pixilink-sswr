@@ -114,7 +114,7 @@ export default function LeadsTable({ leads }: { leads: AgentPortalLead[] }) {
   async function markContacted(id: number) {
     setMarkingId(id)
     try {
-      await fetch('/api/agent-portal/leads/contacted', {
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/agent-portal/leads/contacted`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),

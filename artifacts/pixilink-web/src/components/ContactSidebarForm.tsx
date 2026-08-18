@@ -48,7 +48,7 @@ export default function ContactSidebarForm({ agent, listingAddress, mode = 'cont
       const currentPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : null
       const { parseSourceContext } = await import('@/lib/auth-client')
       const sourceCtx = parseSourceContext(currentPath)
-      const res = await fetch('/api/contact', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/contact`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

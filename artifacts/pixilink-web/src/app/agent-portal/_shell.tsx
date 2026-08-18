@@ -33,7 +33,7 @@ export default function AgentPortalShell({ session, children }: Props) {
   }
 
   async function handleLogout() {
-    await fetch('/api/agent-portal/logout', { method: 'POST' })
+    await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/agent-portal/logout`, { method: 'POST' })
     router.push('/agent-portal/login')
     router.refresh()
   }

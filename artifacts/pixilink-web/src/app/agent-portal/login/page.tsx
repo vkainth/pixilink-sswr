@@ -25,7 +25,7 @@ export default function AgentPortalLoginPage() {
     setLoading(true)
     setError('')
     try {
-      const res = await fetch('/api/agent-portal/login', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/agent-portal/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),

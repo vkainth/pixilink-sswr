@@ -40,7 +40,7 @@ export default function LoginForm({ agent, slug, agentPrefix }: { agent: AgentPr
     setLoading(true)
     try {
       const returnTo = searchParams.get('return_to') || ''
-      const res = await fetch('/api/auth/send-magic-link', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/auth/send-magic-link`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, agent_slug: slug, return_to: returnTo }),

@@ -54,7 +54,7 @@ export default function ResidencitySoldTicker({ items: propItems }: { items?: Ti
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    fetch('/api/residencity/recent-sold?limit=40')
+    fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/residencity/recent-sold?limit=40`)
       .then(r => r.json())
       .then((data: ApiItem[]) => {
         if (Array.isArray(data) && data.length > 0) {

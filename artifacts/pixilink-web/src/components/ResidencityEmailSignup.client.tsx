@@ -11,7 +11,7 @@ export default function ResidencityEmailSignup() {
     if (!email) return
     setStatus('loading')
     try {
-      const res = await fetch('/api/residencity/subscribe', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/api/residencity/subscribe`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email }),
