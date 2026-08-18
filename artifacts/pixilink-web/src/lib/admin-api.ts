@@ -565,9 +565,25 @@ export interface PlatformSettings {
   global_noindex: boolean
 }
 
-export async function getPlatformSettings(): Promise<PlatformSettings> {
+/**
+ * Platform settings.
+ *
+ * Called from the ROOT layout's generateMetadata(), so it runs on every
+ * uncached page view across every agent site. It was uncached
+ * (revalidate: 0), which meant ordinary visitor traffic spent from the same
+ * IP-keyed rate-limit bucket (throttle:600,1 on Laravel's whole `admin`
+ * prefix) that the admin batch tools need -- so a busy site could throttle
+ * out a bulk generation run's saves.
+ *
+ * The only field read on the public path is global_noindex, which changes
+ * approximately never, so a 5 minute cache is ample. Pass fresh = true where
+ * the current value must be exact (the admin settings screen).
+ */
+export async function getPlatformSettings(fresh = false): Promise<PlatformSettings> {
   try {
-    const res = await adminFetch('/platform-settings', { next: { revalidate: 0 } })
+    const res = await adminFetch('/platform-settings', fresh
+      ? { cache: 'no-store' }
+      : { next: { revalidate: 300 } })
     if (!res.ok) return { global_noindex: false }
     return res.json()
   } catch {

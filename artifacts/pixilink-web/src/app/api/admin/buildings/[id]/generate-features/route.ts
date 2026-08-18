@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { getAdminSession } from '@/lib/admin-auth'
 import Anthropic from '@anthropic-ai/sdk'
+import { fetchRetryingOn429 } from '@/lib/admin-retry'
 
 export const maxDuration = 300
 
@@ -320,7 +321,7 @@ export async function POST(
 
       // Web-sourced features always require explicit review — never auto-save
       if (!dryRun) {
-        const saveRes = await fetch(`${LARAVEL_URL}/api-internal/admin/buildings/${id}/features`, {
+        const saveRes = await fetchRetryingOn429(`${LARAVEL_URL}/api-internal/admin/buildings/${id}/features`, {
           method: 'POST',
           headers: { ...laravelHeaders, 'Content-Type': 'application/json' },
           body: JSON.stringify({ features_json: JSON.stringify(payload) }),
@@ -433,7 +434,7 @@ OUTPUT FORMAT (JSON array, no markdown):
 
     // ── Save to Laravel (skipped in dryRun mode) ──────────────────────────
     if (!dryRun) {
-      const saveRes = await fetch(`${LARAVEL_URL}/api-internal/admin/buildings/${id}/features`, {
+      const saveRes = await fetchRetryingOn429(`${LARAVEL_URL}/api-internal/admin/buildings/${id}/features`, {
         method: 'POST',
         headers: { ...laravelHeaders, 'Content-Type': 'application/json' },
         body: JSON.stringify({ features_json: JSON.stringify(payload) }),

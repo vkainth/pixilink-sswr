@@ -10,7 +10,8 @@ export default async function PlatformSettingsPage() {
   const session = jar.get('pxl_admin_session')?.value
   if (!session) redirect('/admin/login')
 
-  const settings = await getPlatformSettings()
+  // fresh: this screen edits the value, so it must not read a cached copy.
+  const settings = await getPlatformSettings(true)
 
   return (
     <div style={{ padding: '32px 40px', maxWidth: 760 }}>

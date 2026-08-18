@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { revalidatePath } from 'next/cache'
 import { getAdminSession } from '@/lib/admin-auth'
 import Anthropic from '@anthropic-ai/sdk'
+import { fetchRetryingOn429 } from '@/lib/admin-retry'
 
 export const maxDuration = 300
 
@@ -284,7 +285,7 @@ REQUIRED OUTPUT (JSON object, no markdown):
     const faq = Array.isArray(parsed.faq) ? parsed.faq : []
 
     // Save all 5 fields to Laravel — must succeed before returning
-    const saveRes = await fetch(`${LARAVEL_URL}/api-internal/admin/buildings/${id}/description`, {
+    const saveRes = await fetchRetryingOn429(`${LARAVEL_URL}/api-internal/admin/buildings/${id}/description`, {
       method: 'POST',
       headers: { ...laravelHeaders, 'Content-Type': 'application/json' },
       body: JSON.stringify({ tagline, description, neighbourhood_context, meta_description, faq_json: JSON.stringify(faq) }),

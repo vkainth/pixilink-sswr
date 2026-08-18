@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getAdminSession } from '@/lib/admin-auth'
 import { PERSONAS } from '@/lib/personas'
 import Anthropic from '@anthropic-ai/sdk'
+import { fetchRetryingOn429 } from '@/lib/admin-retry'
 
 export const maxDuration = 120
 
@@ -180,7 +181,7 @@ If no tags apply, respond with { "tags": [] }.`
 
     const tags = (Array.isArray(parsed.tags) ? parsed.tags : []).filter(t => ALL_PERSONA_TAGS.includes(t))
 
-    const saveRes = await fetch(`${LARAVEL_URL}/api-internal/admin/buildings/${id}/tags`, {
+    const saveRes = await fetchRetryingOn429(`${LARAVEL_URL}/api-internal/admin/buildings/${id}/tags`, {
       method: 'POST',
       headers: adminHeaders,
       body: JSON.stringify({ tags }),
