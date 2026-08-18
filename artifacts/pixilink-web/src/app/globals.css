@@ -19,7 +19,13 @@
   --brand-bg-rgb: 17, 17, 17;
 
   /* CTA token layer — change these two lines to retheme all buttons site-wide */
-  --cta-primary: var(--brand-accent);       /* primary button fill — LIGHT backgrounds only */
+  /* Primary CTA fill. Deliberately NOT var(--brand-accent): the button colour is a
+     conversion decision, the brand accent is an identity one, and tying them together
+     meant the CTA shared its colour with ~82 decorative uses (headings, rules, pills)
+     so nothing on the page read as "the thing to click". Blue also stays clear of the
+     two families already carrying meaning here: green = success/available, red = error.
+     6.70:1 on white. Agent branding now lives in --brand-accent (trim) only. */
+  --cta-primary: #1d4ed8;                   /* primary button fill — LIGHT backgrounds only */
   --cta-primary-text: #ffffff;              /* text on primary buttons */
   --cta-secondary-text: var(--primary-bg);  /* outline button text */
   --cta-secondary-border: var(--primary-bg);/* outline button border */

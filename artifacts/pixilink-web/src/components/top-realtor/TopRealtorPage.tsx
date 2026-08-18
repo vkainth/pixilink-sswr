@@ -471,7 +471,7 @@ export default function TopRealtorPage({ agent, page, widget, agentSlug, buyers,
                 <a
                   href={ap('/contact')}
                   style={{
-                    background: 'var(--brand-accent)', color: '#fff',
+                    background: 'var(--cta-primary)', color: 'var(--cta-primary-text)',
                     border: 'none', borderRadius: 5,
                     padding: '13px 24px', fontSize: 15, fontWeight: 700,
                     textDecoration: 'none', cursor: 'pointer',
@@ -746,7 +746,7 @@ export default function TopRealtorPage({ agent, page, widget, agentSlug, buyers,
                 href={ap('/contact')}
                 style={{
                   display: 'inline-block', marginTop: 20,
-                  background: 'var(--brand-accent)', color: '#fff',
+                  background: 'var(--cta-primary)', color: 'var(--cta-primary-text)',
                   borderRadius: 5, padding: '11px 22px',
                   fontSize: 14, fontWeight: 700, textDecoration: 'none',
                 }}
@@ -775,7 +775,7 @@ export default function TopRealtorPage({ agent, page, widget, agentSlug, buyers,
                   href={ap('/contact')}
                   style={{
                     display: 'inline-block', marginTop: 6,
-                    background: 'var(--brand-accent)', color: '#fff',
+                    background: 'var(--cta-primary)', color: 'var(--cta-primary-text)',
                     borderRadius: 5, padding: '11px 22px',
                     fontSize: 14, fontWeight: 700, textDecoration: 'none',
                   }}
@@ -986,7 +986,7 @@ export default function TopRealtorPage({ agent, page, widget, agentSlug, buyers,
                 {ptMeta.copy} {isDual ? displayNames : firstName} ha{isDual ? 've' : 's'} deep expertise in the {locationName} {ptMeta.singular.toLowerCase()} market — helping both buyers and sellers achieve their goals with precision and speed.
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                <a href={ap(ptMeta.listingHref)} style={{ background: 'var(--brand-accent)', color: '#fff', padding: '10px 20px', borderRadius: 5, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
+                <a href={ap(ptMeta.listingHref)} style={{ background: 'var(--cta-primary)', color: 'var(--cta-primary-text)', padding: '10px 20px', borderRadius: 5, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>
                   Browse {ptMeta.plural} for Sale
                 </a>
                 <a href={ap('/contact')} style={{ background: 'var(--surface-alt)', border: '1px solid var(--border)', color: 'var(--text)', padding: '10px 20px', borderRadius: 5, fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>

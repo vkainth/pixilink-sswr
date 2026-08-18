@@ -86,8 +86,8 @@ export default function StickyConversionBar({ contactHref, areaLabel, agentFirst
       <a
         href={contactHref}
         style={{
-          background: 'var(--brand-accent)',
-          color: '#fff',
+          background: 'var(--cta-primary)',
+          color: 'var(--cta-primary-text)',
           padding: '10px 20px',
           borderRadius: 6,
           fontWeight: 700,

@@ -191,7 +191,7 @@ export default function AgentSidebar({ agent, mode = 'contact', listingAddress, 
               <input placeholder="Street address" value={property.address} onChange={e => setProperty(p => ({ ...p, address: e.target.value }))} style={inp} />
               <input placeholder="City" value={property.city} onChange={e => setProperty(p => ({ ...p, city: e.target.value }))} style={{ ...inp, marginBottom: 20 }} />
               <button onClick={() => setStep(2)} disabled={!property.address || !property.city}
-                style={{ width: '100%', background: 'var(--brand-accent)', color: 'var(--brand-text)', border: 'none', padding: 13, borderRadius: 6, fontWeight: 700, fontSize: 14, cursor: 'pointer', opacity: property.address && property.city ? 1 : 0.5 }}>
+                style={{ width: '100%', background: 'var(--cta-primary)', color: 'var(--cta-primary-text)', border: 'none', padding: 13, borderRadius: 6, fontWeight: 700, fontSize: 14, cursor: 'pointer', opacity: property.address && property.city ? 1 : 0.5 }}>
                 Continue →
               </button>
             </>
@@ -208,7 +208,7 @@ export default function AgentSidebar({ agent, mode = 'contact', listingAddress, 
               <div style={{ display: 'flex', gap: 10 }}>
                 <button onClick={() => setStep(1)} disabled={submitting} style={{ flex: 1, background: '#f5f5f5', color: 'var(--text-muted)', border: '1px solid var(--border)', padding: 13, borderRadius: 6, cursor: 'pointer' }}>← Back</button>
                 <button onClick={handleSubmit} disabled={!form.name || !form.phone || submitting}
-                  style={{ flex: 2, background: 'var(--brand-accent)', color: 'var(--brand-text)', border: 'none', padding: 13, borderRadius: 6, fontWeight: 700, fontSize: 14, cursor: submitting ? 'not-allowed' : 'pointer', opacity: form.name && form.phone && !submitting ? 1 : 0.5 }}>
+                  style={{ flex: 2, background: 'var(--cta-primary)', color: 'var(--cta-primary-text)', border: 'none', padding: 13, borderRadius: 6, fontWeight: 700, fontSize: 14, cursor: submitting ? 'not-allowed' : 'pointer', opacity: form.name && form.phone && !submitting ? 1 : 0.5 }}>
                   {submitting ? 'Sending…' : 'Submit Request ✓'}
                 </button>
               </div>
@@ -269,7 +269,7 @@ export default function AgentSidebar({ agent, mode = 'contact', listingAddress, 
               <div style={{ color: '#dc2626', fontSize: 13, marginBottom: 12 }}>{submitError}</div>
             )}
             <button onClick={handleSubmit} disabled={!form.name || !form.phone || !form.agree || submitting}
-              style={{ width: '100%', background: 'var(--brand-accent)', color: 'var(--brand-text)', border: 'none', padding: 13, borderRadius: 6, fontWeight: 700, fontSize: 13, cursor: submitting ? 'not-allowed' : 'pointer', opacity: form.name && form.phone && form.agree && !submitting ? 1 : 0.5 }}>
+              style={{ width: '100%', background: 'var(--cta-primary)', color: 'var(--cta-primary-text)', border: 'none', padding: 13, borderRadius: 6, fontWeight: 700, fontSize: 13, cursor: submitting ? 'not-allowed' : 'pointer', opacity: form.name && form.phone && form.agree && !submitting ? 1 : 0.5 }}>
               {submitting ? 'Sending…' : mode === 'showing' ? 'Request a Showing' : 'Send Message'}
             </button>
           </>
