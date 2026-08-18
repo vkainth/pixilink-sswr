@@ -27,6 +27,8 @@
      6.70:1 on white. Agent branding now lives in --brand-accent (trim) only. */
   --cta-primary: #1d4ed8;                   /* primary button fill — LIGHT backgrounds only */
   --cta-primary-text: #ffffff;              /* text on primary buttons */
+  --cta-primary-rgb: 29, 78, 216;           /* #1d4ed8 — KEEP IN SYNC with --cta-primary above.
+                                               Needed for rgba() tints on selected states. */
   --cta-secondary-text: var(--primary-bg);  /* outline button text */
   --cta-secondary-border: var(--primary-bg);/* outline button border */
   --cta-chip: #6b7280;                      /* nav chip text (grey, not brand) */

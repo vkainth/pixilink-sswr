@@ -127,7 +127,7 @@ export default function ContactSidebarForm({ agent, listingAddress, mode = 'cont
             <input placeholder="Email (optional)" type="email" value={form.email} onChange={e => setForm(p => ({ ...p, email: e.target.value }))} style={inp} />
             <textarea placeholder="Your message..." value={form.message} onChange={e => setForm(p => ({ ...p, message: e.target.value }))} rows={3} style={{ ...inp, resize: 'vertical', marginBottom: 12 }} />
             <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 14, cursor: 'pointer' }}>
-              <input type="checkbox" checked={form.agree} onChange={e => setForm(p => ({ ...p, agree: e.target.checked }))} style={{ marginTop: 2, accentColor: 'var(--brand-accent)' }} required />
+              <input type="checkbox" checked={form.agree} onChange={e => setForm(p => ({ ...p, agree: e.target.checked }))} style={{ marginTop: 2, accentColor: 'var(--cta-primary)' }} required />
               <span style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.5 }}>
                 I consent to receive communications from {consentNames}.
               </span>

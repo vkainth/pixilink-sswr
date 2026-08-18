@@ -196,7 +196,7 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
 
             <div style={{ display: 'flex', gap: 3, margin: '14px 0 8px' }}>
               {[1, 2, 3, 4].map(s => (
-                <div key={s} style={{ flex: 1, height: 3, borderRadius: 2, background: step >= s ? 'var(--brand-accent)' : '#e5e7eb', transition: 'background 0.25s' }} />
+                <div key={s} style={{ flex: 1, height: 3, borderRadius: 2, background: step >= s ? 'var(--cta-primary)' : '#e5e7eb', transition: 'background 0.25s' }} />
               ))}
             </div>
             <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 14 }}>Step {step} of 4</div>
@@ -209,8 +209,8 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
                   {[['Morning', '9am–12pm'], ['Afternoon', '12–5pm'], ['Evening', '5–7pm']].map(([label, sub]) => (
                     <button key={label} onClick={() => setTime(label)} style={{
                       padding: '12px 8px', borderRadius: 8, cursor: 'pointer', textAlign: 'center',
-                      background: time === label ? 'rgba(var(--brand-accent-rgb),0.08)' : '#f9fafb',
-                      border: `1.5px solid ${time === label ? 'var(--brand-accent)' : '#e5e7eb'}`,
+                      background: time === label ? 'rgba(var(--cta-primary-rgb),0.08)' : '#f9fafb',
+                      border: `1.5px solid ${time === label ? 'var(--cta-primary)' : '#e5e7eb'}`,
                       color: time === label ? '#1a1a1a' : '#6b7280',
                     }}>
                       <div style={{ fontWeight: 700, fontSize: 13 }}>{label}</div>
@@ -283,8 +283,8 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
 
 const cta = (active: boolean): React.CSSProperties => ({
   flex: 1, width: '100%',
-  background: active ? 'var(--brand-accent)' : '#e5e7eb',
-  color: active ? 'var(--brand-text)' : '#6b7280',
+  background: active ? 'var(--cta-primary)' : '#e5e7eb',
+  color: active ? 'var(--cta-primary-text)' : '#6b7280',
   border: 'none', padding: '13px', borderRadius: 7,
   fontWeight: 700, fontSize: 14, cursor: active ? 'pointer' : 'not-allowed', fontFamily: 'inherit',
 })
@@ -294,8 +294,8 @@ const back: React.CSSProperties = {
 }
 const opt = (active: boolean): React.CSSProperties => ({
   padding: '13px 16px', borderRadius: 8, cursor: 'pointer', textAlign: 'left',
-  background: active ? 'rgba(var(--brand-accent-rgb),0.08)' : '#f9fafb',
-  border: `1.5px solid ${active ? 'var(--brand-accent)' : '#e5e7eb'}`,
+  background: active ? 'rgba(var(--cta-primary-rgb),0.08)' : '#f9fafb',
+  border: `1.5px solid ${active ? 'var(--cta-primary)' : '#e5e7eb'}`,
   color: active ? '#1a1a1a' : '#6b7280', fontWeight: active ? 700 : 400, fontSize: 14,
   fontFamily: 'inherit',
 })

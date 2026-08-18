@@ -260,7 +260,7 @@ export default function AgentSidebar({ agent, mode = 'contact', listingAddress, 
               rows={3} style={{ ...inp, resize: 'vertical', marginBottom: 12 }} />
             <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start', marginBottom: 14, cursor: 'pointer' }}>
               <input type="checkbox" checked={form.agree} onChange={e => setForm(p => ({ ...p, agree: e.target.checked }))}
-                style={{ marginTop: 2, accentColor: 'var(--brand-accent)' }} />
+                style={{ marginTop: 2, accentColor: 'var(--cta-primary)' }} />
               <span style={{ fontSize: 11, color: 'var(--text-muted)', lineHeight: 1.5 }}>
                 I agree to the <a href="/terms" style={{ color: 'var(--brand-accent)' }}>Terms & Conditions</a> and consent to receive communications from {agent.name} {agent.brokerage}.
               </span>
