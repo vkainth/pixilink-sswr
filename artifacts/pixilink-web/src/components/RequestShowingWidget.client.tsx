@@ -82,8 +82,8 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
         boxShadow: '0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.05)',
         background: '#fff',
       }}>
-        <div style={{ background: 'var(--primary-bg)', padding: '24px 24px 20px', textAlign: 'center' }}>
-          <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'rgba(255,255,255,0.15)', border: '2px solid #16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto', fontSize: 22, color: '#16a34a' }}>✓</div>
+        <div style={{ background: 'var(--brand-bg)', padding: '24px 24px 20px', textAlign: 'center' }}>
+          <div style={{ width: 52, height: 52, borderRadius: '50%', background: 'rgba(var(--brand-overlay-rgb),0.15)', border: '2px solid #16a34a', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto', fontSize: 22, color: '#16a34a' }}>✓</div>
         </div>
         <div style={{ background: '#fff', padding: '20px 24px 24px', textAlign: 'center' }}>
           <div style={{ fontWeight: 800, fontSize: 17, color: '#1a1a1a', marginBottom: 8 }}>
@@ -97,7 +97,7 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
           <div style={{ background: '#f3f4f6', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: '#6b7280' }}>
             {address} · {price}
           </div>
-          <a href={`tel:${agent.phone}`} style={{ display: 'block', marginTop: 16, background: '#fff', color: 'var(--primary-bg)', borderRadius: 6, padding: '11px 0', fontWeight: 700, fontSize: 13, textDecoration: 'none' }}>
+          <a href={`tel:${agent.phone}`} style={{ display: 'block', marginTop: 16, background: 'var(--brand-text)', color: 'var(--brand-bg)', borderRadius: 6, padding: '11px 0', fontWeight: 700, fontSize: 13, textDecoration: 'none' }}>
             📞 {agent.phone}
           </a>
         </div>
@@ -116,47 +116,47 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
       <input type="text" name="website_url" value={hp} onChange={e => setHp(e.target.value)} style={{ display: 'none' }} tabIndex={-1} autoComplete="off" aria-hidden="true" />
 
       {/* Agent header strip — always dark navy so white text is readable */}
-      <div style={{ background: 'var(--primary-bg)', padding: '18px 20px 16px' }}>
+      <div style={{ background: 'var(--brand-bg)', padding: '18px 20px 16px' }}>
         <div style={{ display: 'flex', gap: 14, alignItems: 'center', marginBottom: 14 }}>
           {isDual && coAgent ? (
             /* Dual-agent: two overlapping circles */
             <div style={{ position: 'relative', width: 88, height: 56, flexShrink: 0 }}>
-              <div style={{ position: 'absolute', left: 0, top: 0, width: 54, height: 54, borderRadius: '50%', border: '2.5px solid rgba(255,255,255,0.28)', overflow: 'hidden', zIndex: 2, background: 'rgba(255,255,255,0.15)' }}>
+              <div style={{ position: 'absolute', left: 0, top: 0, width: 54, height: 54, borderRadius: '50%', border: '2.5px solid rgba(var(--brand-overlay-rgb),0.28)', overflow: 'hidden', zIndex: 2, background: 'rgba(var(--brand-overlay-rgb),0.15)' }}>
                 {photoSrc ? (
                   <img src={photoSrc} alt={agent.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: `${agent.photo_focal_x ?? 50}% ${agent.photo_focal_y ?? 0}%` }} />
                 ) : (
-                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 20 }}>{agent.name.charAt(0)}</div>
+                  <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-text)', fontWeight: 800, fontSize: 20 }}>{agent.name.charAt(0)}</div>
                 )}
               </div>
-              <div style={{ position: 'absolute', left: 34, top: 0, width: 54, height: 54, borderRadius: '50%', border: '2.5px solid rgba(255,255,255,0.28)', overflow: 'hidden', zIndex: 1, background: 'rgba(255,255,255,0.15)' }}>
+              <div style={{ position: 'absolute', left: 34, top: 0, width: 54, height: 54, borderRadius: '50%', border: '2.5px solid rgba(var(--brand-overlay-rgb),0.28)', overflow: 'hidden', zIndex: 1, background: 'rgba(var(--brand-overlay-rgb),0.15)' }}>
                 <img src={imgUrl(coAgent.photo, 400)} alt={coAgent.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 0%' }} />
               </div>
             </div>
           ) : (
             /* Single agent */
-            <div style={{ width: 56, height: 56, borderRadius: '50%', border: '2.5px solid rgba(255,255,255,0.28)', overflow: 'hidden', flexShrink: 0 }}>
+            <div style={{ width: 56, height: 56, borderRadius: '50%', border: '2.5px solid rgba(var(--brand-overlay-rgb),0.28)', overflow: 'hidden', flexShrink: 0 }}>
               {photoSrc ? (
                 <img src={photoSrc} alt={agent.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: `${agent.photo_focal_x ?? 50}% ${agent.photo_focal_y ?? 0}%` }} />
               ) : (
-                <div style={{ width: '100%', height: '100%', background: 'rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 22 }}>{agent.name.charAt(0)}</div>
+                <div style={{ width: '100%', height: '100%', background: 'rgba(var(--brand-overlay-rgb),0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brand-text)', fontWeight: 800, fontSize: 22 }}>{agent.name.charAt(0)}</div>
               )}
             </div>
           )}
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ color: '#ffffff', fontWeight: 700, fontSize: isDual ? 13 : 15, lineHeight: 1.2 }}>
+            <div style={{ color: 'var(--brand-text)', fontWeight: 700, fontSize: isDual ? 13 : 15, lineHeight: 1.2 }}>
               {isDual && coAgent ? `${agent.name} & ${coAgent.name}` : agent.name}
             </div>
-            <div style={{ color: 'rgba(255,255,255,0.85)', fontSize: 11, marginBottom: 4 }}>{agent.brokerage}</div>
+            <div style={{ color: 'rgba(var(--brand-overlay-rgb),0.85)', fontSize: 11, marginBottom: 4 }}>{agent.brokerage}</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#22c55e', flexShrink: 0 }} />
-              <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.85)' }}>Usually responds quickly</span>
+              <span style={{ fontSize: 11, color: 'rgba(var(--brand-overlay-rgb),0.85)' }}>Usually responds quickly</span>
             </div>
           </div>
         </div>
-        <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)', fontStyle: 'italic', marginBottom: 8 }}>
+        <div style={{ fontSize: 12, color: 'rgba(var(--brand-overlay-rgb),0.85)', fontStyle: 'italic', marginBottom: 8 }}>
           {isDual ? 'We\u2019d love to show you this home' : 'I\u2019d love to show you this home'}
         </div>
-        <a href={`tel:${agent.phone}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: '#fff', color: 'var(--primary-bg)', borderRadius: 6, padding: '9px 0', fontWeight: 700, fontSize: 12, textDecoration: 'none' }}>
+        <a href={`tel:${agent.phone}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, background: 'var(--brand-text)', color: 'var(--brand-bg)', borderRadius: 6, padding: '9px 0', fontWeight: 700, fontSize: 12, textDecoration: 'none' }}>
           📞 {agent.phone}
         </a>
       </div>
@@ -165,7 +165,7 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
       <div style={{ background: '#fff', padding: '16px 20px 20px' }}>
         {isFindSimilar ? (
           <>
-            <div style={{ display: 'inline-block', background: '#eff6ff', border: '0.5px solid #bfdbfe', borderRadius: 20, padding: '3px 12px', fontSize: 11, color: '#1d4ed8', letterSpacing: '0.04em', marginBottom: 10 }}>
+            <div style={{ display: 'inline-block', background: 'rgba(var(--brand-accent-rgb),0.10)', border: '1px solid rgba(var(--brand-accent-rgb),0.35)', borderRadius: 20, padding: '3px 12px', fontSize: 11, color: 'var(--text)', letterSpacing: '0.04em', marginBottom: 10 }}>
               • Find Similar Homes
             </div>
             <div style={{ color: '#1a1a1a', fontSize: 17, fontWeight: 700, marginBottom: 4 }}>Find Similar Homes in {areaLabel}</div>
@@ -187,7 +187,7 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
           </>
         ) : (
           <>
-            <div style={{ display: 'inline-block', background: '#fffbeb', border: '0.5px solid #fbbf24', borderRadius: 20, padding: '3px 12px', fontSize: 11, color: '#92400e', letterSpacing: '0.04em', marginBottom: 10, fontWeight: 600 }}>
+            <div style={{ display: 'inline-block', background: 'rgba(var(--brand-accent-rgb),0.10)', border: '1px solid rgba(var(--brand-accent-rgb),0.35)', borderRadius: 20, padding: '3px 12px', fontSize: 11, color: 'var(--text)', letterSpacing: '0.04em', marginBottom: 10, fontWeight: 600 }}>
               🗓 Book a Showing
             </div>
             <div style={{ color: '#1a1a1a', fontSize: 18, fontWeight: 700, marginBottom: 4 }}>Schedule Your Private Tour</div>

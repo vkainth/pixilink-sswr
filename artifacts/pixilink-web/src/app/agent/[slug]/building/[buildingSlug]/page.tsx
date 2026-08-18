@@ -653,6 +653,14 @@ export default async function BuildingDetailPage({ params }: Props) {
             <div style={{ display: 'grid', gap: 14, marginBottom: 36 }}>
               <LeadOfferCapture
                 slug={slug}
+                offerType="building_sold"
+                offerContext={displayName}
+                title={`Get sold prices in ${displayName}`}
+                subtitle="See every recent sale in this building — sent straight to your inbox."
+                buttonLabel="Get Sold Prices"
+              />
+              <LeadOfferCapture
+                slug={slug}
                 offerType="neighbour_sold"
                 offerContext={displayName}
                 title="Find out what my neighbour sold for"
