@@ -172,6 +172,13 @@ function SoldGateCard({ stats }: { stats: SoldGateStats | null }) {
   const total = stats ? stats.total_register + stats.total_login : null
   const registerPct = total && stats ? Math.round((stats.total_register / total) * 100) : null
   const loginPct = total && stats ? 100 - registerPct! : null
+  // Impressions are the denominator. Before they existed this card could only show a
+  // register-vs-login split — a ratio between two conversions, which says nothing about
+  // how many people saw the gate and walked away.
+  const impressions = stats?.total_impression ?? 0
+  const convRate = impressions > 0 && total !== null
+    ? Math.round((total / impressions) * 1000) / 10
+    : null
 
   return (
     <div style={{ background: P.white, borderRadius: 12, border: `1px solid ${P.border}`, overflow: 'hidden', marginBottom: 24 }}>
@@ -194,7 +201,14 @@ function SoldGateCard({ stats }: { stats: SoldGateStats | null }) {
       ) : (
         <div style={{ padding: '20px 22px' }}>
           {/* Summary row */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14, marginBottom: 22 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 14, marginBottom: 22 }}>
+            <div style={{ background: P.bg, borderRadius: 10, padding: '14px 16px', border: `1px solid ${P.border}` }}>
+              <div style={{ fontSize: 10, fontWeight: 600, color: P.muted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Prompts Shown</div>
+              <div style={{ fontSize: 28, fontWeight: 800, color: P.text }}>{impressions}</div>
+              <div style={{ fontSize: 11, color: P.muted, marginTop: 2 }}>
+                {convRate !== null ? `${convRate}% converted` : 'awaiting impressions'}
+              </div>
+            </div>
             <div style={{ background: P.bg, borderRadius: 10, padding: '14px 16px', border: `1px solid ${P.border}` }}>
               <div style={{ fontSize: 10, fontWeight: 600, color: P.muted, textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Total Clicks</div>
               <div style={{ fontSize: 28, fontWeight: 800, color: P.text }}>{total ?? 0}</div>

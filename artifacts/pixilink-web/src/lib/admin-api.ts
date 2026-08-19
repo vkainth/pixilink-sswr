@@ -269,12 +269,17 @@ export interface SoldGateAgentStat {
   slug: string
   register: number
   login: number
+  prompt_impression: number
+  prompt_dismiss: number
 }
 
 export interface SoldGateStats {
   period_days: number
   total_register: number
   total_login: number
+  /** Denominator. Without it a gate's conversion rate cannot be computed at all. */
+  total_impression: number
+  total_dismiss: number
   by_agent: SoldGateAgentStat[]
 }
 
@@ -288,6 +293,8 @@ export interface SoldGateDayStat {
   day: string
   register: number
   login: number
+  prompt_impression: number
+  prompt_dismiss: number
 }
 
 export interface SoldGateStatsByDay {
