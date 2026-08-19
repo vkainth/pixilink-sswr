@@ -41,7 +41,10 @@ export default function SoldSignInCard({ agent, slug, agentPrefix, subarea, retu
     sessionStorage.setItem('pxl_just_authed', '1')
     recordClick(dest)
 
-    const href = `${prefix}/${dest}`
+    // Carry the destination in the URL as well as sessionStorage: the query param is
+    // what lets an already-authed visitor be redirected straight back, and what the
+    // magic-link email embeds. sessionStorage alone is silently lost in both cases.
+    const href = `${prefix}/${dest}?return_to=${encodeURIComponent(returnTo)}`
     const eventName = dest === 'register' ? 'sold_gate_register_click' : 'sold_gate_login_click'
 
     if (typeof window.gtag === 'function') {

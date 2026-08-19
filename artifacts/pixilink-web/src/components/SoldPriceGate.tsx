@@ -17,7 +17,11 @@ export default function SoldPriceGate({ price, label = 'Sold Price', agentPrefix
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('pxl_return_to', window.location.pathname + window.location.search)
     }
-    window.location.href = `${prefix}/register`
+    // Carry the destination in the URL as well as sessionStorage: the query param is
+    // what lets an already-authed visitor be redirected straight back, and what the
+    // magic-link email embeds. sessionStorage alone is silently lost in both cases.
+    const rt = encodeURIComponent(window.location.pathname + window.location.search)
+    window.location.href = `${prefix}/register?return_to=${rt}`
   }
 
   return (
@@ -75,7 +79,11 @@ export function SoldPriceGateCard({
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('pxl_return_to', window.location.pathname + window.location.search)
     }
-    window.location.href = `${prefix}/${dest}`
+    // Carry the destination in the URL as well as sessionStorage: the query param is
+    // what lets an already-authed visitor be redirected straight back, and what the
+    // magic-link email embeds. sessionStorage alone is silently lost in both cases.
+    const rt = encodeURIComponent(window.location.pathname + window.location.search)
+    window.location.href = `${prefix}/${dest}?return_to=${rt}`
   }
 
   const priceFmt = soldPrice != null
@@ -194,7 +202,11 @@ export function SoldPriceBanner({ city, slug, agentPrefix, nextStepUrl }: { city
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('pxl_return_to', window.location.pathname + window.location.search)
     }
-    window.location.href = `${prefix}/${dest}`
+    // Carry the destination in the URL as well as sessionStorage: the query param is
+    // what lets an already-authed visitor be redirected straight back, and what the
+    // magic-link email embeds. sessionStorage alone is silently lost in both cases.
+    const rt = encodeURIComponent(window.location.pathname + window.location.search)
+    window.location.href = `${prefix}/${dest}?return_to=${rt}`
   }
 
   if (nextStepUrl) {

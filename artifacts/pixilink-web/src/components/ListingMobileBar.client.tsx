@@ -37,7 +37,10 @@ export default function ListingMobileBar({ agent, address, price, mlsNum, isSold
     if (returnTo && typeof window !== 'undefined') {
       sessionStorage.setItem('pxl_return_to', returnTo)
     }
-    window.location.href = `${prefix}/${dest}`
+    // Carry the destination in the URL as well as sessionStorage: the query param is
+    // what lets an already-authed visitor be redirected straight back, and what the
+    // magic-link email embeds. sessionStorage alone is silently lost in both cases.
+    window.location.href = `${prefix}/${dest}?return_to=${encodeURIComponent(returnTo)}`
   }
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { getAgent, getListingDetail, authMe, resolveAgentPrefix } from '@/lib/api'
+import { getAgent, getListingDetail, getBuildingDetail, authMe, resolveAgentPrefix } from '@/lib/api'
 import { nextStepPath } from '@/lib/next-step'
 import { cookies, headers } from 'next/headers'
 import { formatPriceFull, pricePerSqft, formatDate } from '@/lib/types'
@@ -6,6 +6,11 @@ import ListingStrip from '@/components/ListingStrip'
 import BuildingComparisonTable from '@/components/BuildingComparisonTable'
 import InsightBar from '@/components/InsightBar'
 import RequestShowingWidget from '@/components/RequestShowingWidget.client'
+import { SoldPriceGateCard } from '@/components/SoldPriceGate'
+import SoldSignInCard from '@/components/SoldSignInCard.client'
+import WelcomeToast from '@/components/WelcomeToast.client'
+import LeadOfferCapture from '@/components/LeadOfferCapture.client'
+import SoldUnlockPrompt from '@/components/SoldUnlockPrompt.client'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
@@ -74,6 +79,23 @@ export default async function SoldListingDetailPage({ params }: Props) {
   const ratio = isLoggedIn && listing.sold_price && listing.list_price
     ? Math.round((listing.sold_price / listing.list_price) * 100)
     : null
+  const soldRatio = ratio != null ? ratio.toFixed(1) : null
+
+  // Other units sold in the same building. This endpoint throws UpstreamUnavailableError
+  // on a 5xx, and a missing comps table must never take the whole page down with it.
+  const buildingDetail = listing.building?.slug
+    ? await getBuildingDetail(slug, listing.building.slug).catch(() => null)
+    : null
+  const buildingSolds = (buildingDetail?.recent_sold ?? []).filter(r => r.mls_no !== listing.mls_no)
+  const bStats = buildingDetail?.stats ?? null
+  const bName = listing.building?.name ?? null
+  // Proof drawn from real building data; falls back to a plain sentence rather than
+  // rendering a half-empty claim when the building fetch returned nothing.
+  const cmaProof = bStats?.avg_sold_price && bName
+    ? `Recent sales at ${bName} average ${formatPriceFull(bStats.avg_sold_price)}`
+      + `${bStats.avg_dom ? ` in ${Math.round(bStats.avg_dom)} days` : ''}.`
+      + ` Get a free valuation from ${agent.name.split(' ')[0]} based on sales like this one.`
+    : `Get a free CMA from ${agent.name.split(' ')[0]} based on real recent sales like this one.`
 
   const card: React.CSSProperties = { background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '22px 24px' }
   const sectionTitle: React.CSSProperties = { fontSize: 18, fontWeight: 800, margin: '0 0 14px', color: 'var(--primary-bg)' }
@@ -112,6 +134,17 @@ export default async function SoldListingDetailPage({ params }: Props) {
   return (
     <div style={{ background: 'var(--off-white)', minHeight: '100vh', paddingBottom: 48 }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <WelcomeToast />
+      <SoldUnlockPrompt
+        slug={slug}
+        mls={listing.mls_no}
+        isLoggedIn={isLoggedIn}
+        agentPrefix={agentPrefix}
+        subarea={listing.subarea}
+        buildingSoldCount={buildingSolds.length}
+        buildingName={listing.building?.name ?? null}
+        returnTo={ap(`/sold/${mls}`)}
+      />
       {/* Breadcrumb */}
       <div className="container" style={{ padding: '18px var(--container-padding) 0' }}>
         <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
@@ -125,11 +158,36 @@ export default async function SoldListingDetailPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Photo hero */}
+      {/* Photo hero. Gated for guests SERVER-SIDE: the URL is simply not emitted.
+          A CSS blur would leave the image one devtools edit and one view-source
+          away, which is the exact failure mode being fixed in the price gate.
+          generateMetadata still uses the real photo for OG — that governs the
+          click through from search and social, not the conversion on the page. */}
       {photos.length > 0 && (
         <div className="container" style={{ padding: '14px var(--container-padding) 0' }}>
-          <div style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', background: '#000', aspectRatio: '16/7' }}>
-            <img src={photos[0]} alt={listing.address} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
+          <div style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', background: 'var(--primary-bg)', aspectRatio: '16/7' }}>
+            {isLoggedIn ? (
+              <img src={photos[0]} alt={listing.address} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
+            ) : (
+              <div style={{
+                width: '100%', height: '100%', display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center', gap: 10, textAlign: 'center', padding: 20,
+              }}>
+                <div style={{ fontSize: 30 }}>🔒</div>
+                <div style={{ color: '#fff', fontWeight: 700, fontSize: 16 }}>
+                  {photos.length} photo{photos.length === 1 ? '' : 's'} of this home
+                </div>
+                <div style={{ color: 'rgba(255,255,255,0.75)', fontSize: 13 }}>
+                  Sign in free to see the photos and the sold price
+                </div>
+                <a href={nextStepUrl ?? ap('/register')} style={{
+                  marginTop: 4, background: 'var(--cta-primary)', color: 'var(--cta-primary-text)',
+                  padding: '10px 22px', borderRadius: 7, fontWeight: 700, fontSize: 13.5, textDecoration: 'none',
+                }}>
+                  {nextStepUrl ? 'Complete Registration' : 'Unlock Photos'}
+                </a>
+              </div>
+            )}
             <div style={{ position: 'absolute', top: 14, left: 14 }}>
               <span style={{ background: '#1f2937', color: '#fff', fontSize: 11, fontWeight: 800, padding: '5px 12px', borderRadius: 4, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
                 SOLD
@@ -162,12 +220,20 @@ export default async function SoldListingDetailPage({ params }: Props) {
                   )}
                 </>
               ) : (
-                <div style={{ position: 'relative', display: 'inline-flex', alignItems: 'center', gap: 12, background: 'var(--off-white)', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 16px', marginBottom: 6 }}>
-                  <div style={{ fontSize: 34, fontWeight: 900, color: 'var(--accent)', filter: 'blur(8px)', userSelect: 'none' }}>$000,000</div>
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)' }}>🔒 {nextStepUrl ? 'Complete registration to see sold price' : 'Sign in to see sold price'}</div>
-                    <a href={nextStepUrl ?? ap('/sign-in')} style={{ fontSize: 12, color: 'var(--accent)', fontWeight: 700, textDecoration: 'none' }}>{nextStepUrl ? 'Complete Registration →' : 'Sign In →'}</a>
-                  </div>
+                <div style={{ marginBottom: 18 }}>
+                  <SoldPriceGateCard
+                    isLoggedIn={false}
+                    slug={slug}
+                    agentPrefix={agentPrefix}
+                    soldPrice={null}
+                    listPrice={null}
+                    soldDate={listing.sold_date ?? null}
+                    dom={listing.dom ?? null}
+                    subarea={listing.subarea ?? null}
+                    city={listing.city}
+                    soldRatio={soldRatio}
+                    nextStepUrl={nextStepUrl}
+                  />
                 </div>
               )}
               <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', margin: '0 0 4px' }}>{listing.address}</h1>
@@ -293,6 +359,28 @@ export default async function SoldListingDetailPage({ params }: Props) {
             </div>
           </div>
 
+          {/* Other units sold in this building — addresses and dates visible,
+              prices locked. BuildingComparisonTable is itself a paywall in
+              sold + !isLoggedIn mode, so the curiosity gap is the CTA. */}
+          {buildingSolds.length > 0 && listing.building && (
+            <section style={{ marginBottom: 36 }}>
+              <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)', margin: '0 0 4px' }}>
+                Other Units Sold at {listing.building.name}
+              </h2>
+              <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 12 }}>
+                {buildingSolds.length} other recent sale{buildingSolds.length === 1 ? '' : 's'} in this building
+                {isLoggedIn ? '.' : ' — sign in free to see every sold price.'}
+              </div>
+              <BuildingComparisonTable
+                rows={buildingSolds}
+                sold
+                isLoggedIn={isLoggedIn}
+                slug={slug}
+                agentPrefix={agentPrefix}
+              />
+            </section>
+          )}
+
           {/* Sidebar */}
           <div className="sold-detail-sidebar">
             <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '18px 20px', marginBottom: 14 }}>
@@ -300,12 +388,7 @@ export default async function SoldListingDetailPage({ params }: Props) {
               {isLoggedIn ? (
                 <div style={{ fontSize: 28, fontWeight: 900, color: 'var(--accent)', marginBottom: 4 }}>{priceLabel}</div>
               ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--accent)', filter: 'blur(7px)', userSelect: 'none' }}>$000,000</div>
-                  <a href={nextStepUrl ?? ap('/sign-in')} style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', textDecoration: 'none', whiteSpace: 'nowrap' }}>
-                    🔒 {nextStepUrl ? 'Complete Registration' : 'Sign In'}
-                  </a>
-                </div>
+                <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--accent)', filter: 'blur(7px)', userSelect: 'none', marginBottom: 4 }}>$000,000</div>
               )}
               {listing.sold_date && (
                 <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Sold {formatDate(listing.sold_date)}</div>
@@ -315,11 +398,31 @@ export default async function SoldListingDetailPage({ params }: Props) {
               )}
             </div>
 
-            <div style={{ background: 'rgba(var(--accent-rgb),0.10)', border: '1px solid var(--accent)', borderRadius: 10, padding: '16px 18px', marginBottom: 14 }}>
-              <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--primary-bg)', marginBottom: 4 }}>What&apos;s your home worth today?</div>
-              <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.55 }}>
-                Get a free CMA from {agent.name.split(' ')[0]} based on real recent sales like this one.
+            {!isLoggedIn && (
+              <div style={{ marginBottom: 14 }}>
+                <SoldSignInCard
+                  agent={agent}
+                  slug={slug}
+                  agentPrefix={agentPrefix}
+                  subarea={listing.subarea}
+                  returnTo={ap(`/sold/${mls}`)}
+                  mls={listing.mls_no}
+                  nextStepUrl={nextStepUrl}
+                />
               </div>
+            )}
+
+            <div style={{ marginBottom: 14 }}>
+              <LeadOfferCapture
+                slug={slug}
+                offerType="sold_valuation"
+                offerContext={listing.building?.name ?? listing.subarea ?? listing.city}
+                accent
+                title="What's your home worth today?"
+                subtitle={cmaProof}
+                buttonLabel="Get My Valuation"
+                successMessage={`Thanks — ${agent.name.split(' ')[0]} will send your valuation shortly.`}
+              />
             </div>
 
             <RequestShowingWidget agent={agent} address={listing.address} price={priceLabel ?? 'Sold listing'} mlsNum={listing.mls_no} variant="find-similar" subarea={listing.subarea || listing.city} />

@@ -86,7 +86,18 @@ export default function SoldGate({ rows, accentColor, primaryBg, totalCount, slu
               ? 'Sign in to see what this unit sold for — free.'
               : `Sign in to see all ${totalCount} sold prices — free.`}
           </span>
-          <a href={agentPrefix ? `${agentPrefix}/sign-in` : (slug ? `/agent/${slug}/sign-in` : '/sign-in')}
+          <a
+            href={agentPrefix ? `${agentPrefix}/sign-in` : (slug ? `/agent/${slug}/sign-in` : '/sign-in')}
+            onClick={e => {
+              // This gate previously recorded the destination nowhere, so anyone who
+              // signed in from a building page landed on the agent homepage instead of
+              // back at the sold prices they came for. Computed on click because the
+              // first render also happens on the server, where window does not exist.
+              e.preventDefault()
+              const returnTo = window.location.pathname + window.location.search
+              sessionStorage.setItem('pxl_return_to', returnTo)
+              window.location.href = `${e.currentTarget.getAttribute('href')}?return_to=${encodeURIComponent(returnTo)}`
+            }}
             style={{
               background: 'var(--cta-primary)',
               color: 'var(--cta-primary-text)',

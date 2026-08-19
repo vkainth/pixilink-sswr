@@ -9,6 +9,7 @@ export type LeadOfferType =
   | 'neighbour_sold'
   | 'school_catchment'
   | 'building_valuation'
+  | 'sold_valuation'
 
 interface Props {
   slug: string
