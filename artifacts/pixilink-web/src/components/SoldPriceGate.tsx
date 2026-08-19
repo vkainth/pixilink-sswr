@@ -40,8 +40,13 @@ interface SoldPriceGateCardProps {
   isLoggedIn: boolean
   slug: string
   agentPrefix?: string
-  soldPrice: number
-  listPrice: number
+  /**
+   * Gated figures — pass null unless isLoggedIn. This is a CLIENT component, so any
+   * number handed in is serialised into the RSC payload and readable in page source
+   * regardless of the blur drawn over it. A CSS blur is a picture of a lock, not a lock.
+   */
+  soldPrice: number | null
+  listPrice: number | null
   soldDate: string | null
   dom: number | null
   subarea: string | null
@@ -73,7 +78,9 @@ export function SoldPriceGateCard({
     window.location.href = `${prefix}/${dest}`
   }
 
-  const priceFmt = `$${Math.round(soldPrice).toLocaleString('en-CA')}`
+  const priceFmt = soldPrice != null
+    ? `$${Math.round(soldPrice).toLocaleString('en-CA')}`
+    : '$000,000'
 
   const soldDateLabel = (() => {
     if (!soldDate) return null
@@ -82,9 +89,9 @@ export function SoldPriceGateCard({
     return d.toLocaleDateString('en-CA', { month: 'long', year: 'numeric' })
   })()
 
-  if (isLoggedIn) {
+  if (isLoggedIn && soldPrice != null) {
     const ratioNum = soldRatio ? Number(soldRatio) : null
-    const priceDelta = soldPrice - listPrice
+    const priceDelta = soldPrice - (listPrice ?? soldPrice)
     const deltaFmt = `${priceDelta >= 0 ? '+' : ''}$${Math.abs(Math.round(priceDelta)).toLocaleString('en-CA')}`
 
     return (

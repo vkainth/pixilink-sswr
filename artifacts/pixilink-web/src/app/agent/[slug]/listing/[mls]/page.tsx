@@ -435,8 +435,12 @@ export default async function ListingDetailPage({ params }: Props) {
     : undefined
   const baths = listing.baths % 1 === 0 ? listing.baths.toFixed(0) : listing.baths.toFixed(1)
   const displayPrice = isSold && listing.sold_price ? listing.sold_price : listing.list_price
-  const priceLabel = formatPriceFull(displayPrice)
-  const psf = pricePerSqft(displayPrice, listing.sqft)
+  // A sold price is licensed data behind the sign-in gate; a list price is public.
+  // Withhold anything derived from the former until the visitor is entitled to it,
+  // including $/sqft — sqft is on the page, so $/sqft reconstructs the price.
+  const soldFiguresVisible = !isSold || isLoggedIn
+  const priceLabel = soldFiguresVisible ? formatPriceFull(displayPrice) : null
+  const psf = soldFiguresVisible ? pricePerSqft(displayPrice, listing.sqft) : null
   const badge = statusBadge[listing.status] || { bg: '#6b7280', label: listing.status }
 
   const photos = listing.photos?.length ? listing.photos : listing.photo_url ? [listing.photo_url] : []
@@ -488,12 +492,12 @@ export default async function ListingDetailPage({ params }: Props) {
     ? `https://maps.google.com/maps?q=${listing.latitude},${listing.longitude}&z=15&output=embed`
     : `https://maps.google.com/maps?q=${encodeURIComponent(listing.address + ', ' + listing.city + ', BC')}&z=15&output=embed`
 
-  const guestSoldLocked = isSold && !isLoggedIn
+  const guestSoldLocked = !soldFiguresVisible   // exact negation; kept for the existing render guards
 
-  const soldRatio = isSold && listing.sold_price && listing.list_price
+  const soldRatio = isSold && isLoggedIn && listing.sold_price && listing.list_price
     ? ((listing.sold_price / listing.list_price) * 100).toFixed(1)
     : null
-  const priceDelta = isSold && listing.sold_price && listing.list_price
+  const priceDelta = isSold && isLoggedIn && listing.sold_price && listing.list_price
     ? listing.sold_price - listing.list_price
     : null
 
@@ -504,7 +508,7 @@ export default async function ListingDetailPage({ params }: Props) {
       {/* Fire-and-forget property view tracker — 401 silently ignored when not logged in */}
       <PropertyViewTracker listingId={listing.mls_no} addressLabel={`${listing.address}, ${listing.city}`} />
       {/* Publish listing data to layout-level components (e.g. W4StickyFooter) via module-level store */}
-      <ListingDataSetter address={listing.address} price={priceLabel} mlsNum={listing.mls_no} isSold={isSold} />
+      <ListingDataSetter address={listing.address} price={priceLabel ?? 'Sold listing'} mlsNum={listing.mls_no} isSold={isSold} />
 
       {/* Gallery */}
       <div className="container" style={{ padding: '20px var(--container-padding) 0' }}>
@@ -642,8 +646,8 @@ export default async function ListingDetailPage({ params }: Props) {
                   isLoggedIn={isLoggedIn}
                   slug={slug}
                   agentPrefix={agentPrefix}
-                  soldPrice={listing.sold_price}
-                  listPrice={listing.list_price}
+                  soldPrice={isLoggedIn ? listing.sold_price : null}
+                  listPrice={isLoggedIn ? listing.list_price : null}
                   soldDate={listing.sold_date ?? null}
                   dom={listing.dom ?? null}
                   subarea={listing.subarea ?? null}
@@ -1006,9 +1010,9 @@ export default async function ListingDetailPage({ params }: Props) {
                 nextStepUrl={nextStepUrl}
               />
             ) : isSold ? (
-              <RequestShowingWidget agent={agent} address={listing.address} price={priceLabel} mlsNum={listing.mls_no} variant="find-similar" subarea={listing.subarea || listing.city} coAgents={coAgents} />
+              <RequestShowingWidget agent={agent} address={listing.address} price={priceLabel ?? 'Sold listing'} mlsNum={listing.mls_no} variant="find-similar" subarea={listing.subarea || listing.city} coAgents={coAgents} />
             ) : (
-              <RequestShowingWidget agent={agent} address={listing.address} price={priceLabel} mlsNum={listing.mls_no} coAgents={coAgents} />
+              <RequestShowingWidget agent={agent} address={listing.address} price={priceLabel ?? 'Sold listing'} mlsNum={listing.mls_no} coAgents={coAgents} />
             )}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
@@ -1034,7 +1038,7 @@ export default async function ListingDetailPage({ params }: Props) {
       <ListingMobileBar
         agent={agent}
         address={listing.address}
-        price={priceLabel}
+        price={priceLabel ?? 'Sold listing'}
         mlsNum={listing.mls_no}
         isSold={isSold}
         isLoggedIn={isLoggedIn}
