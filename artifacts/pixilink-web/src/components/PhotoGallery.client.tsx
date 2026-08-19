@@ -446,7 +446,9 @@ export default function PhotoGallery({ photos, address, virtualTour, status, loc
             </div>
             <button onClick={() => navSignIn('register')}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, background: '#1a7f37', color: '#fff', border: 'none', padding: '13px 24px', borderRadius: 8, fontWeight: 700, fontSize: 15, cursor: 'pointer', width: '100%', marginBottom: 10 }}>
-              <span style={{ fontSize: 20, fontWeight: 900 }}>G</span> Continue with Google
+              {/* NOT Google sign-in - navSignIn('register') goes to the email
+                  registration form. See the same note in SoldPriceGate.tsx. */}
+              Create free account
             </button>
             <button onClick={() => navSignIn('login')}
               style={{ width: '100%', background: '#f9fafb', color: '#111827', border: '1px solid #e5e7eb', padding: '12px 24px', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>

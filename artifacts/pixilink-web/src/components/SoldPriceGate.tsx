@@ -169,7 +169,11 @@ export function SoldPriceGateCard({
         <button
           onClick={() => nav('register')}
           style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, background: 'var(--cta-primary)', color: 'var(--cta-primary-text)', border: 'none', padding: '14px 28px', borderRadius: 8, fontWeight: 700, fontSize: 15, cursor: 'pointer', width: '100%', marginBottom: 12 }}>
-          <span style={{ fontSize: 20, fontWeight: 900 }}>G</span> Continue with Google
+          {/* NOT Google sign-in: nav('register') goes to the email registration form.
+              The OAuth backend exists (UserAuthController::googleRedirect) but nothing
+              links to it, so Google branding here promised a one-tap flow that does
+              not run and has produced zero sign-ups. Labelled as what it does. */}
+          Create free account
         </button>
 
         <button
@@ -178,12 +182,14 @@ export function SoldPriceGateCard({
           Sign in with email or phone
         </button>
 
-        <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start', cursor: 'pointer', marginBottom: 16 }}>
-          <input type="checkbox" style={{ marginTop: 3, accentColor: 'var(--accent)' }} />
-          <span style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'left', lineHeight: 1.5 }}>
-            I agree to the <a href={`${prefix}/terms`} style={{ color: 'var(--accent)' }}>Terms &amp; Conditions</a> and consent to receive market updates.
-          </span>
-        </label>
+        {/* A consent checkbox used to sit here. It had no checked/onChange and was
+            never read - both buttons above worked whether or not it was ticked - so
+            it manufactured the appearance of consent that was never actually given.
+            Real consent is collected at the terms step of registration. A plain
+            notice is honest; a fake checkbox is worse than none. */}
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'left', lineHeight: 1.5, marginBottom: 16 }}>
+          By continuing you agree to our <a href={`${prefix}/terms`} style={{ color: 'var(--accent)' }}>Terms &amp; Conditions</a>.
+        </div>
 
         <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
           Join <strong style={{ color: 'var(--text)' }}>4,800+</strong> buyers already using {area}&apos;s most complete sold data

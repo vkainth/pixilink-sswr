@@ -223,6 +223,7 @@ function VerifyPhoneFormInner({ agent, slug, agentPrefix }: { agent: AgentProfil
   const searchParams = useSearchParams()
   const changeMode = searchParams.get('change') === '1'
   const prefix = agentPrefix ?? `/agent/${slug}`
+  const agentFirstName = agent?.name?.split(' ')[0] ?? ''
 
   const [countryEntry, setCountryEntry] = useState('+1_CA')
   const [phone, setPhone] = useState('')
@@ -337,7 +338,13 @@ function VerifyPhoneFormInner({ agent, slug, agentPrefix }: { agent: AgentProfil
         </div>
 
         <p style={{ fontSize: 12, color: '#9ca3af', margin: 0, lineHeight: 1.5 }}>
-          Your phone number is used for account security only, not for marketing.
+          {/* This previously read "used for account security only, not for marketing",
+              which was not true: the same registration hands the number to the agent
+              and to their CRM so they can follow up. Saying so plainly is both
+              accurate and a better ask - people give a realtor their number precisely
+              so the realtor can call them. */}
+          We verify your number so we know it&apos;s really you. {agentFirstName || 'Your agent'} may
+          use it to follow up about homes you ask about. We don&apos;t sell your details.
         </p>
 
         <button type="submit" disabled={loading}
