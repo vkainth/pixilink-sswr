@@ -62,13 +62,21 @@ function laravelHeaders(): Record<string, string> {
 }
 
 /**
- * Backoff for a 429 from Laravel. Deliberately short: this runs during server
- * rendering, so a long wait would only trade a fast wrong answer for a slow
- * one. Two quick retries clear the brief collisions that happen when a bulk
- * admin job and visitor traffic share the api group's rate-limit bucket; a
- * sustained overload still fails, and the caller decides what that means.
+ * Backoff for a retryable read from Laravel. Deliberately short: this runs
+ * during server rendering, so a long wait would only trade a fast wrong answer
+ * for a slow one. Two quick retries clear the brief collisions that happen when
+ * a bulk admin job and visitor traffic share the api group's rate-limit bucket;
+ * a sustained overload still fails, and the caller decides what that means.
  */
 const READ_RETRY_DELAYS_MS = [300, 900]
+
+/**
+ * Ceiling on total time spent retrying one read. Without it, three attempts at
+ * a 4s timeout plus backoff could keep a visitor waiting ~13s only to show them
+ * an error page anyway. Past this point the backend is not having a blip, and
+ * failing fast is the kinder answer.
+ */
+const RETRY_BUDGET_MS = 6000
 
 async function laravelFetch(path: string, opts: RequestInit = {}): Promise<Response> {
   const url = `${LARAVEL_URL}${path}`
@@ -83,16 +91,37 @@ async function laravelFetch(path: string, opts: RequestInit = {}): Promise<Respo
     headers,
   })
 
-  let res = await attempt()
+  // GETs here are idempotent, so retrying is safe. Retried: 429, and a thrown
+  // transport error — which is overwhelmingly our own 4s timeout firing while
+  // Laravel is briefly saturated (it answers the same request in ~120ms once
+  // the burst clears). A cold container after deploy reliably produces such a
+  // burst, and before this a single slow response turned a real page into a
+  // 500. NOT retried: 404 is an answer, and a 500 will not fix itself in 300ms.
+  const started = Date.now()
+  let res: Response | undefined
+  let err: unknown
 
-  // GETs here are idempotent, so retrying is safe. Only 429 is retried: a 404
-  // is an answer, and a 500 will not fix itself in 300ms.
-  for (let i = 0; i < READ_RETRY_DELAYS_MS.length && res.status === 429; i++) {
-    await new Promise(resolve => setTimeout(resolve, READ_RETRY_DELAYS_MS[i]))
-    res = await attempt()
+  for (let i = 0; ; i++) {
+    if (i > 0) await new Promise(resolve => setTimeout(resolve, READ_RETRY_DELAYS_MS[i - 1]))
+
+    try {
+      res = await attempt()
+      err = undefined
+      if (res.status !== 429) return res
+    } catch (e) {
+      // A caller-supplied signal is the caller's own decision to give up, so
+      // honour it rather than quietly retrying past it.
+      if (opts.signal) throw e
+      err = e
+      res = undefined
+    }
+
+    if (i >= READ_RETRY_DELAYS_MS.length) break
+    if (Date.now() - started > RETRY_BUDGET_MS) break
   }
 
-  return res
+  if (err) throw err
+  return res as Response
 }
 
 // Maps internal agent slug → region preview prefix (for website.pixilink.com/path-mode agents).
