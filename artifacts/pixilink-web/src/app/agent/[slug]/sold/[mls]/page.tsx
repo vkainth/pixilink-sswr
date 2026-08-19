@@ -125,7 +125,11 @@ export default async function SoldListingDetailPage({ params }: Props) {
       addressRegion: 'BC',
       addressCountry: 'CA',
     },
-    ...(listing.photo_url ? { image: listing.photo_url } : {}),
+    // Photo omitted for guests: the hero is gated, and leaving the URL in JSON-LD
+    // would hand it back to anyone reading the page source. og:image and
+    // twitter:image deliberately keep it — that thumbnail is what earns the click
+    // from search and social, which is upstream of the conversion, not part of it.
+    ...(isLoggedIn && listing.photo_url ? { image: listing.photo_url } : {}),
     ...(listing.year_built ? { yearBuilt: listing.year_built } : {}),
     numberOfRooms: listing.beds,
     floorSize: listing.sqft > 0 ? { '@type': 'QuantitativeValue', value: listing.sqft, unitCode: 'FTK' } : undefined,
