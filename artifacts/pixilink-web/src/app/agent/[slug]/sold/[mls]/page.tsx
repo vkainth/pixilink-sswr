@@ -62,12 +62,18 @@ export default async function SoldListingDetailPage({ params }: Props) {
     : undefined
 
   const soldPrice = listing.sold_price || listing.list_price
-  const priceLabel = formatPriceFull(soldPrice)
-  const listPriceLabel = formatPriceFull(listing.list_price)
-  const psf = pricePerSqft(soldPrice, listing.sqft)
+  // Gated figures. The sold price is licensed data behind a sign-in wall, so it must
+  // not reach the page for a guest by ANY route: not rendered, not serialised into a
+  // client component's props, and not reconstructible. $/sqft is the reconstructible
+  // one — 850 ft² beside $665/ft² gives the $565,000 the blur is hiding.
+  const priceLabel = isLoggedIn ? formatPriceFull(soldPrice) : null
+  const listPriceLabel = isLoggedIn ? formatPriceFull(listing.list_price) : null
+  const psf = isLoggedIn ? pricePerSqft(soldPrice, listing.sqft) : null
   const baths = listing.baths % 1 === 0 ? listing.baths.toFixed(0) : listing.baths.toFixed(1)
   const photos = listing.photos?.length ? listing.photos : listing.photo_url ? [listing.photo_url] : []
-  const ratio = listing.sold_price && listing.list_price ? Math.round((listing.sold_price / listing.list_price) * 100) : null
+  const ratio = isLoggedIn && listing.sold_price && listing.list_price
+    ? Math.round((listing.sold_price / listing.list_price) * 100)
+    : null
 
   const card: React.CSSProperties = { background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '22px 24px' }
   const sectionTitle: React.CSSProperties = { fontSize: 18, fontWeight: 800, margin: '0 0 14px', color: 'var(--primary-bg)' }
@@ -316,7 +322,7 @@ export default async function SoldListingDetailPage({ params }: Props) {
               </div>
             </div>
 
-            <RequestShowingWidget agent={agent} address={listing.address} price={priceLabel} mlsNum={listing.mls_no} variant="find-similar" subarea={listing.subarea || listing.city} />
+            <RequestShowingWidget agent={agent} address={listing.address} price={priceLabel ?? 'Sold listing'} mlsNum={listing.mls_no} variant="find-similar" subarea={listing.subarea || listing.city} />
           </div>
         </div>
       </div>
