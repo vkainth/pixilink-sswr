@@ -28,7 +28,7 @@ const SOURCES: { value: string; label: string; hint: string }[] = [
   { value: 'realtylink',  label: 'Realtylink',         hint: 'Shows "via Realtylink"' },
 ]
 
-const EMPTY = { author_name: '', body: '', rating: 5, source: 'manual', date: '', visible: true }
+const EMPTY = { author_name: '', body: '', rating: 0, source: 'manual', date: '', visible: true }
 type Draft = typeof EMPTY
 
 const input: React.CSSProperties = {
@@ -211,8 +211,13 @@ export default function TestimonialsPanel({ agentId, agentName }: Props) {
           </div>
           <div>
             <label style={label}>Rating</label>
-            <div style={{ paddingTop: 4 }}>
-              <Stars n={draft.rating} onChange={v => setDraft({ ...draft, rating: v })} />
+            <div style={{ paddingTop: 4, display: 'flex', alignItems: 'center', gap: 10 }}>
+              {/* Clicking the current rating clears it. 0 renders no stars at all, which is
+                  the honest state for a written testimonial the client never scored. */}
+              <Stars n={draft.rating} onChange={v => setDraft({ ...draft, rating: v === draft.rating ? 0 : v })} />
+              <span style={{ fontSize: 11, color: P.muted }}>
+                {draft.rating === 0 ? 'No rating — no stars shown' : 'click again to clear'}
+              </span>
             </div>
           </div>
         </div>
