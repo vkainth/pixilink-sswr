@@ -25,7 +25,7 @@ export default function BlogTeaser({ posts, agentPrefix }: Props) {
             <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 8, fontWeight: 700 }}>
               Latest News
             </div>
-            <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(22px,2.8vw,34px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
+            <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(22px,2.8vw,34px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
               Market Insights & News
             </h2>
           </div>
@@ -54,7 +54,7 @@ export default function BlogTeaser({ posts, agentPrefix }: Props) {
                       {post.category}
                     </div>
                   )}
-                  <h3 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 17, fontWeight: 700, color: 'var(--primary-bg)', margin: '0 0 8px', lineHeight: 1.3 }}>
+                  <h3 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 17, fontWeight: 700, color: 'var(--primary-bg)', margin: '0 0 8px', lineHeight: 1.3 }}>
                     {post.title}
                   </h3>
                   {post.excerpt && (

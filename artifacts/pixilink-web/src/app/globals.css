@@ -112,14 +112,14 @@ html {
 /* Light palette is the default (white body) — no extra rules needed. */
 
 /* Font pairs — applied via data-font-pair on the agent layout wrapper.
-   serif-sans (default): Playfair Display headings + Inter body — no attribute needed.
-   all-sans: Inter for both headings and body.
+   serif-sans (default): Playfair headings (--font-display) + Inter body (--font-body).
+   all-sans: Inter (--font-body) for both headings and body.
    geometric: DM Sans loaded from Google Fonts via a conditional <link> in layout. */
 [data-font-pair="all-sans"] h1,
 [data-font-pair="all-sans"] h2,
 [data-font-pair="all-sans"] h3,
 [data-font-pair="all-sans"] h4 {
-  font-family: 'Inter', 'Helvetica Neue', sans-serif !important;
+  font-family: var(--font-body), 'Helvetica Neue', sans-serif !important;
   letter-spacing: -0.02em !important;
 }
 [data-font-pair="geometric"] h1,

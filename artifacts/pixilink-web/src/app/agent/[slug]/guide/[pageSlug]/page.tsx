@@ -289,7 +289,7 @@ export default async function GuideDetailPage({ params }: Props) {
       <style>{`
         @media (max-width: 860px) { .guide-layout { grid-template-columns: 1fr !important } }
         .guide-content h2 {
-          font-family: 'Playfair Display', Georgia, serif;
+          font-family: var(--font-display), Georgia, serif;
           font-size: clamp(18px, 2vw, 24px);
           font-weight: 500;
           color: var(--primary-bg, #14213d);

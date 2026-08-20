@@ -160,7 +160,7 @@ export default async function AgentLayout({ children, params }: Props) {
   const cssVars = `--brand-bg:${theme.primaryBg};--brand-accent:${theme.accent};--brand-accent-rgb:${theme.accentRgb};--brand-text:${theme.brandText};--brand-overlay-rgb:${theme.brandOverlayRgb};--brand-bg-rgb:${theme.brandBgRgb};`
 
   // Font-pair — set via data-font-pair attribute on the wrapper div and CSS in globals.css.
-  // 'serif-sans' is the default (Playfair Display headings + Inter body) — no attribute needed.
+  // 'serif-sans' is the default (Playfair headings + Inter body) — no attribute needed.
   // 'geometric' requires DM Sans from Google Fonts; we inject the <link> conditionally.
   const needsDmSans = cfg.font_pair === 'geometric'
 

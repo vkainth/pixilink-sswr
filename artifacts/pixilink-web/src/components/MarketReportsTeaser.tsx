@@ -55,7 +55,7 @@ export default function MarketReportsTeaser({ stats, agentPrefix, firstName }: P
           {cards.map(card => (
             <div key={card.href} style={{ border: '1px solid var(--border)', borderRadius: 10, padding: '28px 28px 24px', display: 'flex', flexDirection: 'column', gap: 10, background: 'var(--off-white)' }}>
               <div style={{ fontSize: 10, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', fontWeight: 700 }}>{card.eyebrow}</div>
-              <h3 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 22, fontWeight: 700, color: 'var(--primary-bg)', margin: 0 }}>{card.title}</h3>
+              <h3 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 22, fontWeight: 700, color: 'var(--primary-bg)', margin: 0 }}>{card.title}</h3>
               <p style={{ fontSize: 14, color: 'var(--text-muted)', lineHeight: 1.7, margin: 0, flex: 1 }}>{card.desc}</p>
               <a href={card.href} style={{ display: 'inline-block', marginTop: 8, background: 'var(--primary-bg)', color: '#fff', padding: '10px 22px', borderRadius: 6, fontWeight: 700, fontSize: 12, letterSpacing: 1, textTransform: 'uppercase', textDecoration: 'none', alignSelf: 'flex-start' }}>
                 {card.cta}

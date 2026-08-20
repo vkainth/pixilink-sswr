@@ -148,7 +148,7 @@ function SignInInner() {
             flexDirection: 'column', padding: '0 24px',
           }}>
             <h2 style={{
-              fontFamily: "'Playfair Display',Georgia,serif",
+              fontFamily: "var(--font-display),Georgia,serif",
               fontSize: 21, fontWeight: 700, color: '#fff', margin: '0 0 8px', textAlign: 'center',
               textShadow: '0 1px 4px rgba(0,0,0,0.5)',
             }}>
@@ -200,7 +200,7 @@ function SignInInner() {
                 Free Access
               </div>
               <h2 style={{
-                fontFamily: "'Playfair Display',Georgia,serif",
+                fontFamily: "var(--font-display),Georgia,serif",
                 fontSize: 'clamp(20px,2.2vw,26px)', fontWeight: 700,
                 lineHeight: 1.25, margin: '0 0 10px', color: '#fff',
                 textShadow: '0 1px 6px rgba(0,0,0,0.4)',

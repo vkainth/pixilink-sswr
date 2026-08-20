@@ -47,7 +47,7 @@ export default function AgentFaqSection({ faqs, agentName, siteUrl }: Props) {
           </div>
           <h2
             style={{
-              fontFamily: "'Playfair Display',Georgia,serif",
+              fontFamily: "var(--font-display),Georgia,serif",
               fontSize: 'clamp(26px,3.5vw,40px)',
               fontWeight: 700,
               color: 'var(--primary-bg)',
@@ -90,7 +90,7 @@ export default function AgentFaqSection({ faqs, agentName, siteUrl }: Props) {
               <h3
                 itemProp="name"
                 style={{
-                  fontFamily: "'Playfair Display',Georgia,serif",
+                  fontFamily: "var(--font-display),Georgia,serif",
                   fontSize: 'clamp(17px,2vw,20px)',
                   fontWeight: 700,
                   color: 'var(--primary-bg)',

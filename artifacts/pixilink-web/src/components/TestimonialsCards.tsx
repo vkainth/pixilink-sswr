@@ -38,7 +38,7 @@ export default function TestimonialsCards({ testimonials }: Props) {
           <div style={{ fontSize: 11, letterSpacing: 3, textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 10, fontWeight: 700 }}>
             Client Reviews
           </div>
-          <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(24px,3vw,38px)', fontWeight: 700, color: 'var(--primary-bg)', margin: 0 }}>
+          <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(24px,3vw,38px)', fontWeight: 700, color: 'var(--primary-bg)', margin: 0 }}>
             What Clients Say
           </h2>
         </div>

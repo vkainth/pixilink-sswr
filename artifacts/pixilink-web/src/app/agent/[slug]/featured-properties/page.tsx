@@ -212,7 +212,7 @@ export default async function FeaturedPropertiesPage({ params }: Props) {
   } : null
 
   return (
-    <div style={{ fontFamily: "'Inter','Helvetica Neue',sans-serif", overflowX: 'hidden' }}>
+    <div style={{ fontFamily: "var(--font-body),'Helvetica Neue',sans-serif", overflowX: 'hidden' }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(agentEntityLd) }} />
       {activeListingBlocks.map((block, i) => (
         <script key={`listing-ld-${i}`} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(block) }} />
@@ -231,7 +231,7 @@ export default async function FeaturedPropertiesPage({ params }: Props) {
           <p style={{ fontSize: 11, letterSpacing: '0.28em', textTransform: 'uppercase', color: SC_GOLD, fontWeight: 600, marginBottom: 12 }}>
             {agent.brokerage}
           </p>
-          <h1 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(2.2rem,5vw,3.6rem)', fontWeight: 400, color: '#fff', lineHeight: 1.1, margin: '0 0 16px' }}>
+          <h1 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(2.2rem,5vw,3.6rem)', fontWeight: 400, color: '#fff', lineHeight: 1.1, margin: '0 0 16px' }}>
             {firstName}&rsquo;s Featured Properties
           </h1>
           <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, maxWidth: 560 }}>
@@ -249,7 +249,7 @@ export default async function FeaturedPropertiesPage({ params }: Props) {
                 <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>
                   Now Available
                 </p>
-                <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(1.6rem,3vw,2.2rem)', fontWeight: 400, color: SC_CHARCOAL, margin: 0 }}>
+                <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(1.6rem,3vw,2.2rem)', fontWeight: 400, color: SC_CHARCOAL, margin: 0 }}>
                   Active Listings
                 </h2>
               </div>
@@ -267,7 +267,7 @@ export default async function FeaturedPropertiesPage({ params }: Props) {
       ) : (
         <section style={{ background: '#fff', padding: 'clamp(56px,8vw,80px) 0' }}>
           <div className="container" style={{ textAlign: 'center' }}>
-            <p style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(1.4rem,2.5vw,1.8rem)', fontWeight: 400, color: SC_CHARCOAL, marginBottom: 12 }}>
+            <p style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(1.4rem,2.5vw,1.8rem)', fontWeight: 400, color: SC_CHARCOAL, marginBottom: 12 }}>
               No active listings at the moment
             </p>
             <p style={{ fontSize: 15, color: '#6b7280', marginBottom: 28 }}>
@@ -288,7 +288,7 @@ export default async function FeaturedPropertiesPage({ params }: Props) {
               <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>
                 Track Record
               </p>
-              <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(1.6rem,3vw,2.2rem)', fontWeight: 400, color: SC_CHARCOAL, margin: 0 }}>
+              <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(1.6rem,3vw,2.2rem)', fontWeight: 400, color: SC_CHARCOAL, margin: 0 }}>
                 Recently Sold
               </h2>
             </div>
@@ -329,7 +329,7 @@ export default async function FeaturedPropertiesPage({ params }: Props) {
             <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12 }}>
               Market Expertise
             </p>
-            <p style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(1.1rem,2vw,1.35rem)', fontWeight: 400, color: SC_CHARCOAL, lineHeight: 1.7, margin: 0 }}>
+            <p style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(1.1rem,2vw,1.35rem)', fontWeight: 400, color: SC_CHARCOAL, lineHeight: 1.7, margin: 0 }}>
               {specializationLine}
             </p>
           </div>

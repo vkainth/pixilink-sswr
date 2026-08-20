@@ -72,7 +72,7 @@ export default function HeroSection(props: Props) {
                 <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'rgba(255,255,255,0.90)', marginBottom: 18 }}>
                   {guideName ? 'Your Local Real Estate Guide' : agent.brokerage}
                 </div>
-                <h1 style={{ fontSize: 'clamp(40px,5vw,64px)', fontWeight: 800, lineHeight: 1.05, margin: '0 0 10px', color: '#fff', letterSpacing: -1.5, fontFamily: "'Playfair Display', Georgia, serif" }}>
+                <h1 style={{ fontSize: 'clamp(40px,5vw,64px)', fontWeight: 800, lineHeight: 1.05, margin: '0 0 10px', color: '#fff', letterSpacing: -1.5, fontFamily: "var(--font-display), Georgia, serif" }}>
                   {guideName || `${territoryLabel} Real Estate`}
                 </h1>
                 {!isDualAgent && (
@@ -243,7 +243,7 @@ function HeroSplit({ agent, agentPrefix, heroStats, guideName, territoryLabel, t
             <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 16, fontWeight: 700 }}>
               {guideName ? 'Your Local Real Estate Guide' : `${territoryLabel} REALTOR®`}
             </div>
-            <h1 style={{ fontSize: 'clamp(36px,4.5vw,58px)', fontWeight: 800, lineHeight: 1.08, margin: '0 0 18px', color: 'var(--primary-bg)', letterSpacing: -1.5, fontFamily: "'Playfair Display', Georgia, serif" }}>
+            <h1 style={{ fontSize: 'clamp(36px,4.5vw,58px)', fontWeight: 800, lineHeight: 1.08, margin: '0 0 18px', color: 'var(--primary-bg)', letterSpacing: -1.5, fontFamily: "var(--font-display), Georgia, serif" }}>
               {guideName || agent.name}
             </h1>
             {guideName && (
@@ -352,7 +352,7 @@ function HeroCircleCentered({ agent, agentPrefix, heroStats, guideName, territor
         <div style={{ fontSize: 12, letterSpacing: 2, textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 12, fontWeight: 700 }}>
           {guideName ? 'Your Local Real Estate Guide' : `${territoryLabel} REALTOR®`}
         </div>
-        <h1 style={{ fontSize: 'clamp(32px,4vw,52px)', fontWeight: 800, lineHeight: 1.1, margin: '0 0 12px', color: '#fff', fontFamily: "'Playfair Display', Georgia, serif" }}>
+        <h1 style={{ fontSize: 'clamp(32px,4vw,52px)', fontWeight: 800, lineHeight: 1.1, margin: '0 0 12px', color: '#fff', fontFamily: "var(--font-display), Georgia, serif" }}>
           {guideName || agent.name}
         </h1>
         <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.65)', marginBottom: 8, fontWeight: 500 }}>
@@ -386,7 +386,7 @@ function HeroTextOnly({ agent, agentPrefix, heroStats, guideName, territoryLabel
         <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 18, fontWeight: 700 }}>
           {guideName ? 'Your Local Real Estate Guide' : `${territoryLabel} REALTOR®`}
         </div>
-        <h1 style={{ fontSize: 'clamp(40px,5.5vw,72px)', fontWeight: 900, lineHeight: 1.0, margin: '0 0 18px', color: 'var(--primary-bg)', letterSpacing: -2.5, fontFamily: "'Playfair Display', Georgia, serif" }}>
+        <h1 style={{ fontSize: 'clamp(40px,5.5vw,72px)', fontWeight: 900, lineHeight: 1.0, margin: '0 0 18px', color: 'var(--primary-bg)', letterSpacing: -2.5, fontFamily: "var(--font-display), Georgia, serif" }}>
           {guideName || `${territoryLabel} Real Estate`}
         </h1>
         {!guideName && <p style={{ fontSize: 18, color: 'var(--text-muted)', marginBottom: 8, fontWeight: 500 }}>{agent.name} · REALTOR® · {agent.brokerage}</p>}
@@ -427,7 +427,7 @@ function HeroPhotoStrip({ agent, agentPrefix, heroStats, guideName, territoryLab
               <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 12, fontWeight: 700 }}>
                 {guideName ? 'Your Local Real Estate Guide' : `${territoryLabel} REALTOR®`}
               </div>
-              <h1 style={{ fontSize: 'clamp(28px,3.5vw,48px)', fontWeight: 800, lineHeight: 1.1, margin: '0 0 10px', color: 'var(--primary-bg)', fontFamily: "'Playfair Display', Georgia, serif" }}>
+              <h1 style={{ fontSize: 'clamp(28px,3.5vw,48px)', fontWeight: 800, lineHeight: 1.1, margin: '0 0 10px', color: 'var(--primary-bg)', fontFamily: "var(--font-display), Georgia, serif" }}>
                 {guideName || agent.name}
               </h1>
               <p style={{ fontSize: 15, color: 'var(--text-muted)', fontWeight: 500 }}>

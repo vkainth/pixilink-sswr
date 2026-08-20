@@ -493,11 +493,11 @@ export default async function BuildingDetailPage({ params }: Props) {
     },
   } : null
 
-  const sectionTitle: React.CSSProperties = { fontSize: 20, fontWeight: 700, color: 'var(--primary-bg)', margin: '0 0 16px', fontFamily: "'Playfair Display',Georgia,serif" }
+  const sectionTitle: React.CSSProperties = { fontSize: 20, fontWeight: 700, color: 'var(--primary-bg)', margin: '0 0 16px', fontFamily: "var(--font-display),Georgia,serif" }
   const card: React.CSSProperties = { background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '22px 24px' }
   const subCard: React.CSSProperties = { border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', background: '#fff', color: '#1c1c1c' }
   const subCardHead: React.CSSProperties = { background: 'var(--off-white)', padding: '12px 16px', borderBottom: '1px solid var(--border)' }
-  const subCardTitle: React.CSSProperties = { fontFamily: "'Playfair Display',Georgia,serif", fontSize: 15, fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }
+  const subCardTitle: React.CSSProperties = { fontFamily: "var(--font-display),Georgia,serif", fontSize: 15, fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }
 
   return (
     <div style={{ background: 'var(--off-white)', minHeight: '100vh' }}>
@@ -536,7 +536,7 @@ export default async function BuildingDetailPage({ params }: Props) {
 
         {/* H1: name + address, always equal size/weight — some visitors search by name, others by address */}
         <div style={{ marginBottom: 20 }}>
-          <h1 style={{ fontSize: 'clamp(20px,2.5vw,30px)', fontWeight: 800, margin: '0 0 4px', color: 'var(--text)', letterSpacing: '-0.01em', fontFamily: "'Playfair Display',Georgia,serif", lineHeight: 1.35 }}>
+          <h1 style={{ fontSize: 'clamp(20px,2.5vw,30px)', fontWeight: 800, margin: '0 0 4px', color: 'var(--text)', letterSpacing: '-0.01em', fontFamily: "var(--font-display),Georgia,serif", lineHeight: 1.35 }}>
             {(() => {
               const subareaEndsWithCity = building.subarea && building.city &&
                 building.subarea.toLowerCase().endsWith(building.city.toLowerCase())
@@ -956,7 +956,7 @@ export default async function BuildingDetailPage({ params }: Props) {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 12 }} className="strata-grid">
                   {/* Financial Health card */}
                   <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 20 }}>
-                    <h3 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 15, fontWeight: 700, margin: '0 0 14px', color: 'var(--primary-bg)' }}>Financial Health</h3>
+                    <h3 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 15, fontWeight: 700, margin: '0 0 14px', color: 'var(--primary-bg)' }}>Financial Health</h3>
                     {([
                       building.strata_no ? ['Strata Plan No.', building.strata_no] : null,
                       ['Contingency Reserve Fund', 'Contact agent for details'],
@@ -972,7 +972,7 @@ export default async function BuildingDetailPage({ params }: Props) {
                   </div>
                   {/* Management & Meetings card */}
                   <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 20 }}>
-                    <h3 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 15, fontWeight: 700, margin: '0 0 14px', color: 'var(--primary-bg)' }}>Management &amp; Meetings</h3>
+                    <h3 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 15, fontWeight: 700, margin: '0 0 14px', color: 'var(--primary-bg)' }}>Management &amp; Meetings</h3>
                     {([
                       building.mgmt_name ? ['Strata Management Co.', building.mgmt_name] : null,
                       ['AGM Schedule', 'Annual — contact strata'],

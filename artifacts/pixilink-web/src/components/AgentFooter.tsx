@@ -245,7 +245,7 @@ export default function AgentFooter({ agent, territories, landingPages = [] }: P
               <p style={{ fontSize: 11, fontWeight: 600, letterSpacing: '0.18em', textTransform: 'uppercase', color: SC_GOLD, marginBottom: 14 }}>
                 {agent.brokerage}
               </p>
-              <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(1.9rem,3.5vw,2.8rem)', fontWeight: 400, color: '#fff', lineHeight: 1.2, marginBottom: 14 }}>
+              <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(1.9rem,3.5vw,2.8rem)', fontWeight: 400, color: '#fff', lineHeight: 1.2, marginBottom: 14 }}>
                 Let&rsquo;s find your<br />next home.
               </h2>
               <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.60)', lineHeight: 1.7, maxWidth: 380 }}>

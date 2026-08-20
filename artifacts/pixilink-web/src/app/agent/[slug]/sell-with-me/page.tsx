@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 const SC_CHARCOAL  = '#1C1C1E'
 const SC_GOLD      = '#9B8B7A'
 const SC_OFF_WHITE = '#F5F3F0'
-const PLAYFAIR: React.CSSProperties = { fontFamily: "'Playfair Display',Georgia,serif" }
+const PLAYFAIR: React.CSSProperties = { fontFamily: "var(--font-display),Georgia,serif" }
 
 export default async function SellWithMePage({ params }: Props) {
   const { slug } = await params
@@ -147,7 +147,7 @@ export default async function SellWithMePage({ params }: Props) {
   }
 
   return (
-    <div style={{ fontFamily: "'Inter','Helvetica Neue',sans-serif", overflowX: 'hidden' }}>
+    <div style={{ fontFamily: "var(--font-body),'Helvetica Neue',sans-serif", overflowX: 'hidden' }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 

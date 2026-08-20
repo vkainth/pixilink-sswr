@@ -302,7 +302,7 @@ export default async function AgentHomePage({ params }: Props) {
     const SC_CHARCOAL  = '#1C1C1E'
     const SC_GOLD      = 'var(--brand-accent)'
     const SC_OFF_WHITE = '#F5F3F0'
-    const playfairStyle: React.CSSProperties = { fontFamily: "'Playfair Display',Georgia,serif" }
+    const playfairStyle: React.CSSProperties = { fontFamily: "var(--font-display),Georgia,serif" }
 
     const agentPhotoSrc = showcaseHeadshot ? imgUrl(showcaseHeadshot.url, 900) : photoSrc
 
@@ -355,7 +355,7 @@ export default async function AgentHomePage({ params }: Props) {
     ]
 
     return (
-      <div style={{ fontFamily: "'Inter','Helvetica Neue',sans-serif", overflowX: 'hidden' }}>
+      <div style={{ fontFamily: "var(--font-body),'Helvetica Neue',sans-serif", overflowX: 'hidden' }}>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />
         {showcaseFaqs.length > 0 && (
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -949,7 +949,7 @@ export default async function AgentHomePage({ params }: Props) {
   }
 
   return (
-    <div style={{ fontFamily: "'Inter','Helvetica Neue',sans-serif", overflowX: 'hidden' }}>
+    <div style={{ fontFamily: "var(--font-body),'Helvetica Neue',sans-serif", overflowX: 'hidden' }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />
 
       {/* ─── Hero (variant driven by site_config) ─── */}
@@ -984,7 +984,7 @@ export default async function AgentHomePage({ params }: Props) {
                 <div style={{ fontSize: 10, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', fontWeight: 700, marginBottom: 6 }}>
                   {hasOwnActive ? 'Active Listings' : 'Available in Your Area'}
                 </div>
-                <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
+                <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
                   {hasOwnActive
                     ? `${firstName}'s Active Listings`
                     : `Listings Available Through ${firstName}`}
@@ -1063,7 +1063,7 @@ export default async function AgentHomePage({ params }: Props) {
                   <span style={{ fontSize: 10, letterSpacing: 2.5, textTransform: 'uppercase', color: '#b45309', fontWeight: 700 }}>Price Reduced</span>
                   <span style={{ fontSize: 10, background: '#dc2626', color: '#fff', fontWeight: 700, letterSpacing: 0.5, padding: '2px 7px', borderRadius: 3, textTransform: 'uppercase' }}>🏷 Deal Alert</span>
                 </div>
-                <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
+                <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
                   Great Buys
                   {greatBuysTotal > 0 && (
                     <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-muted)', fontFamily: 'inherit', marginLeft: 10 }}>
@@ -1090,7 +1090,7 @@ export default async function AgentHomePage({ params }: Props) {
             <div className="section-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 20 }}>
               <div>
                 <div style={{ fontSize: 10, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', fontWeight: 700, marginBottom: 6 }}>Active</div>
-                <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
+                <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
                   Houses for Sale
                   {houseTotal > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-muted)', fontFamily: 'inherit', marginLeft: 10 }}>{houseTotal} listings</span>}
                 </h2>
@@ -1109,7 +1109,7 @@ export default async function AgentHomePage({ params }: Props) {
             <div className="section-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 20 }}>
               <div>
                 <div style={{ fontSize: 10, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', fontWeight: 700, marginBottom: 6 }}>Active</div>
-                <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
+                <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
                   Townhouses for Sale
                   {townhouseTotal > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-muted)', fontFamily: 'inherit', marginLeft: 10 }}>{townhouseTotal} listings</span>}
                 </h2>
@@ -1128,7 +1128,7 @@ export default async function AgentHomePage({ params }: Props) {
             <div className="section-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 20 }}>
               <div>
                 <div style={{ fontSize: 10, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', fontWeight: 700, marginBottom: 6 }}>Active</div>
-                <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
+                <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(20px,2.5vw,28px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
                   Condos for Sale
                   {condoTotal > 0 && <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-muted)', fontFamily: 'inherit', marginLeft: 10 }}>{condoTotal} listings</span>}
                 </h2>
@@ -1167,7 +1167,7 @@ export default async function AgentHomePage({ params }: Props) {
             <div className="section-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28 }}>
               <div>
                 <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 8 }}>Condo Directory</div>
-                <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(24px,3vw,36px)', fontWeight: 700, margin: 0, color: '#fff' }}>
+                <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(24px,3vw,36px)', fontWeight: 700, margin: 0, color: '#fff' }}>
                   Most Active Buildings
                 </h2>
                 <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', marginTop: 6, marginBottom: 0 }}>Sorted by current active listings</p>
@@ -1180,7 +1180,7 @@ export default async function AgentHomePage({ params }: Props) {
               {buildings.slice(0, 6).map(b => (
                 <a key={b.id} href={ap(`/building/${b.slug}`)} className="building-card" style={{ display: 'block', textDecoration: 'none', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.20)', borderRadius: 8, padding: '20px 22px', transition: 'background 0.2s, border-color 0.2s' }}>
                   <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: 'rgba(255,255,255,0.80)', marginBottom: 8, fontWeight: 700 }}>{b.subarea || b.city}</div>
-                  <div style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 17, fontWeight: 700, color: '#fff', marginBottom: 4, lineHeight: 1.3 }}>{b.name}</div>
+                  <div style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 17, fontWeight: 700, color: '#fff', marginBottom: 4, lineHeight: 1.3 }}>{b.name}</div>
                   {b.address && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', marginBottom: 12, lineHeight: 1.4 }}>{b.address.split(',')[0]}</div>}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: b.address ? 0 : 12 }}>
                     {b.year_built && <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.70)' }}>Built {b.year_built}</span>}
@@ -1204,7 +1204,7 @@ export default async function AgentHomePage({ params }: Props) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28 }}>
               <div>
                 <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 8 }}>Coverage Area</div>
-                <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(24px,3vw,36px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
+                <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(24px,3vw,36px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
                   Areas {firstName} Covers
                 </h2>
               </div>
@@ -1217,7 +1217,7 @@ export default async function AgentHomePage({ params }: Props) {
                 <Image src={areas[0].img} alt={areas[0].name} fill unoptimized className="area-img" style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }} />
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(26,26,26,0.82) 30%, rgba(26,26,26,0.05) 65%)' }} />
                 <div style={{ position: 'absolute', bottom: 28, left: 28 }}>
-                  <div style={{ fontFamily: "'Playfair Display',Georgia,serif", color: '#fff', fontWeight: 700, fontSize: 28, marginBottom: 6 }}>{areas[0].name}</div>
+                  <div style={{ fontFamily: "var(--font-display),Georgia,serif", color: '#fff', fontWeight: 700, fontSize: 28, marginBottom: 6 }}>{areas[0].name}</div>
                   <div style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 13 }}>{areas[0].count} active listings</div>
                 </div>
               </a>
@@ -1227,7 +1227,7 @@ export default async function AgentHomePage({ params }: Props) {
                     <Image src={area.img} alt={area.name} fill unoptimized className="area-img" style={{ objectFit: 'cover', transition: 'transform 0.4s ease' }} />
                     <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(26,26,26,0.78) 35%, rgba(26,26,26,0.05) 70%)' }} />
                     <div style={{ position: 'absolute', bottom: 16, left: 18 }}>
-                      <div style={{ fontFamily: "'Playfair Display',Georgia,serif", color: '#fff', fontWeight: 700, fontSize: 20, marginBottom: 3 }}>{area.name}</div>
+                      <div style={{ fontFamily: "var(--font-display),Georgia,serif", color: '#fff', fontWeight: 700, fontSize: 20, marginBottom: 3 }}>{area.name}</div>
                       <div style={{ color: 'var(--accent)', fontSize: 12, fontWeight: 600 }}>{area.count} active listings</div>
                     </div>
                   </a>
@@ -1262,7 +1262,7 @@ export default async function AgentHomePage({ params }: Props) {
             )}
             <div>
               <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 12 }}>About</div>
-              <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(24px,3vw,36px)', fontWeight: 700, marginBottom: 24, color: 'var(--primary-bg)', lineHeight: 1.2 }}>
+              <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(24px,3vw,36px)', fontWeight: 700, marginBottom: 24, color: 'var(--primary-bg)', lineHeight: 1.2 }}>
                 {agent.name}
               </h2>
               {agent.bio?.split('\n\n').slice(0, 3).map((para, i) => (
@@ -1305,7 +1305,7 @@ export default async function AgentHomePage({ params }: Props) {
                   </div>
                 )}
                 <div>
-                  <h3 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(24px,3vw,36px)', fontWeight: 700, marginBottom: 24, color: 'var(--primary-bg)', lineHeight: 1.2 }}>{coAgent.name}</h3>
+                  <h3 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(24px,3vw,36px)', fontWeight: 700, marginBottom: 24, color: 'var(--primary-bg)', lineHeight: 1.2 }}>{coAgent.name}</h3>
                   {coAgent.bio.split('\n\n').slice(0, 3).map((para, i) => (
                     <p key={i} style={{ marginBottom: 16, color: 'var(--text-muted)', lineHeight: 1.85, fontSize: 15 }}>{para}</p>
                   ))}
@@ -1344,7 +1344,7 @@ export default async function AgentHomePage({ params }: Props) {
         <section style={{ background: 'var(--primary-bg)', padding: '80px 0', textAlign: 'center' }}>
           <div className="container" style={{ maxWidth: 640 }}>
             <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 14 }}>Free Service</div>
-            <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(26px,3.5vw,42px)', fontWeight: 700, color: '#fff', marginBottom: 16, lineHeight: 1.15 }}>
+            <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(26px,3.5vw,42px)', fontWeight: 700, color: '#fff', marginBottom: 16, lineHeight: 1.15 }}>
               What&apos;s Your Home Worth?
             </h2>
             <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.62)', marginBottom: 36, lineHeight: 1.8 }}>

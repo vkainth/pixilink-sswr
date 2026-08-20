@@ -1,6 +1,6 @@
 import { Suspense } from 'react'
 import { headers } from 'next/headers'
-import { Playfair_Display } from 'next/font/google'
+import { playfair } from '@/lib/fonts'
 import { getAgent, getMarketStats, getMarketReport, getNeighbourhoods, getListings, getPriceMatrix, getMarketBreakdown, agentCanonicalBase, resolveAgentPrefix } from '@/lib/api'
 import PageQuickLinks from '@/components/PageQuickLinks'
 import { formatPrice, formatPriceFull } from '@/lib/types'
@@ -25,7 +25,6 @@ import type {
   NeighbourhoodSummary, MonthlyTrendPoint, MarketType, MarketReportTypeRow, MonthlyTypePricePoint,
 } from '@/lib/types'
 
-const playfair = Playfair_Display({ subsets: ['latin'], weight: ['400', '500'], display: 'swap' })
 
 
 // Market-page-scoped no-data fallbacks: show "N/A" instead of the shared "Contact".

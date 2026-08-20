@@ -235,7 +235,7 @@ export default function ShowcaseSearchClient({
   )
 
   return (
-    <div style={{ fontFamily: "'Inter','Helvetica Neue',sans-serif", minHeight: '100vh' }}>
+    <div style={{ fontFamily: "var(--font-body),'Helvetica Neue',sans-serif", minHeight: '100vh' }}>
       <style>{`
         .sc-card { transition: box-shadow 0.2s ease, transform 0.2s ease; background: #fff; overflow: hidden; text-decoration: none; color: inherit; display: block; }
         .sc-card:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,0.11); }
@@ -260,7 +260,7 @@ export default function ShowcaseSearchClient({
         <div style={{ padding: 'clamp(40px,5vw,60px) 0 0' }}>
           <div className="container">
             <h1 style={{
-              fontFamily: "'Playfair Display',Georgia,serif",
+              fontFamily: "var(--font-display),Georgia,serif",
               fontSize: 'clamp(1.9rem,3.8vw,2.8rem)',
               fontWeight: 400, color: '#fff',
               margin: '0 0 6px', lineHeight: 1.1,
@@ -415,7 +415,7 @@ export default function ShowcaseSearchClient({
             </div>
           ) : displayed.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '80px 0' }}>
-              <p style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(1.3rem,2vw,1.7rem)', fontWeight: 400, color: SC_CHARCOAL, marginBottom: 20 }}>
+              <p style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(1.3rem,2vw,1.7rem)', fontWeight: 400, color: SC_CHARCOAL, marginBottom: 20 }}>
                 No homes match these filters
               </p>
               <button onClick={clearAll} style={{ background: SC_GOLD, color: SC_CHARCOAL, padding: '13px 28px', border: 'none', fontWeight: 700, fontSize: 12, letterSpacing: '0.08em', textTransform: 'uppercase', cursor: 'pointer', fontFamily: 'inherit' }}>

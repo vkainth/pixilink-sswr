@@ -24,7 +24,7 @@ export default function SoldGallery({ soldListings, agentPrefix, firstName }: Pr
             <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 8, fontWeight: 700 }}>
               Proven Results
             </div>
-            <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(22px,2.8vw,34px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
+            <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(22px,2.8vw,34px)', fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }}>
               Recently Sold by {firstName}
             </h2>
           </div>

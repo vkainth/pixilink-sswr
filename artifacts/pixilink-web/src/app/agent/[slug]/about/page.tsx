@@ -432,7 +432,7 @@ export default async function AboutPage({ params }: Props) {
             {isShowcasePreset ? (
               <div style={{ marginBottom: 48, background: '#1C1C1E', padding: '32px 28px' }}>
                 <p style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#9B8B7A', fontWeight: 700, marginBottom: 12 }}>No Cost, No Obligation</p>
-                <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(1.4rem,2.5vw,2rem)', fontWeight: 400, color: '#fff', marginBottom: 12, lineHeight: 1.2 }}>
+                <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(1.4rem,2.5vw,2rem)', fontWeight: 400, color: '#fff', marginBottom: 12, lineHeight: 1.2 }}>
                   What&apos;s Your Home Worth?
                 </h2>
                 <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, marginBottom: 24 }}>
