@@ -233,6 +233,14 @@ export const FALLBACK_MARKET_REPORT: MarketReport = {
   ],
 }
 
+/**
+ * The agent this fallback content actually describes. Everything in this file - name,
+ * bio, service area, privacy policy, terms - is Randy's, so it may only ever be served
+ * on his site. getPage() checks this before falling back; serving it to another agent
+ * publishes his identity on their domain.
+ */
+export const FALLBACK_AGENT_SLUG = 'randy'
+
 export const FALLBACK_PAGES: AgentPage[] = [
   {
     slug: 'home',

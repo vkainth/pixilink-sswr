@@ -43,6 +43,7 @@ import {
   FALLBACK_NEIGHBOURHOOD_DETAILS,
   FALLBACK_MARKET_REPORT,
   FALLBACK_PAGES,
+  FALLBACK_AGENT_SLUG,
   FALLBACK_AWARDS,
   FALLBACK_MEDIA,
   FALLBACK_TEAM,
@@ -921,6 +922,19 @@ export async function getPage(slug: string, pageSlug: string): Promise<AgentPage
   } catch {
     // fall through
   }
+
+  // FALLBACK_PAGES is Randy's content — his name, his bio, his South Surrey / White Rock /
+  // Cloverdale service area, his privacy policy and terms. Serving it to any other agent
+  // publishes one realtor's identity on another's site, which is exactly what happened:
+  // Sharene's /sellers was titled "Sell Your Home in South Surrey & White Rock | Randy
+  // Dyck" on an Abbotsford agent's domain. No agent has agent_pages rows today, so this
+  // path is the normal case, not an edge case.
+  //
+  // Returning null instead is strictly better for everyone else: the pages compute their
+  // own title and description from the real agent and territories (see sellers/page.tsx),
+  // and only defer to page?.meta_title when one exists.
+  if (slug !== FALLBACK_AGENT_SLUG) return null
+
   return FALLBACK_PAGES.find((p) => p.slug === pageSlug) ?? null
 }
 
