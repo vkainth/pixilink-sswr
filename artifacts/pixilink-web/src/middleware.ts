@@ -19,6 +19,22 @@ const DOMAIN_SLUG_MAP: Record<string, string> = {
   'sharene.pixilink.com': 'sharene',
 }
 
+// Canonical domain per agent slug — where an agent's site actually lives.
+//
+// Why this exists: /agent/{slug} pages are ISR-cached under ONE key regardless of which
+// host rendered them, but the links inside embed a host-dependent prefix (x-agent-prefix
+// → resolveAgentPrefix). When the same agent was reachable both at her custom domain
+// (prefix '') and at the website.pixilink.com/{region} preview (prefix '/{region}'),
+// whichever context rendered first after each revalidate poisoned the cache for the
+// other — shareneshuster.com served links like /sharene/about, which 404 there. The fix
+// is to give a domain-owning agent exactly one rendering context: every preview path
+// 308s here instead of rendering.
+const SLUG_CANONICAL_DOMAIN: Record<string, string> = {
+  'randy': 'findfraservalleyhomes.com',
+  'tricity': 'suburbia.ca',
+  'sharene': 'shareneshuster.com',
+}
+
 // Old domain → new canonical domain 301 redirects.
 // Also used for www → non-www canonicalization.
 const OLD_DOMAIN_REDIRECTS: Record<string, string> = {
@@ -45,7 +61,7 @@ const REGION_PREVIEW_HOSTS = new Set(['website.pixilink.com'])
 let _regionMapCache: Record<string, string> | null = null
 let _regionMapCachedAt = 0
 const REGION_MAP_TTL_MS = 5 * 60 * 1000 // 5 minutes
-const REGION_MAP_FALLBACK: Record<string, string> = { 'tricity': 'tricity', 'burnaby': 'saeed-farhani-ppqu', 'sharene': 'sharene' }
+const REGION_MAP_FALLBACK: Record<string, string> = { 'tricity': 'tricity', 'burnaby': 'saeed-farhani-ppqu' }
 
 async function getRegionMap(): Promise<Record<string, string>> {
   const now = Date.now()
@@ -546,6 +562,13 @@ export async function middleware(req: NextRequest) {
     if (agentMatch) {
       const internalSlug = agentMatch[1]
       const rest = agentMatch[2] || ''
+      // Domain-owning agents first: rendering /agent/{slug} here would cache HTML with
+      // '/agent/{slug}'-prefixed links that the custom domain then serves (the ISR entry
+      // is shared across hosts — see SLUG_CANONICAL_DOMAIN). One hop to the real site.
+      const canonicalDomain = SLUG_CANONICAL_DOMAIN[internalSlug]
+      if (canonicalDomain) {
+        return NextResponse.redirect(`https://${canonicalDomain}${rest || '/'}${req.nextUrl.search}`, 308)
+      }
       const regionMap = await getRegionMap()
       const regionSlug = Object.entries(regionMap).find(([, s]) => s === internalSlug)?.[0]
       if (regionSlug) {
@@ -571,6 +594,15 @@ export async function middleware(req: NextRequest) {
       const internalSlug = regionMap[regionSlug]
       if (internalSlug) {
         const rest = regionMatch[2] || ''
+        // A domain-owning agent must have exactly ONE rendering context. Rendering
+        // this preview path would cache /agent/{slug} HTML with '/{region}'-prefixed
+        // links, which the custom domain then serves — every link 404s there (see
+        // SLUG_CANONICAL_DOMAIN). Redirect instead of rendering. Region-only agents
+        // (no canonical domain, e.g. burnaby) keep the preview as their real site.
+        const canonicalDomain = SLUG_CANONICAL_DOMAIN[internalSlug]
+        if (canonicalDomain) {
+          return NextResponse.redirect(`https://${canonicalDomain}${rest || '/'}${req.nextUrl.search}`, 308)
+        }
         const url = req.nextUrl.clone()
         url.pathname = `/agent/${internalSlug}${rest}`
         const requestHeaders = new Headers(req.headers)

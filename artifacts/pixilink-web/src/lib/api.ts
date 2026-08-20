@@ -135,7 +135,6 @@ async function laravelFetch(path: string, opts: RequestInit = {}): Promise<Respo
 const RESIDENCITY_SLUG_MAP: Record<string, string> = {
   'tricity': 'tricity',
   'saeed-farhani-ppqu': 'burnaby',
-  'sharene': 'sharene',
 }
 
 /**
