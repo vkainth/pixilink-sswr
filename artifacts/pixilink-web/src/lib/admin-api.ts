@@ -508,6 +508,59 @@ export async function deleteAdminBestOfList(agentId: number, listId: number): Pr
   return res.ok
 }
 
+/**
+ * A testimonial as the admin screen sees it.
+ *
+ * `source` is what appears as the attribution on the public site. 'manual' renders no
+ * attribution at all, which is the honest default for a quote an agent supplied
+ * directly — only name a platform when the review genuinely came from it.
+ */
+export interface AdminTestimonial {
+  id: number
+  source: string
+  external_id: string | null
+  author_name: string
+  rating: number
+  body: string
+  date: string | null
+  visible: boolean
+}
+
+export async function getAdminTestimonials(agentId: number): Promise<AdminTestimonial[]> {
+  const res = await adminFetch(`/agents/${agentId}/testimonials`, { next: { revalidate: 0 } })
+  if (!res.ok) return []
+  return res.json()
+}
+
+export async function createAdminTestimonial(agentId: number, data: Partial<AdminTestimonial>): Promise<AdminTestimonial | null> {
+  const res = await adminFetch(`/agents/${agentId}/testimonials`, {
+    method: 'POST',
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new AdminApiError(res.status, err)
+  }
+  return res.json()
+}
+
+export async function updateAdminTestimonial(agentId: number, testimonialId: number, data: Partial<AdminTestimonial>): Promise<AdminTestimonial | null> {
+  const res = await adminFetch(`/agents/${agentId}/testimonials/${testimonialId}`, {
+    method: 'PUT',
+    body: JSON.stringify(data),
+  })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new AdminApiError(res.status, err)
+  }
+  return res.json()
+}
+
+export async function deleteAdminTestimonial(agentId: number, testimonialId: number): Promise<boolean> {
+  const res = await adminFetch(`/agents/${agentId}/testimonials/${testimonialId}`, { method: 'DELETE' })
+  return res.ok
+}
+
 export interface AdminSiteUser {
   id: number
   name: string

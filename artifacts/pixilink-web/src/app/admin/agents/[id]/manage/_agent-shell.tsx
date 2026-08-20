@@ -39,6 +39,7 @@ export default function AgentContextShell({ agentId, agentName, adminName, child
     navItem(agentId, '/ai-content', 'AI Content', '✦'),
     navItem(agentId, '/buildings', 'Buildings', '🏢'),
     navItem(agentId, '/buyer-solds', 'Buyer Solds', '🤝'),
+    navItem(agentId, '/testimonials', 'Testimonials', '❝'),
     navItem(agentId, '/settings', 'Settings', '⚙'),
   ]
 
