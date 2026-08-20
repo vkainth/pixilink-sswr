@@ -353,8 +353,14 @@ export default async function AgentHomePage({ params }: Props) {
     if (awards.length > 0) scStats.push({ v: `${awards.length}`, l: 'Industry Awards' })
     if (yearsActive) scStats.push({ v: `${yearsActive}+`, l: 'Years Experience' })
     if (last5Ratio) scStats.push({ v: `${last5Ratio.ratio}%`, l: 'of Asking Price (Last 5)' })
+    // Prefer the count of distinct neighbourhoods the agent has actually sold in — it is
+    // verifiable from the listing data and reads as real breadth ("14+ Neighbourhoods").
+    // territories.city is the fallback, but territory rows are sparse for most agents
+    // (Sharene had two), which produced a "2+ Communities" tile that undercut the band.
+    const soldAreas = new Set(ownSoldListings.map((l: { subarea?: string | null }) => l.subarea).filter(Boolean))
     const scMarkets = [...new Set(territories.map((t: { city?: string | null }) => t.city).filter(Boolean))].length
-    if (scMarkets > 0) scStats.push({ v: `${scMarkets}+`, l: 'Communities' })
+    if (soldAreas.size >= 3) scStats.push({ v: `${soldAreas.size}+`, l: 'Neighbourhoods Sold In' })
+    else if (scMarkets > 0) scStats.push({ v: `${scMarkets}+`, l: 'Communities' })
 
     // Default FAQ set for AEO when no agent FAQs are stored — structured for schema.org/FAQPage
     const showcaseFaqs = agentFaqs.length > 0 ? agentFaqs : [

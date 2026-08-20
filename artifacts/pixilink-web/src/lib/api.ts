@@ -92,12 +92,16 @@ async function laravelFetch(path: string, opts: RequestInit = {}): Promise<Respo
     headers,
   })
 
-  // GETs here are idempotent, so retrying is safe. Retried: 429, and a thrown
-  // transport error — which is overwhelmingly our own 4s timeout firing while
-  // Laravel is briefly saturated (it answers the same request in ~120ms once
-  // the burst clears). A cold container after deploy reliably produces such a
-  // burst, and before this a single slow response turned a real page into a
-  // 500. NOT retried: 404 is an answer, and a 500 will not fix itself in 300ms.
+  // GETs here are idempotent, so retrying is safe. Retried: 429, 502/503/504,
+  // and a thrown transport error — which is overwhelmingly our own 4s timeout
+  // firing while Laravel is briefly saturated (it answers the same request in
+  // ~120ms once the burst clears). A cold container after deploy reliably
+  // produces such a burst, and before this a single slow response turned a real
+  // page into a 500. The gateway statuses earn a retry for the same reason: 48
+  // upstream 502s were observed in one 30-minute window, and each is Apache/
+  // PHP-FPM momentarily out of workers, not an answer about the resource.
+  // NOT retried: 404 is an answer, and a 500 will not fix itself in 300ms.
+  const RETRYABLE_STATUS = new Set([429, 502, 503, 504])
   const started = Date.now()
   let res: Response | undefined
   let err: unknown
@@ -108,7 +112,7 @@ async function laravelFetch(path: string, opts: RequestInit = {}): Promise<Respo
     try {
       res = await attempt()
       err = undefined
-      if (res.status !== 429) return res
+      if (!RETRYABLE_STATUS.has(res.status)) return res
     } catch (e) {
       // A caller-supplied signal is the caller's own decision to give up, so
       // honour it rather than quietly retrying past it.

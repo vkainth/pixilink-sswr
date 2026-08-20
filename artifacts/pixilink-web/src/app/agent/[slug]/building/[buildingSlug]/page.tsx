@@ -192,7 +192,7 @@ export default async function BuildingDetailPage({ params }: Props) {
 
   const photos = (building.photos.length > 0 ? building.photos : building.photo_url ? [building.photo_url] : []).filter((p: string) => p.trim() !== '')
   const stats = aggregateStats(building)
-  const hasStats = !!stats && (stats.avg_sold_price != null || stats.avg_dom != null || stats.avg_per_sqft != null || stats.expensive_sold != null)
+  const hasStats = !!stats && (stats.avg_sold_price != null || stats.avg_dom != null || stats.avg_per_sqft != null)
 
   // Pet policy text
   const petText = building.no_pets
@@ -584,7 +584,10 @@ export default async function BuildingDetailPage({ params }: Props) {
               stats!.avg_sold_price != null ? { label: 'Avg Sold Price', value: formatPrice(stats!.avg_sold_price) } : null,
               stats!.avg_per_sqft != null ? { label: 'Avg $/sq ft', value: `$${Math.round(stats!.avg_per_sqft).toLocaleString('en-CA')}` } : null,
               stats!.avg_dom != null ? { label: 'Avg Days on Market', value: `${stats!.avg_dom}d` } : null,
-              stats!.expensive_sold != null ? { label: 'Highest Sold', value: formatPriceFull(stats!.expensive_sold) } : null,
+              // "Highest Sold" is deliberately NOT rendered: it is a MAX, so it is always one
+              // specific unit's exact sold price, published without registration beside the list
+              // of units it could belong to — the same figure the sold gate exists to withhold.
+              // An average over n>=2 is non-identifying; a maximum never is.
             ].filter(Boolean).map((s) => {
               const stat = s as { label: string; value: string }
               return (

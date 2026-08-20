@@ -51,6 +51,13 @@ export interface SiteTheme {
   darkRaised: string
   /** Text on `dark` / `accent` fills. */
   onDark: string
+  /**
+   * Display face for interior-page headings. `--font-display` itself is global (both
+   * fonts load on every site), so shared pages cannot use it directly without
+   * restyling every preset. This token resolves to the body stack on hub/minimal —
+   * an exact identity — and to the display face only on showcase.
+   */
+  fontDisplay: string
 }
 
 /**
@@ -118,6 +125,9 @@ export function resolveSiteTheme(agent: AgentProfile): SiteTheme {
       darkDeep:   'var(--primary-bg)',
       darkRaised: 'var(--primary-bg)',
       onDark:     '#fff',
+      // Interior headings inherit body's var(--font-sans) today; naming that value
+      // keeps the substitution an identity.
+      fontDisplay: 'var(--font-sans)',
     }
   }
 
@@ -127,6 +137,7 @@ export function resolveSiteTheme(agent: AgentProfile): SiteTheme {
     accent,
     accentRgb: theme.accentRgb,
     accentText: darkenToContrast(accent, SHOWCASE.canvas),
+    fontDisplay: "var(--font-display), Georgia, serif",
   }
 }
 
@@ -147,5 +158,6 @@ export function siteThemeCssVars(t: SiteTheme): string {
     `--site-dark-deep:${t.darkDeep}`,
     `--site-dark-raised:${t.darkRaised}`,
     `--site-on-dark:${t.onDark}`,
+    `--site-font-display:${t.fontDisplay}`,
   ].join(';') + ';'
 }

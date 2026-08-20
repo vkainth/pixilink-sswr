@@ -248,7 +248,7 @@ export default async function SoldListingDetailPage({ params }: Props) {
                   />
                 </div>
               )}
-              <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--site-body)', margin: '0 0 4px' }}>{listing.address}</h1>
+              <h1 style={{ fontFamily: "var(--site-font-display)", fontSize: 22, fontWeight: 700, color: 'var(--site-body)', margin: '0 0 4px' }}>{listing.address}</h1>
               <p style={{ fontSize: 14, color: 'var(--site-muted)', margin: '0 0 4px' }}>
                 {listing.city}{listing.subarea ? `, ${listing.subarea}` : ''}
               </p>

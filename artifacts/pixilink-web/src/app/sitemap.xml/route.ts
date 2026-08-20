@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { headers } from 'next/headers'
+import { resolveSiteConfig } from '@/lib/types'
 import { resolveAgentFromHost, buildBaseUrl, sitemapIndex, xmlResponse, RESIDENCITY_HOSTS, RESIDENCITY_ZONES } from '@/lib/sitemap-utils'
 
 const SOLD_START_YEAR = 2018
@@ -26,15 +27,23 @@ export async function GET(): Promise<Response> {
     soldYearLocs.push(`${base}/sitemap-sold-${y}.xml`)
   }
 
+  // Showcase agents 404 the hub-only route families (requireNotShowcase), so their
+  // sub-sitemaps must not be advertised: measured on a live showcase domain, buildings
+  // carried 1,078 URLs, market 11,084, neighbourhoods 261 and guides 1 — every one a 404.
+  // Listings, sold, subarea-listings and landing-pages all verified 200 on showcase.
+  const isShowcase = resolveSiteConfig(agent).layout_preset === 'showcase'
+
   const locs = [
     `${base}/sitemap-general.xml`,
     `${base}/sitemap-listings.xml`,
-    `${base}/sitemap-buildings.xml`,
-    `${base}/sitemap-market.xml`,
-    `${base}/sitemap-neighbourhoods.xml`,
+    ...(isShowcase ? [] : [
+      `${base}/sitemap-buildings.xml`,
+      `${base}/sitemap-market.xml`,
+      `${base}/sitemap-neighbourhoods.xml`,
+      `${base}/sitemap-guides.xml`,
+    ]),
     `${base}/sitemap-landing-pages.xml`,
     `${base}/sitemap-subarea-listings.xml`,
-    `${base}/sitemap-guides.xml`,
     ...soldYearLocs,
     `${base}/sitemap-terminated-listings.xml`,
   ]
