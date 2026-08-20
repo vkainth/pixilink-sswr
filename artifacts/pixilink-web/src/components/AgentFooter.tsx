@@ -216,9 +216,9 @@ export default function AgentFooter({ agent, territories, landingPages = [] }: P
 
   // ── Showcase footer (Modern Luxury) ────────────────────────────────────────
   if (isShowcase) {
-    const SC_CHARCOAL  = '#1C1C1E'
-    const SC_GOLD      = '#9B8B7A'
-    const SC_OFF_WHITE = '#F5F3F0'
+    const SC_CHARCOAL  = 'var(--site-ink)'
+    const SC_GOLD      = 'var(--site-accent)'
+    const SC_OFF_WHITE = 'var(--site-canvas)'
     const firstName = agent.name.split(' ')[0]
     const scFirstName = firstName
     const showcaseLinks = [
@@ -290,7 +290,7 @@ export default function AgentFooter({ agent, territories, landingPages = [] }: P
                   <div style={{ display: 'flex', gap: 10, marginTop: 14 }}>
                     {socials.map((s, i) => (
                       <a key={i} href={s!.href} target="_blank" rel="noopener noreferrer" aria-label={s!.label}
-                        style={{ color: '#9b8b7a', display: 'flex', alignItems: 'center', transition: 'color 0.15s' }}
+                        style={{ color: 'var(--site-accent)', display: 'flex', alignItems: 'center', transition: 'color 0.15s' }}
                         onMouseEnter={e => (e.currentTarget.style.color = SC_CHARCOAL)}
                         onMouseLeave={e => (e.currentTarget.style.color = SC_GOLD)}>
                         {s!.svg}

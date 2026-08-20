@@ -3,10 +3,10 @@ import React, { useState, useTransition, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import type { AgentListing } from '@/lib/types'
 
-const SC_CHARCOAL  = '#1C1C1E'
-const SC_GOLD      = '#9B8B7A'
-const SC_OFF_WHITE = '#F5F3F0'
-const SC_DARK2     = '#242426'
+const SC_CHARCOAL  = 'var(--site-ink)'
+const SC_GOLD      = 'var(--site-accent)'
+const SC_OFF_WHITE = 'var(--site-canvas)'
+const SC_DARK2     = 'var(--site-dark-alt)'
 
 interface Props {
   slug: string
@@ -79,6 +79,10 @@ const SORTS = [
   { label: 'Days Listed',value: 'dom' },
 ]
 
+// Select chevron. The colours here are the only hardcoded palette values left on the
+// showcase surfaces: a data: URI is a separate document, so it can carry neither var()
+// nor currentColor. Replacing the background-image with an inline <svg> or a CSS-drawn
+// caret would let this follow --site-accent like everything else.
 const ARROW = (dark = false) =>
   `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='${dark ? '%231C1C1E' : '%239B8B7A'}' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`
 

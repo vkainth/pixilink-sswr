@@ -18,6 +18,7 @@ import { cookies, headers } from 'next/headers'
 import Script from 'next/script'
 import { getAgent, authMe, getAgentTerritories, getListings, getLandingPages, regionSlugForAgent as regionSlugForAgentShared, agentAreaDisplay } from '@/lib/api'
 import { toSubareaSlug, fromSubareaSlug } from './homes-for-sale/subareaUtils'
+import { resolveSiteTheme, siteThemeCssVars } from '@/lib/site-theme'
 import { resolveTheme, getCoAgents, resolveSiteConfig } from '@/lib/types'
 import { getPlatformSettings } from '@/lib/admin-api'
 import AgentNav from '@/components/AgentNav'
@@ -157,7 +158,11 @@ export default async function AgentLayout({ children, params }: Props) {
   // Only inject per-agent colours into the brand-zone variables.
   // --primary-bg and --accent remain fixed (from globals.css) so all content pages
   // look identical across agents. Branding shows only in the sticky bar + contact sidebar.
-  const cssVars = `--brand-bg:${theme.primaryBg};--brand-accent:${theme.accent};--brand-accent-rgb:${theme.accentRgb};--brand-text:${theme.brandText};--brand-overlay-rgb:${theme.brandOverlayRgb};--brand-bg-rgb:${theme.brandBgRgb};`
+  // --site-* is the surface palette (canvas, ink, rule, accent…) resolved per preset and
+  // appended to the same declaration block, so any agent page can reference a token from
+  // an inline style with no prop threading. Non-showcase presets resolve these straight
+  // back to the existing global tokens, so hub and minimal render unchanged.
+  const cssVars = `--brand-bg:${theme.primaryBg};--brand-accent:${theme.accent};--brand-accent-rgb:${theme.accentRgb};--brand-text:${theme.brandText};--brand-overlay-rgb:${theme.brandOverlayRgb};--brand-bg-rgb:${theme.brandBgRgb};` + siteThemeCssVars(resolveSiteTheme(agent))
 
   // Font-pair — set via data-font-pair attribute on the wrapper div and CSS in globals.css.
   // 'serif-sans' is the default (Playfair headings + Inter body) — no attribute needed.

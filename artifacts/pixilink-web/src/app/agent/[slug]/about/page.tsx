@@ -63,19 +63,27 @@ export default async function AboutPage({ params }: Props) {
 
   const isShowcasePreset = resolveSiteConfig(agent).layout_preset === 'showcase'
 
-  // SC palette — explicit colours for showcase agents (no CSS var fallbacks)
+  // Surface palette. The --site-* tokens resolve per preset in lib/site-theme.ts, so the
+  // showcase/non-showcase ternary that used to live here is gone for everything except the
+  // CTA keys — those point at the dedicated conversion tokens on non-showcase presets and
+  // must not collapse into the brand accent.
   const C = {
-    heading:          isShowcasePreset ? '#1C1C1E'           : 'var(--primary-bg)',
-    body:             isShowcasePreset ? '#3D3D3D'           : 'var(--text)',
-    muted:            isShowcasePreset ? '#6b6b6b'           : 'var(--text-muted)',
-    border:           isShowcasePreset ? '#e8e3dc'           : 'var(--border)',
-    accent:           isShowcasePreset ? '#9B8B7A'           : 'var(--accent)',
-    bg:               isShowcasePreset ? '#F5F3F0'           : 'var(--off-white)',
-    ctaPrimary:       isShowcasePreset ? '#9B8B7A'           : 'var(--cta-primary)',
-    ctaPrimaryText:   isShowcasePreset ? '#fff'              : 'var(--cta-primary-text)',
-    ctaSecBorder:     isShowcasePreset ? '#9B8B7A'           : 'var(--cta-secondary-border)',
-    ctaSecText:       isShowcasePreset ? '#1C1C1E'           : 'var(--cta-secondary-text)',
-    phoneLink:        isShowcasePreset ? '#9B8B7A'           : 'var(--primary-bg)',
+    heading:          'var(--site-ink)',
+    body:             'var(--site-body)',
+    muted:            'var(--site-muted)',
+    border:           'var(--site-rule)',
+    bg:               'var(--site-canvas)',
+    // accent = fills, rules and marks. accentText = accent applied to TEXT on a light
+    // background, where the raw accent clears nothing like AA (a mid-gold sits at ~2:1).
+    accent:           'var(--site-accent)',
+    accentText:       'var(--site-accent-text)',
+    ctaPrimary:       isShowcasePreset ? 'var(--site-accent)'      : 'var(--cta-primary)',
+    // Charcoal, not white: white on a mid-gold fill is 3.3:1 and fails AA. Charcoal on the
+    // same fill is 7.6:1, and matches what sell-with-me already does.
+    ctaPrimaryText:   isShowcasePreset ? 'var(--site-ink)'         : 'var(--cta-primary-text)',
+    ctaSecBorder:     isShowcasePreset ? 'var(--site-accent)'      : 'var(--cta-secondary-border)',
+    ctaSecText:       isShowcasePreset ? 'var(--site-ink)'         : 'var(--cta-secondary-text)',
+    phoneLink:        isShowcasePreset ? 'var(--site-accent-text)' : 'var(--primary-bg)',
   } as const
 
   const photoSrc = agent.photo_path ? imgUrl(agent.photo_path, 600) : null
@@ -430,15 +438,15 @@ export default async function AboutPage({ params }: Props) {
 
             {/* What's Your Home Worth */}
             {isShowcasePreset ? (
-              <div style={{ marginBottom: 48, background: '#1C1C1E', padding: '32px 28px' }}>
-                <p style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: '#9B8B7A', fontWeight: 700, marginBottom: 12 }}>No Cost, No Obligation</p>
+              <div style={{ marginBottom: 48, background: 'var(--site-dark)', padding: '32px 28px' }}>
+                <p style={{ fontSize: 10, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--site-accent)', fontWeight: 700, marginBottom: 12 }}>No Cost, No Obligation</p>
                 <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(1.4rem,2.5vw,2rem)', fontWeight: 400, color: '#fff', marginBottom: 12, lineHeight: 1.2 }}>
                   What&apos;s Your Home Worth?
                 </h2>
                 <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.65)', lineHeight: 1.7, marginBottom: 24 }}>
                   {agent.name} will review your property and prepare a professional Comparative Market Analysis — real numbers from real MLS® data, at no cost to you.
                 </p>
-                <a href={ap('/home-evaluation')} style={{ display: 'inline-block', background: '#9B8B7A', color: '#1C1C1E', padding: '13px 28px', fontWeight: 700, fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none' }}>
+                <a href={ap('/home-evaluation')} style={{ display: 'inline-block', background: 'var(--site-accent)', color: 'var(--site-ink)', padding: '13px 28px', fontWeight: 700, fontSize: 13, letterSpacing: '0.08em', textTransform: 'uppercase', textDecoration: 'none' }}>
                   Get My Free Evaluation →
                 </a>
               </div>
@@ -474,7 +482,7 @@ export default async function AboutPage({ params }: Props) {
               <h2 style={{ fontSize: 22, fontWeight: 700, color: C.heading, margin: 0 }}>
                 {isDualAgent ? 'Our Active Listings' : 'My Active Listings'}
               </h2>
-              <a href={ap('/my-listings')} style={{ fontSize: 13, color: C.accent, fontWeight: 600, textDecoration: 'none' }}>
+              <a href={ap('/my-listings')} style={{ fontSize: 13, color: C.accentText, fontWeight: 600, textDecoration: 'none' }}>
                 View all listings →
               </a>
             </div>
@@ -493,7 +501,7 @@ export default async function AboutPage({ params }: Props) {
                   ? `Recently Sold by ${firstName} & ${coFirstName}`
                   : `Recently Sold by ${firstName}`}
               </h2>
-              <a href={ap('/my-listings')} style={{ fontSize: 13, color: C.accent, fontWeight: 600, textDecoration: 'none' }}>
+              <a href={ap('/my-listings')} style={{ fontSize: 13, color: C.accentText, fontWeight: 600, textDecoration: 'none' }}>
                 View all sold →
               </a>
             </div>

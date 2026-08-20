@@ -23,9 +23,10 @@ interface Props {
 
 export const dynamic = 'force-dynamic'
 
-const SC_CHARCOAL  = '#1C1C1E'
-const SC_GOLD      = '#9B8B7A'
-const SC_OFF_WHITE = '#F5F3F0'
+const SC_CHARCOAL  = 'var(--site-ink)'
+const SC_GOLD      = 'var(--site-accent)'
+const SC_GOLD_TEXT = 'var(--site-accent-text)'
+const SC_OFF_WHITE = 'var(--site-canvas)'
 
 /**
  * Builds a one-line SEO/AEO caption for a sold listing card.
@@ -246,7 +247,7 @@ export default async function FeaturedPropertiesPage({ params }: Props) {
           <div className="container">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 36, gap: 16, flexWrap: 'wrap' }}>
               <div>
-                <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>
+                <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD_TEXT, textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>
                   Now Available
                 </p>
                 <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(1.6rem,3vw,2.2rem)', fontWeight: 400, color: SC_CHARCOAL, margin: 0 }}>
@@ -285,7 +286,7 @@ export default async function FeaturedPropertiesPage({ params }: Props) {
         <section style={{ background: SC_OFF_WHITE, padding: 'clamp(56px,8vw,80px) 0' }}>
           <div className="container">
             <div style={{ marginBottom: 36 }}>
-              <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>
+              <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD_TEXT, textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>
                 Track Record
               </p>
               <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(1.6rem,3vw,2.2rem)', fontWeight: 400, color: SC_CHARCOAL, margin: 0 }}>
@@ -326,7 +327,7 @@ export default async function FeaturedPropertiesPage({ params }: Props) {
       {specializationLine && (
         <section style={{ background: '#fff', padding: 'clamp(40px,6vw,64px) 0', borderTop: '1px solid #e8eaed' }}>
           <div className="container" style={{ maxWidth: 760 }}>
-            <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12 }}>
+            <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD_TEXT, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12 }}>
               Market Expertise
             </p>
             <p style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(1.1rem,2vw,1.35rem)', fontWeight: 400, color: SC_CHARCOAL, lineHeight: 1.7, margin: 0 }}>

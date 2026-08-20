@@ -973,7 +973,7 @@ export interface AreaIntroContent {
 }
 
 /** Parse a 3- or 6-digit hex string (#rgb or #rrggbb) into [r, g, b] 0-255. */
-function hexToRgb(hex: string): [number, number, number] {
+export function hexToRgb(hex: string): [number, number, number] {
   const h = hex.replace('#', '')
   if (h.length === 3) {
     return [
@@ -986,7 +986,7 @@ function hexToRgb(hex: string): [number, number, number] {
 }
 
 /** WCAG relative luminance of a hex colour. Returns 0 (black) – 1 (white). */
-function relativeLuminance(hex: string): number {
+export function relativeLuminance(hex: string): number {
   const [r, g, b] = hexToRgb(hex).map(c => {
     const s = c / 255
     return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4)

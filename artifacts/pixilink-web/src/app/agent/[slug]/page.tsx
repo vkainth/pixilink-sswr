@@ -299,9 +299,9 @@ export default async function AgentHomePage({ params }: Props) {
 
   // ── Showcase (Modern Luxury) homepage ──────────────────────────────────────
   if (isShowcasePreset) {
-    const SC_CHARCOAL  = '#1C1C1E'
-    const SC_GOLD      = 'var(--brand-accent)'
-    const SC_OFF_WHITE = '#F5F3F0'
+    const SC_CHARCOAL  = 'var(--site-ink)'
+    const SC_GOLD      = 'var(--site-accent)'
+    const SC_OFF_WHITE = 'var(--site-canvas)'
     const playfairStyle: React.CSSProperties = { fontFamily: "var(--font-display),Georgia,serif" }
 
     const agentPhotoSrc = showcaseHeadshot ? imgUrl(showcaseHeadshot.url, 900) : photoSrc
@@ -377,7 +377,7 @@ export default async function AgentHomePage({ params }: Props) {
               {agentPhotoSrc ? (
                 <Image src={agentPhotoSrc} alt={agent.name} fill unoptimized priority style={{ objectFit: 'cover', objectPosition: 'center 12%' }} />
               ) : (
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg, #252527 0%, #1C1C1E 55%, #161618 100%)' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg, var(--site-dark-raised) 0%, var(--site-dark) 55%, var(--site-dark-deep) 100%)' }} />
               )}
               {/* Overlay — heavier bottom-left, lighter top-right */}
               <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.25) 100%)' }} />
@@ -446,7 +446,7 @@ export default async function AgentHomePage({ params }: Props) {
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '65%', background: 'linear-gradient(to top, rgba(20,20,22,1.0) 0%, rgba(20,20,22,0.6) 40%, transparent 100%)' }} />
                 </>
               ) : (
-                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg, #252527 0%, #1C1C1E 55%, #161618 100%)' }} />
+                <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg, var(--site-dark-raised) 0%, var(--site-dark) 55%, var(--site-dark-deep) 100%)' }} />
               )}
               {/* Brokerage badge — top right */}
               <div style={{ position: 'absolute', top: 24, right: 24, display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(0,0,0,0.42)', backdropFilter: 'blur(6px)', padding: '9px 16px' }}>
@@ -466,7 +466,7 @@ export default async function AgentHomePage({ params }: Props) {
               </div>
             </div>
             {/* Content band */}
-            <div style={{ background: 'linear-gradient(160deg, #252527 0%, #1C1C1E 55%, #161618 100%)', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+            <div style={{ background: 'linear-gradient(160deg, var(--site-dark-raised) 0%, var(--site-dark) 55%, var(--site-dark-deep) 100%)', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
               <div className="container sc-editorial-band" style={{ padding: 'clamp(40px,6vw,64px) var(--container-padding)' }}>
                 {/* Left: tagline + bio + CTA */}
                 <div>
@@ -513,7 +513,7 @@ export default async function AgentHomePage({ params }: Props) {
           </div>
         ) : (
           /* ── Split hero (default) ── */
-          <div style={{ background: 'linear-gradient(160deg, #252527 0%, #1C1C1E 55%, #161618 100%)' }}>
+          <div style={{ background: 'linear-gradient(160deg, var(--site-dark-raised) 0%, var(--site-dark) 55%, var(--site-dark-deep) 100%)' }}>
           <div style={{ minHeight: 'clamp(520px,78vh,800px)' }} className={`sc-hero-split${!agentPhotoSrc ? ' sc-hero-split--nophoto' : ''}`}>
             {/* Left: text column */}
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: 'clamp(56px,8vw,100px) clamp(32px,6vw,80px)' }}>
@@ -710,8 +710,8 @@ export default async function AgentHomePage({ params }: Props) {
                   const soldPrice = l.sold_price ? formatPrice(l.sold_price) : null
                   const typeLabel = l.type === 'Apartment Unit' ? 'Condo' : l.type === 'House/Single Family' ? 'House' : l.type || null
                   return (
-                    <a key={l.id} href={href} className="sc-sold-card" style={{ display: 'block', textDecoration: 'none', background: '#252527', overflow: 'hidden' }}>
-                      <div style={{ position: 'relative', paddingBottom: '72%', background: '#2a2a2c', overflow: 'hidden' }}>
+                    <a key={l.id} href={href} className="sc-sold-card" style={{ display: 'block', textDecoration: 'none', background: 'var(--site-dark-raised)', overflow: 'hidden' }}>
+                      <div style={{ position: 'relative', paddingBottom: '72%', background: 'var(--site-dark-alt)', overflow: 'hidden' }}>
                         {photo && (
                           <img
                             src={photo}
@@ -732,7 +732,7 @@ export default async function AgentHomePage({ params }: Props) {
                       </div>
                       <div style={{ padding: '14px 16px 16px' }}>
                         {soldPrice && (
-                          <div style={{ ...playfairStyle, fontSize: 20, fontWeight: 700, color: '#F5F3F0', marginBottom: 5, lineHeight: 1.1 }}>
+                          <div style={{ ...playfairStyle, fontSize: 20, fontWeight: 700, color: 'var(--site-canvas)', marginBottom: 5, lineHeight: 1.1 }}>
                             {soldPrice}
                           </div>
                         )}

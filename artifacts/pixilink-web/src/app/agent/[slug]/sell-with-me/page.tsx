@@ -32,9 +32,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-const SC_CHARCOAL  = '#1C1C1E'
-const SC_GOLD      = '#9B8B7A'
-const SC_OFF_WHITE = '#F5F3F0'
+const SC_CHARCOAL  = 'var(--site-ink)'
+const SC_GOLD      = 'var(--site-accent)'
+const SC_GOLD_TEXT = 'var(--site-accent-text)'
+const SC_OFF_WHITE = 'var(--site-canvas)'
 const PLAYFAIR: React.CSSProperties = { fontFamily: "var(--font-display),Georgia,serif" }
 
 export default async function SellWithMePage({ params }: Props) {
@@ -227,7 +228,7 @@ export default async function SellWithMePage({ params }: Props) {
       <section style={{ background: '#fff', padding: 'clamp(56px,8vw,80px) 0' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: 56 }}>
-            <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12 }}>My Process</p>
+            <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD_TEXT, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12 }}>My Process</p>
             <h2 style={{ ...PLAYFAIR, fontSize: 'clamp(1.8rem,3vw,2.5rem)', fontWeight: 400, color: SC_CHARCOAL, margin: 0 }}>
               From Listing to Close
             </h2>
@@ -347,7 +348,7 @@ export default async function SellWithMePage({ params }: Props) {
                             padding: '18px 0',
                             fontSize: 16,
                             fontWeight: 500,
-                            color: '#F5F3F0',
+                            color: 'var(--site-canvas)',
                             verticalAlign: 'top',
                             lineHeight: 1.5,
                           }}
@@ -369,7 +370,7 @@ export default async function SellWithMePage({ params }: Props) {
         <section style={{ background: SC_OFF_WHITE, padding: 'clamp(56px,8vw,80px) 0', borderTop: '1px solid #e5e0d8' }}>
           <div className="container">
             <div style={{ textAlign: 'center', marginBottom: 48 }}>
-              <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12 }}>Recognition</p>
+              <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD_TEXT, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12 }}>Recognition</p>
               <h2 style={{ ...PLAYFAIR, fontSize: 'clamp(1.8rem,3vw,2.5rem)', fontWeight: 400, color: SC_CHARCOAL, margin: 0 }}>
                 Awards &amp; Credentials
               </h2>
@@ -378,15 +379,15 @@ export default async function SellWithMePage({ params }: Props) {
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
                   <tr>
-                    <th style={{ padding: '10px 0', paddingRight: 24, fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: SC_GOLD, textAlign: 'left', borderBottom: '2px solid #e0dbd2', width: '18%' }}>Year</th>
-                    <th style={{ padding: '10px 0', paddingRight: 24, fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: SC_GOLD, textAlign: 'left', borderBottom: '2px solid #e0dbd2' }}>Award</th>
-                    <th style={{ padding: '10px 0', fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: SC_GOLD, textAlign: 'left', borderBottom: '2px solid #e0dbd2' }}>Issued by</th>
+                    <th style={{ padding: '10px 0', paddingRight: 24, fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: SC_GOLD_TEXT, textAlign: 'left', borderBottom: '2px solid #e0dbd2', width: '18%' }}>Year</th>
+                    <th style={{ padding: '10px 0', paddingRight: 24, fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: SC_GOLD_TEXT, textAlign: 'left', borderBottom: '2px solid #e0dbd2' }}>Award</th>
+                    <th style={{ padding: '10px 0', fontSize: 10, fontWeight: 700, letterSpacing: '0.15em', textTransform: 'uppercase', color: SC_GOLD_TEXT, textAlign: 'left', borderBottom: '2px solid #e0dbd2' }}>Issued by</th>
                   </tr>
                 </thead>
                 <tbody>
                   {topRealtor.awards.map(award => (
                     <tr key={award.id} style={{ borderBottom: '1px solid #e5e0d8' }}>
-                      <td style={{ padding: '16px 0', paddingRight: 24, fontSize: 13, fontWeight: 600, color: SC_GOLD, fontVariantNumeric: 'tabular-nums', verticalAlign: 'top' }}>
+                      <td style={{ padding: '16px 0', paddingRight: 24, fontSize: 13, fontWeight: 600, color: SC_GOLD_TEXT, fontVariantNumeric: 'tabular-nums', verticalAlign: 'top' }}>
                         {award.year || '—'}
                       </td>
                       <td style={{ padding: '16px 0', paddingRight: 24, fontSize: 15, fontWeight: 600, color: SC_CHARCOAL, verticalAlign: 'top', lineHeight: 1.4 }}>
@@ -410,7 +411,7 @@ export default async function SellWithMePage({ params }: Props) {
       {/* ── Free Home Evaluation CTA ── */}
       <section style={{ background: SC_OFF_WHITE, padding: 'clamp(56px,8vw,80px) 0', textAlign: 'center' }}>
         <div className="container" style={{ maxWidth: 640 }}>
-          <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 16 }}>No Cost, No Obligation</p>
+          <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD_TEXT, textTransform: 'uppercase', fontWeight: 700, marginBottom: 16 }}>No Cost, No Obligation</p>
           <h2 style={{ ...PLAYFAIR, fontSize: 'clamp(2rem,3vw,2.8rem)', fontWeight: 400, color: SC_CHARCOAL, marginBottom: 16, lineHeight: 1.2 }}>
             What Is Your Home Worth?
           </h2>
@@ -432,11 +433,11 @@ export default async function SellWithMePage({ params }: Props) {
           <div className="container">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40, gap: 16, flexWrap: 'wrap' }}>
               <div>
-                <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>Track Record</p>
+                <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD_TEXT, textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>Track Record</p>
                 <h2 style={{ ...PLAYFAIR, fontSize: 'clamp(1.8rem,3vw,2.5rem)', fontWeight: 400, color: SC_CHARCOAL, margin: 0 }}>
                   Recently Sold
                   {topRealtor?.sold_count && topRealtor.sold_count > 0 && (
-                    <span style={{ fontSize: '0.5em', fontWeight: 400, color: SC_GOLD, marginLeft: 16 }}>{topRealtor.sold_count}+ homes sold</span>
+                    <span style={{ fontSize: '0.5em', fontWeight: 400, color: SC_GOLD_TEXT, marginLeft: 16 }}>{topRealtor.sold_count}+ homes sold</span>
                   )}
                 </h2>
               </div>
@@ -519,7 +520,7 @@ export default async function SellWithMePage({ params }: Props) {
         <section style={{ background: SC_OFF_WHITE, padding: 'clamp(56px,8vw,80px) 0' }}>
           <div className="container">
             <div style={{ textAlign: 'center', marginBottom: 48 }}>
-              <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12 }}>Client Stories</p>
+              <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD_TEXT, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12 }}>Client Stories</p>
               <h2 style={{ ...PLAYFAIR, fontSize: 'clamp(1.8rem,3vw,2.5rem)', fontWeight: 400, color: SC_CHARCOAL, margin: 0 }}>
                 What My Sellers Say
               </h2>
@@ -533,7 +534,7 @@ export default async function SellWithMePage({ params }: Props) {
       <section style={{ background: '#fff', padding: 'clamp(56px,8vw,80px) 0' }}>
         <div className="container" style={{ maxWidth: 760 }}>
           <div style={{ textAlign: 'center', marginBottom: 48 }}>
-            <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12 }}>FAQ</p>
+            <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD_TEXT, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12 }}>FAQ</p>
             <h2 style={{ ...PLAYFAIR, fontSize: 'clamp(1.8rem,3vw,2.5rem)', fontWeight: 400, color: SC_CHARCOAL, margin: 0 }}>
               Common Questions
             </h2>

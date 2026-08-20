@@ -5,9 +5,10 @@ import { imgUrl, getCoAgents, resolveSiteConfig } from '@/lib/types'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
-const SC_CHARCOAL  = '#1C1C1E'
-const SC_GOLD      = '#9B8B7A'
-const SC_OFF_WHITE = '#F5F3F0'
+const SC_CHARCOAL  = 'var(--site-ink)'
+const SC_GOLD      = 'var(--site-accent)'
+const SC_GOLD_TEXT = 'var(--site-accent-text)'
+const SC_OFF_WHITE = 'var(--site-canvas)'
 const PLAYFAIR_SC = { fontFamily: "var(--font-display),Georgia,serif" } as const
 
 
@@ -195,7 +196,7 @@ export default async function ContactPage({ params }: Props) {
 
               {/* Left: What to Expect */}
               <div>
-                <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 16 }}>What to Expect</p>
+                <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD_TEXT, textTransform: 'uppercase', fontWeight: 700, marginBottom: 16 }}>What to Expect</p>
                 <h2 style={{ ...PLAYFAIR_SC, fontSize: 'clamp(1.6rem,2.5vw,2.2rem)', fontWeight: 400, color: SC_CHARCOAL, marginBottom: 32, lineHeight: 1.2 }}>
                   Straightforward, Responsive Service
                 </h2>

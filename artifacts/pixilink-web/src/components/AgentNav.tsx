@@ -113,7 +113,7 @@ export default function AgentNav({ agent, user, navStyle = 'dark-bar' }: Props) 
   const isCentered = navStyle === 'centered' && !isShowcase
 
   const navBg =
-    isShowcase ? '#1C1C1E'
+    isShowcase ? 'var(--site-dark)'
     : isDarkNav ? 'var(--primary-bg)'
     : isTransparent ? (scrolled ? 'rgba(255,255,255,0.97)' : 'transparent')
     : '#fff'
@@ -128,14 +128,14 @@ export default function AgentNav({ agent, user, navStyle = 'dark-bar' }: Props) 
   const navTextColor      = isLightText ? '#fff' : '#111'
   const navSubTextColor   = isLightText ? 'rgba(255,255,255,0.65)' : '#6b7280'
   const navLinkColor      = isShowcase ? 'rgba(255,255,255,0.65)' : isLightText ? 'rgba(255,255,255,0.70)' : '#6b7280'
-  const navLinkActiveColor = isShowcase ? '#9B8B7A' : isLightText ? '#fff' : '#111'
-  const navActiveBorder   = isShowcase ? '#9B8B7A' : isDarkNav ? 'var(--brand-accent)' : isTransparent && !scrolled ? '#fff' : '#111'
-  const photoRingColor    = isShowcase ? '#9B8B7A' : isDarkNav ? 'var(--brand-accent)' : '#e5e7eb'
+  const navLinkActiveColor = isShowcase ? 'var(--site-accent)' : isLightText ? '#fff' : '#111'
+  const navActiveBorder   = isShowcase ? 'var(--site-accent)' : isDarkNav ? 'var(--brand-accent)' : isTransparent && !scrolled ? '#fff' : '#111'
+  const photoRingColor    = isShowcase ? 'var(--site-accent)' : isDarkNav ? 'var(--brand-accent)' : '#e5e7eb'
   const hamburgerColor    = isLightText ? '#fff' : '#111'
-  const mobileDrawerBg    = isShowcase ? '#1C1C1E' : isDarkNav ? 'var(--primary-bg)' : '#fff'
+  const mobileDrawerBg    = isShowcase ? 'var(--site-dark)' : isDarkNav ? 'var(--primary-bg)' : '#fff'
   const mobileDrawerBorder = isShowcase || isDarkNav ? 'rgba(255,255,255,0.10)' : '#e5e7eb'
   const mobileLinkColor   = isShowcase ? 'rgba(255,255,255,0.75)' : isDarkNav ? 'rgba(255,255,255,0.80)' : '#374151'
-  const mobileLinkActive  = isShowcase ? '#9B8B7A' : isDarkNav ? '#fff' : '#111'
+  const mobileLinkActive  = isShowcase ? 'var(--site-accent)' : isDarkNav ? '#fff' : '#111'
   const mobileLinkActiveBg = isShowcase || isDarkNav ? 'rgba(255,255,255,0.08)' : '#f9fafb'
 
   // Split links for centered variant: roughly half on each side
