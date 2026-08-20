@@ -2,6 +2,7 @@ import Image from 'next/image'
 import { getAgent, getBuildingDetail, getBuildings, getLandingPages, matchTopRealtorUrl, agentCanonicalBase, resolveAgentPrefix } from '@/lib/api'
 import { toHomesForSaleHref } from '../../homes-for-sale/subareaUtils'
 import { formatPrice, formatPriceFull, buildingDisplayName, hasBuildingName, getCoAgents } from '@/lib/types'
+import type { BuildingStats } from '@/lib/types'
 import PhotoGallery from '@/components/PhotoGallery.client'
 import BuildingComparisonTable from '@/components/BuildingComparisonTable'
 import SoldGate from '@/components/SoldGate.client'
@@ -18,6 +19,23 @@ import { getAiPages, matchAiPageToSubarea } from '@/lib/ai-pages-api'
 import PageQuickLinks from '@/components/PageQuickLinks'
 import LeadOfferCapture from '@/components/LeadOfferCapture.client'
 import PropertyViewTracker from '@/components/PropertyViewTracker.client'
+
+/**
+ * The building stats aggregate, or null when it is not actually an aggregate.
+ *
+ * stats is computed server-side over strata_no sales in the last 12 months, so when a
+ * building has exactly one sale in that window every figure derived from it — "Avg Sold
+ * Price", "Highest Sold" (a MAX), "Avg $/sq ft" — is that single unit's exact sold price
+ * relabelled as an average. This page is ISR-cached with no auth context, so it is served
+ * identically to logged-out visitors while listing that same unit behind a "View Sold
+ * Price" gate. Requiring two sales keeps the number non-identifying; below that the panel,
+ * prose, FAQs, JSON-LD and meta description all fall away together.
+ *
+ * Used by both generateMetadata and the page component — they must agree.
+ */
+function aggregateStats(building: { stats?: BuildingStats | null }): BuildingStats | null {
+  return (building.stats?.sold_count ?? 0) >= 2 ? (building.stats ?? null) : null
+}
 
 interface Props {
   params: Promise<{ slug: string; buildingSlug: string }>
@@ -71,11 +89,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   // Build suffix from live pricing data — sold keywords always lead when available
   let suffix = ''
-  const metaSoldCount = building.stats?.sold_count_6m ?? building.recent_sold.length
-  if (building.stats?.avg_sold_price) {
-    const avgStr = formatPrice(building.stats.avg_sold_price)
-    const sqftStr = building.stats.avg_per_sqft
-      ? ` at $${Math.round(building.stats.avg_per_sqft).toLocaleString('en-CA')}/sq ft`
+  const buildingStats = aggregateStats(building)
+  const metaSoldCount = buildingStats?.sold_count_6m ?? building.recent_sold.length
+  if (buildingStats?.avg_sold_price) {
+    const avgStr = formatPrice(buildingStats.avg_sold_price)
+    const sqftStr = buildingStats.avg_per_sqft
+      ? ` at $${Math.round(buildingStats.avg_per_sqft).toLocaleString('en-CA')}/sq ft`
       : ''
     const soldPart = metaSoldCount > 0
       ? `${metaSoldCount} unit${metaSoldCount !== 1 ? 's' : ''} sold, avg ${avgStr}${sqftStr}.`
@@ -172,7 +191,7 @@ export default async function BuildingDetailPage({ params }: Props) {
   const firstName = agent.name.split(' ')[0]
 
   const photos = (building.photos.length > 0 ? building.photos : building.photo_url ? [building.photo_url] : []).filter((p: string) => p.trim() !== '')
-  const stats = building.stats
+  const stats = aggregateStats(building)
   const hasStats = !!stats && (stats.avg_sold_price != null || stats.avg_dom != null || stats.avg_per_sqft != null || stats.expensive_sold != null)
 
   // Pet policy text

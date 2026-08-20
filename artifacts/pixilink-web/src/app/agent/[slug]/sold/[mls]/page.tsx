@@ -91,7 +91,15 @@ export default async function SoldListingDetailPage({ params }: Props) {
   const bName = listing.building?.name ?? null
   // Proof drawn from real building data; falls back to a plain sentence rather than
   // rendering a half-empty claim when the building fetch returned nothing.
-  const cmaProof = bStats?.avg_sold_price && bName
+  //
+  // The building aggregate is computed over strata_no sales in the last 12 months and
+  // INCLUDES this listing. Where the building has exactly one sale in that window the
+  // "average" IS this listing's sold price, so printing it would hand a logged-out
+  // visitor the single figure the gate exists to withhold. Two or more sales makes the
+  // number non-identifying; below that we fall through to the generic sentence.
+  // A signed-in visitor can already see the exact price, so the guard only applies to guests.
+  const bAvgIsAggregate = isLoggedIn || (bStats?.sold_count ?? 0) >= 2
+  const cmaProof = bAvgIsAggregate && bStats?.avg_sold_price && bName
     ? `Recent sales at ${bName} average ${formatPriceFull(bStats.avg_sold_price)}`
       + `${bStats.avg_dom ? ` in ${Math.round(bStats.avg_dom)} days` : ''}.`
       + ` Get a free valuation from ${agent.name.split(' ')[0]} based on sales like this one.`

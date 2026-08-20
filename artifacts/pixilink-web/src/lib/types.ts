@@ -351,6 +351,10 @@ export interface ListingDetail extends AgentListing {
 }
 
 export interface BuildingStats {
+  /** Sales in the last 12 months this aggregate is drawn from. Needed to tell a
+   *  real average from a single sale masquerading as one - see sold/[mls]/page.tsx. */
+  sold_count?: number | null
+  sold_count_6m?: number | null
   expensive_sold: number | null
   avg_sold_price: number | null
   avg_dom: number | null
