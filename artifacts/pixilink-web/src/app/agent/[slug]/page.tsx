@@ -1032,10 +1032,16 @@ export default async function AgentHomePage({ params }: Props) {
             .sc-sold-grid { grid-template-columns: repeat(2, 1fr); }
             /* Editorial Stack — stack to single column */
             .sc-editorial-band { grid-template-columns: 1fr !important; }
-            /* Below 900px the band is single-column, so an absolutely-placed card would
-               overlap the text. Drop it back into the flow at a smaller size. */
+            /* Below 900px the band is single-column: reset the desktop card clearance.
+               (The card itself is hidden on mobile — see below.) */
             .sc-editorial-band--portrait .sc-editorial-stats { padding-top: 28px; }
-            .sc-editorial-portrait { position: static !important; top: auto !important; right: auto !important; width: 116px; height: 145px; margin: -60px 0 20px; border-width: 4px; }
+            /* Hidden on mobile, not shrunk: the earlier "position: static" shrink broke
+               containment — the portrait is a next/image fill (position:absolute), so a
+               static card stops being its containing block and the image explodes to
+               fill the whole band, burying the tagline (seen live on iPhone). On a phone
+               the hero already fills the screen and the nav shows her avatar; the card
+               adds nothing worth that risk. */
+            .sc-editorial-portrait { display: none; }
             .sc-editorial-stats { border-left: none !important; padding-left: 0 !important; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 28px; display: flex !important; flex-wrap: wrap; gap: 20px 32px; }
             .sc-editorial-stats > div { border-bottom: none !important; margin-bottom: 0 !important; padding-bottom: 0 !important; }
           }

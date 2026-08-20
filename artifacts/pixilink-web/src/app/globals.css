@@ -283,10 +283,25 @@ input, textarea, select {
     transition: opacity 600ms cubic-bezier(0.22, 0.61, 0.36, 1),
                 transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
     will-change: opacity, transform;
+    /* Failsafe: content must never wait on JavaScript to be readable. Until the
+       hydration bundle arrives and the observer runs, every reveal target sits at
+       opacity 0 — on a phone on cellular that is seconds of mostly-blank page,
+       reported as "the site takes forever to load". This zero-duration animation
+       snaps everything visible at 1.6s regardless of JS: on fast connections the
+       observer wins first and the staggered reveals look normal; on slow ones the
+       page simply appears. Also covers a crashed hydration, which the noscript
+       rule cannot (JS is present, just dead). */
+    animation: sc-reveal-failsafe 0s linear 1.6s forwards;
+  }
+  @keyframes sc-reveal-failsafe {
+    to { opacity: 1; transform: none; }
   }
   [data-sc-reveal].is-revealed {
     opacity: 1;
     transform: none;
+    /* The observer got here first — cancel the failsafe so its later "to" frame
+       cannot fight the transition. */
+    animation: none;
   }
   /* Once revealed, stop advertising a compositor layer we no longer need. */
   [data-sc-reveal].is-revealed { will-change: auto; }
