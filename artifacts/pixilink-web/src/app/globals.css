@@ -266,3 +266,45 @@ input, textarea, select {
   transition: opacity 0.15s;
 }
 .residencity-cta-btn:hover { opacity: 0.88; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Motion — scroll reveals, card hover crossfade, hero parallax.
+
+   Everything here is wrapped in `prefers-reduced-motion: no-preference`, so a user
+   who asks for reduced motion never receives the hidden/offset starting state.
+   That is deliberate and load-bearing: if the hidden state applied unconditionally
+   and the observer never ran, the page would be blank. Combined with the noscript
+   rule below, an element can only be hidden when JS is present AND motion is wanted.
+   ───────────────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  [data-sc-reveal] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 600ms cubic-bezier(0.22, 0.61, 0.36, 1),
+                transform 600ms cubic-bezier(0.22, 0.61, 0.36, 1);
+    will-change: opacity, transform;
+  }
+  [data-sc-reveal].is-revealed {
+    opacity: 1;
+    transform: none;
+  }
+  /* Once revealed, stop advertising a compositor layer we no longer need. */
+  [data-sc-reveal].is-revealed { will-change: auto; }
+
+  /* Listing card hover — crossfade to the listing's second photo.
+     The layer is a background-image rather than an <img> on purpose: the URL is
+     derived from the first photo's path, so it may not exist, and a background
+     that 404s simply never paints. A broken <img> would show a broken-image icon. */
+  .sc-card-swap {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 700ms ease;
+    pointer-events: none;
+  }
+  /* The hover trigger lives with the card rules in the showcase page's own style
+     block, next to the existing zoom, so the whole card behaviour reads together. */
+}
+

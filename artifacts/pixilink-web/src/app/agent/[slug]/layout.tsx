@@ -266,6 +266,10 @@ export default async function AgentLayout({ children, params }: Props) {
         {trackingScripts}
         <div style={{ ['--brand-bg' as string]: theme.primaryBg, ['--brand-accent' as string]: theme.accent, ['--brand-accent-rgb' as string]: theme.accentRgb, ['--brand-text' as string]: theme.brandText, ['--brand-overlay-rgb' as string]: theme.brandOverlayRgb, ['--brand-bg-rgb' as string]: theme.brandBgRgb }}>
           <style>{`:root{${cssVars}}`}</style>
+          {/* Scroll reveals hide their element until the observer runs; with JS off that
+              can never happen, so force them visible. A noscript style block is the only
+              construct that reliably targets "JS disabled", and is inert otherwise. */}
+          <noscript><style>{`[data-sc-reveal]{opacity:1!important;transform:none!important}`}</style></noscript>
           {children}
         </div>
       </AgentSlugProvider>
@@ -288,6 +292,10 @@ export default async function AgentLayout({ children, params }: Props) {
           />
         )}
         <style>{`:root{${cssVars}}`}</style>
+        {/* Scroll reveals hide their element until the observer runs; with JS off that
+            can never happen, so force them visible. A noscript style block is the only
+            construct that reliably targets "JS disabled", and is inert otherwise. */}
+        <noscript><style>{`[data-sc-reveal]{opacity:1!important;transform:none!important}`}</style></noscript>
         <AgentNav agent={agent} user={user} navStyle={cfg.nav_style} />
         {(() => {
           const showStickyBar = !agent.settings?.disable_sticky_bar && cfg.layout_preset !== 'showcase'

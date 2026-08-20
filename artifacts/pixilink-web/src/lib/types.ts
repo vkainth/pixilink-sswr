@@ -1039,6 +1039,31 @@ export function imgUrl(path: string | null, w: 325 | 400 | 600 | 800 | 900 | 160
 }
 
 /** Returns the original CDN URL without any resize query params — use for lightbox full-size display. */
+
+/**
+ * The URL of a listing's second MLS photo, derived from the first.
+ *
+ * The list endpoints return a single photo_url, and fetching a listing's full photo set
+ * costs one imageXML request each — far too much for a grid. The CDN names photos
+ * predictably though (…/R3004528-1.jpg, -2.jpg, …), so the second can be derived.
+ *
+ * This is a guess: a listing with one photo has no -2. Callers must therefore use it
+ * somewhere a miss is invisible — a CSS background-image, never an <img>, because a
+ * background that 404s simply does not paint while a broken <img> shows an icon.
+ *
+ * Returns null when the path does not end in the expected -N.ext form.
+ */
+export function secondPhotoUrl(path: string | null): string | null {
+  if (!path) return null
+  const base = path.split('?')[0]
+  const m = base.match(/^(.*-)(\d+)(\.[a-zA-Z]+)$/)
+  if (!m) return null
+  const [, prefix, num, ext] = m
+  // Only step off the FIRST photo. Deriving -3 from -2 would be a second guess layered
+  // on a first, and the caller only ever wants the pair.
+  if (num !== '1') return null
+  return `${prefix}2${ext}`
+}
 export function imgUrlFull(path: string | null): string {
   if (!path) return ''
   if (path.startsWith('/api/storage/') || path.startsWith('/storage/')) return `${STORAGE_BASE}${path}`

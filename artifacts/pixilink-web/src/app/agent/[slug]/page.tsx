@@ -3,7 +3,10 @@ import { headers } from 'next/headers'
 import Image from 'next/image'
 import { getAgent, getListings, getBuildings, getMarketStats, getTestimonials, getTopRealtor, getAwards, getAgentTerritories, agentCanonicalBase, resolveAgentPrefix, getNews, getFaqs, getOwnListings, getReciprocityListings, getMedia, getUnifiedSolds } from '@/lib/api'
 import { normalizeCity } from '@/lib/market'
-import { imgUrl, formatPrice, getHeroCredentials, getCoAgents, resolveSiteConfig } from '@/lib/types'
+import MotionReveal from '@/components/MotionReveal.client'
+import HeroParallax from '@/components/HeroParallax.client'
+import CountUpStat from '@/components/CountUpStat.client'
+import { imgUrl, secondPhotoUrl, formatPrice, getHeroCredentials, getCoAgents, resolveSiteConfig } from '@/lib/types'
 import type { UnifiedSoldsResponse } from '@/lib/types'
 import { toHomesForSaleHref } from './homes-for-sale/subareaUtils'
 import ListingCard from '@/components/ListingCard'
@@ -379,6 +382,9 @@ export default async function AgentHomePage({ params }: Props) {
 
     return (
       <div style={{ fontFamily: "var(--font-body),'Helvetica Neue',sans-serif", overflowX: 'hidden' }}>
+        {/* One observer for every [data-sc-reveal] on the page. Renders nothing. */}
+        <MotionReveal />
+        <HeroParallax />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessJsonLd) }} />
         {showcaseFaqs.length > 0 && (
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
@@ -398,7 +404,7 @@ export default async function AgentHomePage({ params }: Props) {
           <div style={{ background: SC_CHARCOAL }}>
             <div style={{ position: 'relative', minHeight: 'clamp(480px,82vh,900px)', overflow: 'hidden' }}>
               {heroImageSrc ? (
-                <Image src={heroImageSrc} alt={heroImageAlt} fill unoptimized priority style={{ objectFit: 'cover', objectPosition: heroObjectPosition }} />
+                <Image data-sc-parallax src={heroImageSrc} alt={heroImageAlt} fill unoptimized priority style={{ objectFit: 'cover', objectPosition: heroObjectPosition }} />
               ) : (
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg, var(--site-dark-raised) 0%, var(--site-dark) 55%, var(--site-dark-deep) 100%)' }} />
               )}
@@ -449,7 +455,7 @@ export default async function AgentHomePage({ params }: Props) {
                     <div key={s.l} className="sc-stat-item" style={{ display: 'flex', alignItems: 'center' }}>
                       {i > 0 && <div className="sc-stat-divider" style={{ width: 1, height: 40, background: 'rgba(255,255,255,0.09)', flexShrink: 0 }} />}
                       <div className="sc-stat-tile" style={{ textAlign: 'center', padding: '22px 40px' }}>
-                        <div style={{ ...playfairStyle, fontSize: 30, fontWeight: 700, color: '#fff', lineHeight: 1 }}>{s.v}</div>
+                        <div style={{ ...playfairStyle, fontSize: 30, fontWeight: 700, color: '#fff', lineHeight: 1 }}><CountUpStat value={s.v} /></div>
                         <div style={{ fontSize: 9, color: SC_GOLD, textTransform: 'uppercase', letterSpacing: '0.18em', marginTop: 6 }}>{s.l}</div>
                       </div>
                     </div>
@@ -465,7 +471,7 @@ export default async function AgentHomePage({ params }: Props) {
             <div style={{ position: 'relative', height: 'clamp(340px,58vh,700px)', overflow: 'hidden', background: '#111' }}>
               {heroImageSrc ? (
                 <>
-                  <Image src={heroImageSrc} alt={heroImageAlt} fill unoptimized priority style={{ objectFit: 'cover', objectPosition: heroObjectPosition }} />
+                  <Image data-sc-parallax src={heroImageSrc} alt={heroImageAlt} fill unoptimized priority style={{ objectFit: 'cover', objectPosition: heroObjectPosition }} />
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '65%', background: 'linear-gradient(to top, rgba(20,20,22,1.0) 0%, rgba(20,20,22,0.6) 40%, transparent 100%)' }} />
                 </>
               ) : (
@@ -536,7 +542,7 @@ export default async function AgentHomePage({ params }: Props) {
                   <div style={{ borderLeft: '1px solid rgba(255,255,255,0.10)', paddingLeft: 'clamp(28px,4vw,48px)' }} className="sc-editorial-stats">
                     {scStats.map((s, i) => (
                       <div key={s.l} style={{ paddingBottom: i < scStats.length - 1 ? 20 : 0, marginBottom: i < scStats.length - 1 ? 20 : 0, borderBottom: i < scStats.length - 1 ? '1px solid rgba(255,255,255,0.07)' : 'none', display: 'flex', alignItems: 'center', gap: 16 }}>
-                        <div style={{ ...playfairStyle, fontSize: 28, fontWeight: 700, color: '#fff', lineHeight: 1, minWidth: 64 }}>{s.v}</div>
+                        <div style={{ ...playfairStyle, fontSize: 28, fontWeight: 700, color: '#fff', lineHeight: 1, minWidth: 64 }}><CountUpStat value={s.v} /></div>
                         <div style={{ fontSize: 9, color: SC_GOLD, textTransform: 'uppercase', letterSpacing: '0.16em', lineHeight: 1.4 }}>{s.l}</div>
                       </div>
                     ))}
@@ -628,7 +634,7 @@ export default async function AgentHomePage({ params }: Props) {
                     <div key={s.l} className="sc-stat-item" style={{ display: 'flex', alignItems: 'center' }}>
                       {i > 0 && <div className="sc-stat-divider" style={{ width: 1, height: 40, background: 'rgba(255,255,255,0.09)', flexShrink: 0 }} />}
                       <div className="sc-stat-tile" style={{ textAlign: 'center', padding: '22px 40px' }}>
-                        <div style={{ ...playfairStyle, fontSize: 30, fontWeight: 700, color: '#fff', lineHeight: 1 }}>{s.v}</div>
+                        <div style={{ ...playfairStyle, fontSize: 30, fontWeight: 700, color: '#fff', lineHeight: 1 }}><CountUpStat value={s.v} /></div>
                         <div style={{ fontSize: 9, color: SC_GOLD, textTransform: 'uppercase', letterSpacing: '0.18em', marginTop: 6 }}>{s.l}</div>
                       </div>
                     </div>
@@ -641,7 +647,7 @@ export default async function AgentHomePage({ params }: Props) {
 
         {/* ── Active Listings ── */}
         {(hasOwnActive || reciprocityListings.length > 0) && (
-          <section style={{ background: '#fff', padding: 'clamp(56px,8vw,80px) 0' }}>
+          <section data-sc-reveal style={{ background: '#fff', padding: 'clamp(56px,8vw,80px) 0' }}>
             <div className="container">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40, gap: 16, flexWrap: 'wrap' }}>
                 <div>
@@ -659,6 +665,8 @@ export default async function AgentHomePage({ params }: Props) {
               <div className="sc-active-grid">
                 {(hasOwnActive ? ownActiveListings : reciprocityListings).slice(0, 6).map(l => {
                   const photo = l.photo_url ? imgUrl(l.photo_url, 600) : null
+                  // Same width as the primary, or hovering would pull the heavier native file.
+                  const photo2 = photo ? imgUrl(secondPhotoUrl(l.photo_url), 600) : ''
                   const href = `${agentPrefix}/listing/${l.slug || l.mls_no}`
                   return (
                     <a key={l.id} href={href} className="sc-active-card" style={{ display: 'block', textDecoration: 'none', overflow: 'hidden' }}>
@@ -671,6 +679,13 @@ export default async function AgentHomePage({ params }: Props) {
                             className="sc-active-card-img"
                             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                           />
+                        )}
+                        {photo2 && (
+                          /* Second photo, revealed on hover. Derived URL, so it may not
+                             exist — a background-image that 404s never paints, which is
+                             why this is a div and not an <img>. */
+                          <div className="sc-card-swap" aria-hidden="true"
+                            style={{ backgroundImage: `url(${photo2})` }} />
                         )}
                         <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.38) 48%, transparent 72%)' }} />
                         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, padding: '20px 20px 18px' }}>
@@ -705,7 +720,7 @@ export default async function AgentHomePage({ params }: Props) {
 
         {/* ── Awards Strip ── */}
         {awards.length > 0 && (
-          <div style={{ background: SC_CHARCOAL, borderTop: '1px solid rgba(255,255,255,0.06)', padding: '36px 0' }}>
+          <div data-sc-reveal style={{ background: SC_CHARCOAL, borderTop: '1px solid rgba(255,255,255,0.06)', padding: '36px 0' }}>
             <div className="container">
               <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 20, textAlign: 'center' }}>Awards &amp; Recognition</p>
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -723,7 +738,7 @@ export default async function AgentHomePage({ params }: Props) {
 
         {/* ── Recently Sold (own listings) ── */}
         {ownSoldListings.length > 0 && (
-          <section style={{ background: SC_CHARCOAL, padding: 'clamp(56px,8vw,80px) 0' }}>
+          <section data-sc-reveal style={{ background: SC_CHARCOAL, padding: 'clamp(56px,8vw,80px) 0' }}>
             <div className="container">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40, gap: 16, flexWrap: 'wrap' }}>
                 <div>
@@ -740,6 +755,8 @@ export default async function AgentHomePage({ params }: Props) {
               <div className="sc-sold-grid">
                 {ownSoldListings.slice(0, 8).map(l => {
                   const photo = l.photo_url ? imgUrl(l.photo_url, 600) : null
+                  // Same width as the primary, or hovering would pull the heavier native file.
+                  const photo2 = photo ? imgUrl(secondPhotoUrl(l.photo_url), 600) : ''
                   const href = `${agentPrefix}/sold/${l.mls_no}`
                   const soldPrice = l.sold_price ? formatPrice(l.sold_price) : null
                   const typeLabel = l.type === 'Apartment Unit' ? 'Condo' : l.type === 'House/Single Family' ? 'House' : l.type || null
@@ -754,6 +771,13 @@ export default async function AgentHomePage({ params }: Props) {
                             className="sc-sold-card-img"
                             style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                           />
+                        )}
+                        {photo2 && (
+                          /* Second photo, revealed on hover. Derived URL, so it may not
+                             exist — a background-image that 404s never paints, which is
+                             why this is a div and not an <img>. */
+                          <div className="sc-card-swap" aria-hidden="true"
+                            style={{ backgroundImage: `url(${photo2})` }} />
                         )}
                         {!photo && (
                           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(var(--brand-accent-rgb),0.25)', fontSize: 40 }}>
@@ -789,7 +813,7 @@ export default async function AgentHomePage({ params }: Props) {
 
         {/* ── Testimonials ── */}
         {testimonials.length > 0 && (
-          <section style={{ background: '#fff', padding: 'clamp(56px,8vw,80px) 0' }}>
+          <section data-sc-reveal style={{ background: '#fff', padding: 'clamp(56px,8vw,80px) 0' }}>
             <div className="container">
               <div style={{ textAlign: 'center', marginBottom: 48 }}>
                 <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12 }}>Client Stories</p>
@@ -803,7 +827,7 @@ export default async function AgentHomePage({ params }: Props) {
         )}
 
         {/* ── Sell With Me Teaser ── */}
-        <section style={{ background: SC_CHARCOAL, padding: 'clamp(64px,10vw,100px) 0' }}>
+        <section data-sc-reveal style={{ background: SC_CHARCOAL, padding: 'clamp(64px,10vw,100px) 0' }}>
           <div className="container">
             <div className="sc-sell-grid">
               <div>
@@ -838,7 +862,7 @@ export default async function AgentHomePage({ params }: Props) {
         </section>
 
         {/* ── Home Evaluation CTA ── */}
-        <section style={{ background: SC_OFF_WHITE, padding: 'clamp(56px,8vw,80px) 0', borderBottom: '1px solid #e5e0d8', textAlign: 'center' }}>
+        <section data-sc-reveal style={{ background: SC_OFF_WHITE, padding: 'clamp(56px,8vw,80px) 0', borderBottom: '1px solid #e5e0d8', textAlign: 'center' }}>
           <div className="container" style={{ maxWidth: 640 }}>
             <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 16 }}>Free Evaluation</p>
             <h2 style={{ ...playfairStyle, fontSize: 'clamp(2rem,3vw,2.8rem)', fontWeight: 400, color: SC_CHARCOAL, marginBottom: 16, lineHeight: 1.2 }}>
@@ -860,7 +884,7 @@ export default async function AgentHomePage({ params }: Props) {
 
         {/* ── About Snippet ── */}
         {agent.bio && (
-          <section style={{ background: SC_CHARCOAL, padding: 'clamp(56px,8vw,80px) 0' }}>
+          <section data-sc-reveal style={{ background: SC_CHARCOAL, padding: 'clamp(56px,8vw,80px) 0' }}>
             <div className="container">
               <div className="sc-about-grid">
                 {agentPhotoSrc && (
@@ -889,7 +913,7 @@ export default async function AgentHomePage({ params }: Props) {
         )}
 
         {/* ── Contact CTA ── */}
-        <section style={{ background: SC_OFF_WHITE, padding: 'clamp(40px,6vw,60px) 0', textAlign: 'center' }}>
+        <section data-sc-reveal style={{ background: SC_OFF_WHITE, padding: 'clamp(40px,6vw,60px) 0', textAlign: 'center' }}>
           <div className="container">
             <p style={{ fontSize: 15, color: '#666', marginBottom: 8 }}>
               {agent.phone && (
@@ -941,6 +965,16 @@ export default async function AgentHomePage({ params }: Props) {
           .sc-sold-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.40); }
           .sc-sold-card-img { transition: transform 0.45s ease, opacity 0.3s ease; opacity: 0.85; }
           .sc-sold-card:hover .sc-sold-card-img { transform: scale(1.04); opacity: 1; }
+          /* Crossfade to the listing's second photo on hover. The .sc-card-swap layer and
+             its reduced-motion guard live in globals.css; only the trigger is here, so it
+             sits with the zoom above rather than in a separate file. focus-visible is
+             included so the effect is reachable by keyboard, not mouse-only. */
+          @media (prefers-reduced-motion: no-preference) {
+            .sc-active-card:hover .sc-card-swap,
+            .sc-active-card:focus-visible .sc-card-swap,
+            .sc-sold-card:hover .sc-card-swap,
+            .sc-sold-card:focus-visible .sc-card-swap { opacity: 1; }
+          }
           /* Suppress the shared layout value-prop CTA — showcase has its own sell section */
           .layout-value-prop { display: none !important; }
           /* Editorial Stack — portrait overlapping the strip/band boundary.
