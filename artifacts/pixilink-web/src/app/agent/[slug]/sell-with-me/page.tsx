@@ -524,7 +524,7 @@ export default async function SellWithMePage({ params }: Props) {
                 What My Sellers Say
               </h2>
             </div>
-            <TestimonialsCards testimonials={testimonials} />
+            <TestimonialsCards testimonials={testimonials} bare />
           </div>
         </section>
       )}

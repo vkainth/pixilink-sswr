@@ -2,6 +2,59 @@ import type { AgentTestimonial } from '@/lib/types'
 
 interface Props {
   testimonials: AgentTestimonial[]
+  /** Render only the cards grid — for callers that provide their own section + header. */
+  bare?: boolean
+}
+
+const GRID_CSS = `
+  .testimonials-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+  }
+  @media (max-width: 640px) {
+    .testimonials-cards-grid { grid-template-columns: 1fr; }
+  }
+`
+
+function TestimonialCard({ t }: { t: AgentTestimonial }) {
+  const label = sourceLabel(t.source)
+  return (
+    <div style={{
+      background: 'var(--off-white)',
+      borderRadius: 12,
+      padding: '32px 28px',
+      border: '1px solid var(--border)',
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
+      {t.rating > 0 && <Stars n={t.rating} />}
+      <p style={{ fontSize: 15, lineHeight: 1.75, color: 'var(--text)', flex: 1, marginBottom: 24, fontStyle: 'italic' }}>
+        &ldquo;{t.text}&rdquo;
+      </p>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 12, borderTop: '1px solid var(--border)', paddingTop: 18 }}>
+        <div style={{
+          width: 40, height: 40, borderRadius: '50%',
+          background: 'var(--primary-bg)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          color: 'var(--accent)', fontWeight: 700, fontSize: 16, flexShrink: 0,
+        }}>
+          {t.name.charAt(0)}
+        </div>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--primary-bg)' }}>{t.name}</div>
+          {label && (
+            t.source_url
+              ? <a href={t.source_url} target="_blank" rel="noopener noreferrer"
+                  style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', marginTop: 2, display: 'block' }}>
+                  {label}
+                </a>
+              : <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{label}</div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 function Stars({ n }: { n: number }) {
@@ -28,8 +81,25 @@ function sourceLabel(source: string): string {
   }
 }
 
-export default function TestimonialsCards({ testimonials }: Props) {
+export default function TestimonialsCards({ testimonials, bare = false }: Props) {
   if (!testimonials.length) return null
+
+  // Bare mode: only the cards grid — for callers that supply their own section,
+  // header and padding (the showcase homepage and sell-with-me both do). Rendering
+  // the default chrome inside theirs stacked two headers ("Client Stories / What My
+  // Clients Say" directly above "Client Reviews / What Clients Say") with doubled
+  // section padding between them. Latent until 2026-08-20 because the testimonials
+  // table was empty for every agent, so this section had never rendered anywhere.
+  if (bare) {
+    return (
+      <>
+        <div className="testimonials-cards-grid">
+          {testimonials.map(t => <TestimonialCard key={t.id} t={t} />)}
+        </div>
+        <style>{GRID_CSS}</style>
+      </>
+    )
+  }
 
   return (
     <section style={{ padding: '80px 0', background: '#fff' }}>
@@ -44,57 +114,10 @@ export default function TestimonialsCards({ testimonials }: Props) {
         </div>
 
         <div className="testimonials-cards-grid">
-          {testimonials.map(t => {
-            const label = sourceLabel(t.source)
-            return (
-              <div key={t.id} style={{
-                background: 'var(--off-white)',
-                borderRadius: 12,
-                padding: '32px 28px',
-                border: '1px solid var(--border)',
-                display: 'flex',
-                flexDirection: 'column',
-              }}>
-                {t.rating > 0 && <Stars n={t.rating} />}
-                <p style={{ fontSize: 15, lineHeight: 1.75, color: 'var(--text)', flex: 1, marginBottom: 24, fontStyle: 'italic' }}>
-                  &ldquo;{t.text}&rdquo;
-                </p>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 12, borderTop: '1px solid var(--border)', paddingTop: 18 }}>
-                  <div style={{
-                    width: 40, height: 40, borderRadius: '50%',
-                    background: 'var(--primary-bg)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'var(--accent)', fontWeight: 700, fontSize: 16, flexShrink: 0,
-                  }}>
-                    {t.name.charAt(0)}
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontWeight: 700, fontSize: 14, color: 'var(--primary-bg)' }}>{t.name}</div>
-                    {label && (
-                      t.source_url
-                        ? <a href={t.source_url} target="_blank" rel="noopener noreferrer"
-                            style={{ fontSize: 12, color: 'var(--accent)', textDecoration: 'none', marginTop: 2, display: 'block' }}>
-                            {label}
-                          </a>
-                        : <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{label}</div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
+          {testimonials.map(t => <TestimonialCard key={t.id} t={t} />)}
         </div>
       </div>
-      <style>{`
-        .testimonials-cards-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-          gap: 24px;
-        }
-        @media (max-width: 640px) {
-          .testimonials-cards-grid { grid-template-columns: 1fr; }
-        }
-      `}</style>
+      <style>{GRID_CSS}</style>
     </section>
   )
 }

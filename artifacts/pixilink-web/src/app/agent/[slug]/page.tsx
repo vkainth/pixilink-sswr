@@ -837,7 +837,7 @@ export default async function AgentHomePage({ params }: Props) {
                   What My Clients Say
                 </h2>
               </div>
-              <TestimonialsCards testimonials={testimonials} />
+              <TestimonialsCards testimonials={testimonials} bare />
             </div>
           </section>
         )}
