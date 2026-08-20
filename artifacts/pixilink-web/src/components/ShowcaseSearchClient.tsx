@@ -44,6 +44,25 @@ const MIN_PRICE_OPTIONS = [
   { label: '$3M+',    value: '3000000' },
 ]
 
+// Max Price needs its own list. Reusing MIN_PRICE_OPTIONS put "$3M+" at the top of an
+// UPPER bound, which reads as no ceiling at all, and offered no ceiling above $3M on a
+// site whose listings reach $5.5M.
+const MAX_PRICE_OPTIONS = [
+  { label: 'No Max',  value: '' },
+  { label: '$600K',   value: '600000' },
+  { label: '$800K',   value: '800000' },
+  { label: '$1M',     value: '1000000' },
+  { label: '$1.25M',  value: '1250000' },
+  { label: '$1.5M',   value: '1500000' },
+  { label: '$2M',     value: '2000000' },
+  { label: '$2.5M',   value: '2500000' },
+  { label: '$3M',     value: '3000000' },
+  { label: '$4M',     value: '4000000' },
+  { label: '$5M',     value: '5000000' },
+  { label: '$7.5M',   value: '7500000' },
+  { label: '$10M+',   value: '99000000' },
+]
+
 const YEAR_BUILT_OPTIONS = [
   { label: 'Any Age',     value: '' },
   { label: 'New (≤ 1yr)', value: 'new' },
@@ -64,19 +83,27 @@ const ARROW = (dark = false) =>
   `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='${dark ? '%231C1C1E' : '%239B8B7A'}' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E")`
 
 function Sel({
-  placeholder, options, value, onChange, active,
+  placeholder, options, value, onChange, active, ariaLabel, disabled,
 }: {
   placeholder: string
-  options: { label: string; value: string }[]
+  // `disabled` on an option greys it rather than removing it, so the list does not change
+  // length while the user is reading it.
+  options: { label: string; value: string; disabled?: boolean }[]
   value: string
   onChange: (v: string) => void
   active?: boolean
+  /** Screen readers otherwise announce the selected VALUE, never the field name — the
+   *  placeholder is an <option>, not a label, so there was no accessible name at all. */
+  ariaLabel?: string
+  disabled?: boolean
 }) {
   const isActive = active ?? !!value
   return (
     <select
       value={value}
       onChange={e => onChange(e.target.value)}
+      aria-label={ariaLabel ?? placeholder}
+      disabled={disabled}
       style={{
         padding: '8px 30px 8px 12px',
         fontSize: 12,
@@ -91,13 +118,18 @@ function Sel({
         backgroundImage: ARROW(!isActive),
         backgroundRepeat: 'no-repeat',
         backgroundPosition: 'right 9px center',
-        minWidth: 0,
+        // Was minWidth: 0, which let every select shrink to its longest option — so the
+        // row had ragged, inconsistent widths. A floor keeps them aligned.
+        minWidth: 92,
+        opacity: disabled ? 0.55 : 1,
         letterSpacing: '0.01em',
       }}
     >
-      <option value="" style={{ background: SC_CHARCOAL, color: '#fff' }}>{placeholder}</option>
+      <option value="" style={{ background: SC_CHARCOAL, color: '#fff' }}>
+        {value ? `\u2715  Clear ${placeholder}` : placeholder}
+      </option>
       {options.map(o => (
-        <option key={o.value} value={o.value} style={{ background: SC_CHARCOAL, color: '#fff' }}>{o.label}</option>
+        <option key={o.value} value={o.value} disabled={o.disabled} style={{ background: SC_CHARCOAL, color: '#fff' }}>{o.label}</option>
       ))}
     </select>
   )
@@ -188,12 +220,11 @@ export default function ShowcaseSearchClient({
 
   const hasFilters = !!(activeType || activeBeds || activeMin || activeMax || activeCity || activeSubarea || activeYearBuilt || activeSort || keyword || activeStatus === 'Sold')
 
-  const displayed = keyword
-    ? initialListings.filter(l =>
-        (l.address || '').toLowerCase().includes(keyword.toLowerCase()) ||
-        (l.city || '').toLowerCase().includes(keyword.toLowerCase()) ||
-        (l.mls_no || '').toLowerCase().includes(keyword.toLowerCase()))
-    : initialListings
+  // Keyword is a SERVER filter now, so initialListings is already the filtered set.
+  // Previously this re-filtered client-side over just the current page of 40 out of 50,775,
+  // which is why searching a valid MLS number showed "No homes match" while the header
+  // still claimed thousands available.
+  const displayed = initialListings
 
   const rangeStart = (activePage - 1) * pageSize + 1
   const rangeEnd   = Math.min(activePage * pageSize, totalCount)
@@ -313,48 +344,51 @@ export default function ShowcaseSearchClient({
               {divider}
 
               {cities.length > 0 && (
-                <Sel placeholder="City" value={activeCity} onChange={pushCity}
+                <Sel ariaLabel="Filter by city" placeholder="City" value={activeCity} onChange={pushCity}
                   options={cities.map(c => ({ label: c, value: c }))} />
               )}
 
               {activeCity && subareas.length > 0 && (
-                <Sel placeholder="Neighbourhood" value={activeSubarea} onChange={pushSubarea}
+                <Sel ariaLabel="Filter by neighbourhood" placeholder="Neighbourhood" value={activeSubarea} onChange={pushSubarea}
                   options={subareas.map(s => ({ label: s, value: s }))} />
               )}
 
               {divider}
 
-              <Sel placeholder="Type" value={activeType} onChange={pushType}
+              <Sel ariaLabel="Property type" placeholder="Type" value={activeType} onChange={pushType}
                 options={TYPES.map(t => ({ label: t === 'Apartment' ? 'Condo' : t, value: t }))} />
 
-              <Sel placeholder="Beds" value={activeBeds} onChange={pushBeds}
+              <Sel ariaLabel="Minimum bedrooms" placeholder="Beds" value={activeBeds} onChange={pushBeds}
                 options={BEDS_OPTIONS} />
             </div>
 
             {/* Row B: Price + Year Built + Sort + Clear */}
             <div className="sc-filter-row" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-              <Sel placeholder="Min Price" value={activeMin} onChange={pushMin}
+              <Sel placeholder="Min Price" value={activeMin} onChange={pushMin} ariaLabel="Minimum price"
                 options={MIN_PRICE_OPTIONS.filter(o => o.value).map(o => {
                   const maxN = activeMax ? parseInt(activeMax) : 0
                   const optN = parseInt(o.value)
+                  // Disabled, not filtered out — with both selects greying their invalid
+                  // options, an inverted range is unreachable, so the silent
+                  // wipe-the-other-bound guard in pushMin/pushMax never fires.
                   return { label: o.label, value: o.value, disabled: maxN > 0 && optN >= maxN }
-                }).filter(o => !o.disabled || o.value === activeMin)
-                .map(({ label, value }) => ({ label, value }))} />
+                })} />
 
-              <Sel placeholder="Max Price" value={activeMax} onChange={pushMax}
-                options={MIN_PRICE_OPTIONS.filter(o => o.value).map(o => {
+              <Sel placeholder="Max Price" value={activeMax} onChange={pushMax} ariaLabel="Maximum price"
+                options={MAX_PRICE_OPTIONS.filter(o => o.value).map(o => {
                   const minN = activeMin ? parseInt(activeMin) : 0
                   const optN = parseInt(o.value)
+                  // Disabled, not removed: options vanishing mid-interaction makes the list
+                  // change length as you use it.
                   return { label: o.label, value: o.value, disabled: minN > 0 && optN <= minN }
-                }).filter(o => !o.disabled || o.value === activeMax)
-                .map(({ label, value }) => ({ label, value }))} />
+                })} />
 
               {divider}
 
-              <Sel placeholder="Year Built" value={activeYearBuilt} onChange={pushYearBuilt}
+              <Sel ariaLabel="Year built" placeholder="Year Built" value={activeYearBuilt} onChange={pushYearBuilt}
                 options={YEAR_BUILT_OPTIONS.filter(o => o.value)} />
 
-              <Sel placeholder="Sort: Newest" value={activeSort} onChange={pushSort}
+              <Sel ariaLabel="Sort results" placeholder="Sort: Newest" value={activeSort} onChange={pushSort}
                 options={SORTS.filter(s => s.value)} />
 
               {hasFilters && (

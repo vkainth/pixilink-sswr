@@ -2,7 +2,7 @@ import React from 'react'
 import { headers } from 'next/headers'
 import Image from 'next/image'
 import { getAgent, getOwnListings, getAgentTerritories, agentCanonicalBase, resolveAgentPrefix, agentAreaDisplay } from '@/lib/api'
-import { imgUrl, type AgentListing } from '@/lib/types'
+import { type AgentListing } from '@/lib/types'
 import { requireShowcase } from '@/lib/showcase'
 import ListingCard from '@/components/ListingCard'
 import AgentFaqSection from '@/components/AgentFaqSection'
@@ -92,7 +92,6 @@ export default async function FeaturedPropertiesPage({ params }: Props) {
 
   const activeListings: AgentListing[] = activeResult?.listings ?? []
   const soldListings: AgentListing[] = soldResult?.listings ?? []
-  const photoSrc = agent.photo_path ? imgUrl(agent.photo_path, 400) : null
   const firstName = agent.name.split(' ')[0]
 
   const areaLabel = primaryMarkets(soldListings) || agentAreaDisplay(territories)
@@ -344,43 +343,12 @@ export default async function FeaturedPropertiesPage({ params }: Props) {
         siteUrl={`https://${domain}`}
       />
 
-      {/* Agent + CTA */}
-      <section style={{ background: SC_CHARCOAL, padding: 'clamp(56px,8vw,80px) 0' }}>
-        <div className="container">
-          <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr', gap: 40, alignItems: 'center', maxWidth: 720 }} className="sc-fp-cta-grid">
-            {photoSrc && (
-              <div style={{ width: 120, height: 120, borderRadius: '50%', overflow: 'hidden', border: `2px solid ${SC_GOLD}`, flexShrink: 0 }}>
-                <Image src={photoSrc} alt={agent.name} width={120} height={120} unoptimized style={{ objectFit: 'cover', objectPosition: 'center top', width: '100%', height: '100%' }} />
-              </div>
-            )}
-            <div>
-              <p style={{ fontSize: 11, letterSpacing: '0.22em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 600, marginBottom: 8 }}>
-                {agent.brokerage}
-              </p>
-              <h2 style={{ fontFamily: "'Playfair Display',Georgia,serif", fontSize: 'clamp(1.4rem,2.5vw,2rem)', fontWeight: 400, color: '#fff', marginBottom: 8 }}>
-                {agent.name}
-              </h2>
-              {specializationLine ? (
-                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6, marginBottom: 20, maxWidth: 480 }}>
-                  {specializationLine}
-                </p>
-              ) : (
-                <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6, marginBottom: 20, maxWidth: 480 }}>
-                  Serving {areaLabel} with a track record you can verify.
-                </p>
-              )}
-              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <a href={ap('/home-evaluation')} style={{ background: SC_GOLD, color: SC_CHARCOAL, padding: '12px 24px', fontWeight: 700, fontSize: 13, letterSpacing: '0.06em', textTransform: 'uppercase', textDecoration: 'none', display: 'inline-block' }}>
-                  Free Home Evaluation
-                </a>
-                <a href={ap('/contact')} style={{ border: `1px solid rgba(155,139,122,0.4)`, color: SC_GOLD, padding: '12px 24px', fontWeight: 600, fontSize: 13, letterSpacing: '0.04em', textTransform: 'uppercase', textDecoration: 'none', display: 'inline-block' }}>
-                  Contact {firstName}
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* The dark "agent + CTA" band that used to sit here was removed: it repeated the
+          brokerage eyebrow, the specialisation sentence already printed higher on this
+          same page, and both of the footer band's destinations (home evaluation and
+          contact). Between it, the layout value-prop card and the footer band, this page
+          offered "Free Home Evaluation" three times in one screen. The footer band now
+          closes the page. */}
 
       <style>{`
         @media (max-width: 480px) {

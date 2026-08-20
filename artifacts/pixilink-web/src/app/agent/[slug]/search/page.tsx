@@ -97,6 +97,10 @@ export default async function SearchPage({ params, searchParams }: Props) {
       min_year: showcaseYearRange.min_year,
       max_year: showcaseYearRange.max_year,
       sort: (sp.sort as ListingsParams['sort']) || undefined,
+      // The keyword box used to filter only the rows already on screen, so searching
+      // an MLS number said "No homes match" for a listing 1,200 pages deep. Now sent
+      // to the server, which matches address / MLS / city / subarea.
+      keyword: sp.keyword || undefined,
       page: showcasePage,
       limit: SHOWCASE_PAGE_SIZE,
       all_search: true,

@@ -271,6 +271,8 @@ export interface ListingsParams {
   limit?: number
   days_back?: number
   price_reduced?: boolean
+  /** Free-text match on address, MLS number, city or subarea. Server-side. */
+  keyword?: string
   month?: string
   year?: number
   min_year?: number
@@ -341,6 +343,7 @@ export async function getListings(slug: string, params: ListingsParams = {}): Pr
     if (params.limit)     qs.set('limit', String(params.limit))
     if (params.days_back) qs.set('days_back', String(params.days_back))
     if (params.price_reduced) qs.set('price_reduced', '1')
+    if (params.keyword) qs.set('keyword', params.keyword)
     if (params.month)        qs.set('month', params.month)
     if (params.year)         qs.set('year', String(params.year))
     if (params.min_year)     qs.set('min_year', String(params.min_year))

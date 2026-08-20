@@ -290,9 +290,19 @@ export default async function AgentLayout({ children, params }: Props) {
             <>
               <main style={{ paddingTop: 'var(--nav-height)', paddingBottom: showStickyBar ? 'var(--sticky-footer-height)' : undefined }}>
                 {children}
-                <div className="layout-value-prop container" style={{ padding: '0 var(--container-padding) 48px' }}>
-                  <AgentValuePropCta agent={agent} />
-                </div>
+                {/* Showcase pages already close with their own CTA plus the footer's
+                    "Let's find your next home" band, so this card was a third ask in the
+                    same screen - "Free Home Evaluation" appeared three times and
+                    "Contact {name}" twice on /featured-properties and /sell-with-me. The
+                    showcase homepage was already hiding it with a display:none override,
+                    which is the same judgement made less cleanly. Gating it here removes
+                    it from all six showcase pages and leaves other presets untouched,
+                    where it is often the only mid-page CTA. */}
+                {cfg.layout_preset !== 'showcase' && (
+                  <div className="layout-value-prop container" style={{ padding: '0 var(--container-padding) 48px' }}>
+                    <AgentValuePropCta agent={agent} />
+                  </div>
+                )}
               </main>
               <AgentFooter agent={agent} territories={filteredTerritories} landingPages={landingPages} />
               {showStickyBar && (
