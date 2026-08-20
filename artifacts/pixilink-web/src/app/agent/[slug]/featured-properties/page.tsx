@@ -227,7 +227,6 @@ export default async function FeaturedPropertiesPage({ params }: Props) {
 
       {/* Page header */}
       <div style={{ background: SC_CHARCOAL, padding: 'clamp(56px,8vw,88px) 0 clamp(40px,5vw,64px)' }}>
-        <div style={{ height: 3, background: `linear-gradient(90deg,${SC_GOLD} 0%,#c4b09a 50%,${SC_GOLD} 100%)`, marginBottom: 'clamp(40px,5vw,64px)' }} />
         <div className="container">
           <p style={{ fontSize: 11, letterSpacing: '0.28em', textTransform: 'uppercase', color: SC_GOLD, fontWeight: 600, marginBottom: 12 }}>
             {agent.brokerage}

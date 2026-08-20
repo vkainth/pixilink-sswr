@@ -124,7 +124,6 @@ export default async function ContactPage({ params }: Props) {
 
         {/* Hero band — charcoal */}
         <div style={{ background: SC_CHARCOAL }}>
-          <div style={{ height: 3, background: `linear-gradient(90deg,${SC_GOLD} 0%,#c4b09a 50%,${SC_GOLD} 100%)` }} />
           <div className="container" style={{ padding: 'clamp(48px,8vw,72px) var(--container-padding)' }}>
             <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 16 }}>Get in Touch</p>
             <h1 style={{ ...PLAYFAIR_SC, fontSize: 'clamp(2rem,4vw,3rem)', fontWeight: 400, color: '#fff', lineHeight: 1.15, margin: '0 0 16px' }}>

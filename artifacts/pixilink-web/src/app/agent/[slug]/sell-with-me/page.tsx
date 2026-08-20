@@ -154,7 +154,6 @@ export default async function SellWithMePage({ params }: Props) {
 
       {/* ── Hero ── */}
       <div style={{ background: SC_CHARCOAL }}>
-        <div style={{ height: 3, background: `linear-gradient(90deg,${SC_GOLD} 0%,#c4b09a 50%,${SC_GOLD} 100%)` }} />
         <div className="container" style={{ padding: 'clamp(60px,10vw,96px) var(--container-padding)' }}>
           <div className="swm-hero-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 56, alignItems: 'center' }}>
             <div>
@@ -181,7 +180,7 @@ export default async function SellWithMePage({ params }: Props) {
             {photoSrc && (
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <div style={{ position: 'relative', width: 320, maxWidth: '100%' }}>
-                  <div style={{ aspectRatio: '3/4', overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,0.55)' }}>
+                  <div style={{ aspectRatio: '3/4', overflow: 'hidden' }}>
                     <Image src={photoSrc} alt={agent.name} fill unoptimized style={{ objectFit: 'cover', objectPosition: `${agent.photo_focal_x ?? 50}% ${agent.photo_focal_y ?? 15}%` }} />
                   </div>
                   <div style={{ position: 'absolute', top: -12, left: -12, right: 12, bottom: 12, border: `1px solid rgba(155,139,122,0.28)`, pointerEvents: 'none' }} />
