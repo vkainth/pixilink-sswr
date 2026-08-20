@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { markFormStarted, markFormSubmitted } from '@/lib/form-funnel'
 import { useRouter } from 'next/navigation'
 import { authFetch, nextStepPath, consumeReturnTo, peekReturnTo, parseSourceContext } from '@/lib/auth-client'
 import AuthSplitLayout from '@/components/AuthSplitLayout'
@@ -66,6 +67,8 @@ export default function RegisterForm({ agent, slug, agentPrefix }: { agent: Agen
       })
       const data = await res.json()
       if (!res.ok) { setError(getErrorMsg(data)); return }
+      // Account created: not an abandonment, even though OTP is still ahead.
+      markFormSubmitted('register', slug)
 
       // Phone is now required — if the backend says verify_phone, auto-send the
       // OTP and jump straight to the code-entry page (skip the phone-entry page).
@@ -110,7 +113,7 @@ export default function RegisterForm({ agent, slug, agentPrefix }: { agent: Agen
         <div className="auth-name-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div>
             <label style={labelStyle}>First Name</label>
-            <input required value={firstName} onChange={e => setFirstName(e.target.value)}
+            <input required value={firstName} onChange={e => { markFormStarted('register', slug); setFirstName(e.target.value) }}
               placeholder="Jane" autoComplete="given-name" style={inputStyle} />
           </div>
           <div>

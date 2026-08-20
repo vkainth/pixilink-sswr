@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { markFormStarted, markFormSubmitted } from '@/lib/form-funnel'
 import type { AgentProfile } from '@/lib/types'
 import { imgUrl } from '@/lib/types'
 
@@ -62,6 +63,7 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
         }),
       })
       if (res.ok) {
+        markFormSubmitted('showing_request', agent.slug)
         setDone(true)
       } else {
         setError('Something went wrong. Please try again or call directly.')
@@ -207,7 +209,7 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
                 <div style={{ color: '#6b7280', fontSize: 12, marginBottom: 14 }}>Pick a window — I&apos;ll confirm the exact time.</div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 8, marginBottom: 16 }}>
                   {[['Morning', '9am–12pm'], ['Afternoon', '12–5pm'], ['Evening', '5–7pm']].map(([label, sub]) => (
-                    <button key={label} onClick={() => setTime(label)} style={{
+                    <button key={label} onClick={() => { markFormStarted('showing_request', agent.slug); setTime(label) }} style={{
                       padding: '12px 8px', borderRadius: 8, cursor: 'pointer', textAlign: 'center',
                       background: time === label ? 'rgba(var(--cta-primary-rgb),0.08)' : '#f9fafb',
                       border: `1.5px solid ${time === label ? 'var(--cta-primary)' : '#e5e7eb'}`,

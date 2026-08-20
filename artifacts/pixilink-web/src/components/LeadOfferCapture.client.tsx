@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { markFormStarted, markFormSubmitted } from '@/lib/form-funnel'
 
 export type LeadOfferType =
   | 'weekly_deals'
@@ -59,6 +60,7 @@ export default function LeadOfferCapture({
         }),
       })
       if (res.ok) {
+        markFormSubmitted(`offer:${offerType}`, slug)
         setSent(true)
       } else {
         const data = await res.json().catch(() => ({}))
@@ -118,7 +120,7 @@ export default function LeadOfferCapture({
             required
             placeholder="Your email address"
             value={email}
-            onChange={e => setEmail(e.target.value)}
+            onChange={e => { markFormStarted(`offer:${offerType}`, slug); setEmail(e.target.value) }}
             className="loc-input"
             style={{
               padding: '9px 14px', border: '1px solid var(--border)', borderRadius: 6,
