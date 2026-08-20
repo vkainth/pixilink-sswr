@@ -75,12 +75,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (RESIDENCITY_HOSTS.has(reqHost) || residencityZone) {
     const regionSlug = residencityZone || mappedRegionSlug
     canonicalHost = regionSlug ? `residencity.ca/${regionSlug}` : 'residencity.ca'
+  } else if (agent.settings?.custom_domain) {
+    // The agent record beats host inspection: in headerless renders (build-time
+    // prerender, reused layout output) reqHost is empty, and the old order fell
+    // through to the region branch — canonicalizing suburbia.ca's pages to
+    // website.pixilink.com/tricity in whichever cached copy rendered headerless.
+    canonicalHost = agent.settings.custom_domain
   } else if (AGENT_DOMAINS.has(reqHost)) {
-    canonicalHost = agent.settings?.custom_domain || reqHost
+    canonicalHost = reqHost
   } else if (mappedRegionSlug) {
     canonicalHost = `website.pixilink.com/${mappedRegionSlug}`
   } else {
-    canonicalHost = agent.settings?.custom_domain || 'findfraservalleyhomes.com'
+    canonicalHost = 'findfraservalleyhomes.com'
   }
 
   const isSouthSurrey = canonicalHost.includes('southsurreywhiterock') || canonicalHost.includes('south-surrey')
@@ -183,9 +189,18 @@ export default async function AgentLayout({ children, params }: Props) {
   const mappedRegionSlug = regionSlugForAgentShared(slug)
   const isResidencityMode = RESIDENCITY_HOSTS.has(host) || Boolean(residencityZone) || Boolean(mappedRegionSlug)
 
+  // An agent with a custom_domain is ONLY publicly served on that domain — middleware
+  // 308s every other context (region preview, /agent/{slug} on website.pixilink.com).
+  // So for these agents the prefix is '' in EVERY render, including the headerless ones
+  // (build-time prerender, reused layout output) where `host` is empty and the old
+  // host-based check fell through to '/agent/{slug}' — which is how shareneshuster.com
+  // ended up serving a nav whose every link 404s. custom_domain comes from the agent
+  // record: pure, header-free, and automatically right for future domain-owning agents.
+  const ownsDomain = Boolean(agent.settings?.custom_domain)
+
   let agentPrefix: string
   let signInUrl: string
-  if (isDomainMode) {
+  if (ownsDomain || isDomainMode) {
     agentPrefix = ''
     signInUrl = '/sign-in'
   } else if (isResidencityMode) {
