@@ -219,10 +219,28 @@ export default function AgentEditorForm({ agent, cities, subareas }: Props) {
   const [focalX, setFocalX] = useState<number>(agent?.settings?.photo_focal_x ?? 50)
   const [focalY, setFocalY] = useState<number>(agent?.settings?.photo_focal_y ?? 0)
 
-  // Site Layout (showcase-only)
-  const layoutPreset = agent?.settings?.site_config?.layout_preset ?? 'hub'
+  // Design config — the whole site_config object is editable here. Values not touched
+  // by these controls (anything hand-added to the JSON) are preserved on save via the
+  // spread in buildSiteConfig, so this panel never silently drops an unknown key.
+  const initialSc = agent?.settings?.site_config ?? {}
+  const [layoutPreset, setLayoutPreset] = useState<string>(initialSc.layout_preset ?? 'hub')
+  const [heroStyle, setHeroStyle] = useState<string>(initialSc.hero_style ?? 'full-bleed')
+  const [navStyle, setNavStyle] = useState<string>(initialSc.nav_style ?? (initialSc.layout_preset === 'showcase' ? 'dark-bar' : 'centered'))
+  const [fontPair, setFontPair] = useState<string>(initialSc.font_pair ?? 'serif-sans')
+  const [palette, setPalette] = useState<string>(initialSc.palette ?? 'light')
+  const [scSections, setScSections] = useState<Record<string, boolean | string>>({
+    achievements:   initialSc.sections?.achievements ?? true,
+    sold_gallery:   initialSc.sections?.sold_gallery ?? true,
+    buildings:      initialSc.sections?.buildings ?? (initialSc.layout_preset !== 'showcase'),
+    testimonials:   initialSc.sections?.testimonials ?? 'cards',
+    market_reports: initialSc.sections?.market_reports ?? (initialSc.layout_preset !== 'showcase'),
+    blog:           initialSc.sections?.blog ?? true,
+    cta_home_eval:  initialSc.sections?.cta_home_eval ?? true,
+    credentials:    initialSc.sections?.credentials ?? true,
+    faqs:           initialSc.sections?.faqs ?? true,
+  })
   const [showcaseHeroStyle, setShowcaseHeroStyle] = useState<string>(
-    agent?.settings?.site_config?.showcase_hero_style ?? 'split'
+    initialSc.showcase_hero_style ?? 'split'
   )
 
   // Hero Stats
@@ -378,6 +396,19 @@ export default function AgentEditorForm({ agent, cities, subareas }: Props) {
       v !== null && !(Array.isArray(v) && v.length === 0)
     )
 
+    // Merge over the stored object rather than rebuilding it, so any key added by hand
+    // to the JSON (or by a future panel) survives a save from this form.
+    const siteConfig = JSON.stringify({
+      ...(agent?.settings?.site_config ?? {}),
+      layout_preset: layoutPreset,
+      showcase_hero_style: showcaseHeroStyle,
+      hero_style: heroStyle,
+      nav_style: navStyle,
+      font_pair: fontPair,
+      palette,
+      sections: scSections,
+    })
+
     const payload = {
       name, slug: slug || undefined, brokerage: brokerage || null, email,
       phone: phone || null, bio: bio || null, license_number: licenseNumber || null,
@@ -400,6 +431,7 @@ export default function AgentEditorForm({ agent, cities, subareas }: Props) {
       photo_focal_y: focalY,
       headshot_path: headshotUrl || null,
       favicon_url: faviconUrl || null,
+      site_config: siteConfig,
       hero_stats: hasHeroStats ? JSON.stringify(heroStatsPayload) : null,
       achievements: achievements.some((a) => a.trim())
         ? JSON.stringify(achievements.filter((a) => a.trim()).map((a) => ({ label: a })))
@@ -428,13 +460,9 @@ export default function AgentEditorForm({ agent, cities, subareas }: Props) {
 
       if (res.ok) {
         const data = await res.json()
-        if (!isNew && layoutPreset === 'showcase') {
-          await fetch(apiPath(`/api/admin/agents/${agent!.id}/site-config`), {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ showcase_hero_style: showcaseHeroStyle }),
-          })
-        }
+        // site_config now travels in the main payload; the old follow-up PUT to
+        // /site-config only ever wrote showcase_hero_style — and silently no-oped until
+        // agentUpdate's validator learned the key, since validate() strips unknown input.
         setSuccess(isNew ? 'Agent created successfully!' : 'Agent updated successfully!')
         if (isNew && data?.id) {
           router.push(`/admin/agents/${data.id}`)
@@ -747,9 +775,22 @@ export default function AgentEditorForm({ agent, cities, subareas }: Props) {
         </Field>
       </Section>
 
-      {/* Showcase Layout — only visible for showcase preset agents */}
-      {layoutPreset === 'showcase' && (
-        <Section title="Showcase Layout">
+      {/* Design — the site_config controls. Only options a preset actually honours are
+          shown for it, so nothing here silently does nothing. */}
+      <Section title="Design">
+        <Field label="Layout Preset">
+          <select style={inputStyle} value={layoutPreset} onChange={(e) => setLayoutPreset(e.target.value)}>
+            <option value="hub">Hub — full content site: neighbourhoods, market reports, guides</option>
+            <option value="showcase">Showcase — editorial personal-brand homepage, shared property pages</option>
+            <option value="minimal">Minimal — lean single-purpose site</option>
+          </select>
+          <div style={{ fontSize: 11, color: '#5e6c84', marginTop: 4 }}>
+            Switching preset changes which pages exist: showcase serves about / sell-with-me /
+            featured-properties / contact and 404s hub-only routes (sellers, buyers, neighbourhoods…), and vice versa.
+          </div>
+        </Field>
+
+        {layoutPreset === 'showcase' ? (
           <Field label="Hero Style">
             <select
               style={inputStyle}
@@ -760,12 +801,83 @@ export default function AgentEditorForm({ agent, cities, subareas }: Props) {
               <option value="fullbleed-cinematic">Full-bleed Cinematic — photo fills viewport, text overlay</option>
               <option value="editorial-stack">Editorial Stack — photo strip on top, text + stats below</option>
             </select>
+            <div style={{ fontSize: 11, color: '#5e6c84', marginTop: 4 }}>
+              The strip heroes use the agent&apos;s <code>hero</code> image from agent media when one is set,
+              falling back to the portrait.
+            </div>
           </Field>
-          <div style={{ fontSize: 12, color: '#5e6c84', marginTop: -8 }}>
-            Controls which hero layout appears at the top of this agent&apos;s homepage. Changes take effect on next page load.
+        ) : (
+          <div style={twoColGrid}>
+            <Field label="Hero Style">
+              <select style={inputStyle} value={heroStyle} onChange={(e) => setHeroStyle(e.target.value)}>
+                <option value="full-bleed">Full-bleed photo</option>
+                <option value="split">Split — text and photo</option>
+                <option value="circle-centered">Circle portrait, centered</option>
+                <option value="text-only">Text only</option>
+                <option value="photo-strip">Photo strip</option>
+              </select>
+            </Field>
+            <Field label="Nav Style">
+              <select style={inputStyle} value={navStyle} onChange={(e) => setNavStyle(e.target.value)}>
+                <option value="centered">Centered</option>
+                <option value="dark-bar">Dark bar</option>
+                <option value="transparent-hero">Transparent over hero</option>
+                <option value="minimal">Minimal</option>
+              </select>
+            </Field>
           </div>
-        </Section>
-      )}
+        )}
+
+        <div style={twoColGrid}>
+          <Field label="Type Pairing">
+            <select style={inputStyle} value={fontPair} onChange={(e) => setFontPair(e.target.value)}>
+              <option value="serif-sans">Serif headings + sans body (Playfair / Inter)</option>
+              <option value="all-sans">All sans (Inter)</option>
+              <option value="geometric">Geometric (DM Sans)</option>
+            </select>
+          </Field>
+          <Field label="Palette">
+            <select style={inputStyle} value={palette} onChange={(e) => setPalette(e.target.value)}>
+              <option value="light">Light</option>
+              <option value="dark">Dark canvas</option>
+            </select>
+          </Field>
+        </div>
+
+        <Field label="Homepage Sections">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px 16px', paddingTop: 2 }}>
+            {([
+              ['achievements',   'Achievements',    null],
+              ['sold_gallery',   'Sold gallery',    null],
+              ['testimonials',   'Testimonials',    null],
+              ['cta_home_eval',  'Home eval CTA',   null],
+              ['credentials',    'Hero credentials', null],
+              ['faqs',           'FAQs',            null],
+              ['buildings',      'Buildings',       'hub only'],
+              ['market_reports', 'Market reports',  'hub only'],
+              ['blog',           'Blog teaser',     'hub only'],
+            ] as [string, string, string | null][]).map(([key, label, note]) => (
+              <label key={key} style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 13, color: '#172b4d' }}>
+                <input
+                  type="checkbox"
+                  checked={scSections[key] !== false}
+                  onChange={(e) => setScSections({
+                    ...scSections,
+                    // testimonials is a variant union, not a boolean — re-enabling
+                    // restores the cards style rather than a bare `true`.
+                    [key]: key === 'testimonials' ? (e.target.checked ? 'cards' : false) : e.target.checked,
+                  })}
+                />
+                {label}
+                {note && <span style={{ fontSize: 10, color: '#8993a4' }}>({note})</span>}
+              </label>
+            ))}
+          </div>
+          <div style={{ fontSize: 11, color: '#5e6c84', marginTop: 8 }}>
+            A section also needs data to render — an enabled sold gallery with no sold listings still hides itself.
+          </div>
+        </Field>
+      </Section>
 
       {/* Domain + Tracking */}
       <Section title="Domain & Tracking">

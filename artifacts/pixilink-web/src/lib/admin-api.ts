@@ -75,6 +75,11 @@ export interface AdminAgent {
     site_config?: {
       layout_preset?: string
       showcase_hero_style?: string
+      hero_style?: string
+      nav_style?: string
+      font_pair?: string
+      palette?: string
+      sections?: Record<string, boolean | string>
       [key: string]: unknown
     } | null
   } | null
