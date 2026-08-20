@@ -30,6 +30,8 @@ export interface SiteTheme {
   rule: string
   /** Brand accent — rules, small marks, and fills on dark backgrounds. */
   accent: string
+  /** accent as an "R,G,B" triplet, for rgba(var(--site-accent-rgb),a) tints. */
+  accentRgb: string
   /**
    * Accent darkened until it clears WCAG AA against `canvas`.
    *
@@ -109,6 +111,7 @@ export function resolveSiteTheme(agent: AgentProfile): SiteTheme {
       muted:      'var(--text-muted)',
       rule:       'var(--border)',
       accent:     'var(--accent)',
+      accentRgb:  'var(--accent-rgb)',
       accentText: 'var(--accent)',
       dark:       'var(--primary-bg)',
       darkAlt:    'var(--primary-bg)',
@@ -122,6 +125,7 @@ export function resolveSiteTheme(agent: AgentProfile): SiteTheme {
   return {
     ...SHOWCASE,
     accent,
+    accentRgb: theme.accentRgb,
     accentText: darkenToContrast(accent, SHOWCASE.canvas),
   }
 }
@@ -136,6 +140,7 @@ export function siteThemeCssVars(t: SiteTheme): string {
     `--site-muted:${t.muted}`,
     `--site-rule:${t.rule}`,
     `--site-accent:${t.accent}`,
+    `--site-accent-rgb:${t.accentRgb}`,
     `--site-accent-text:${t.accentText}`,
     `--site-dark:${t.dark}`,
     `--site-dark-alt:${t.darkAlt}`,

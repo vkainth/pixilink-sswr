@@ -141,10 +141,10 @@ export default async function HomeEvaluationPage({ params }: Props) {
   ]
 
   return (
-    <div style={{ background: 'var(--off-white)', minHeight: '100vh' }}>
+    <div style={{ background: 'var(--site-canvas)', minHeight: '100vh' }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Hero */}
-      <div style={{ background: '#fff', padding: '48px 0 40px', borderBottom: '1px solid var(--border)' }}>
+      <div style={{ background: '#fff', padding: '48px 0 40px', borderBottom: '1px solid var(--site-rule)' }}>
         <div className="container">
           <div className="eval-hero" style={{ display: 'grid', gridTemplateColumns: photoSrc ? '1fr 180px' : '1fr', gap: 40, alignItems: 'center' }}>
             <div>
@@ -162,7 +162,7 @@ export default async function HomeEvaluationPage({ params }: Props) {
               )}
             </div>
             {photoSrc && (
-              <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border)' }}>
+              <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid var(--site-rule)' }}>
                 <img src={photoSrc} alt={agent.name} style={{ width: '100%', display: 'block', aspectRatio: '3/4', objectFit: 'cover', objectPosition: 'top' }} />
               </div>
             )}
@@ -172,7 +172,7 @@ export default async function HomeEvaluationPage({ params }: Props) {
 
       {/* Credential strip — only rendered when real review data is configured */}
       {reviewValue && (
-        <div style={{ background: 'var(--primary-bg)', padding: '10px 0' }}>
+        <div style={{ background: 'var(--site-ink)', padding: '10px 0' }}>
           <div className="container">
             <p style={{ margin: 0, textAlign: 'center', fontSize: 13, color: 'rgba(255,255,255,0.88)', fontWeight: 500, lineHeight: 1.5 }}>
               <strong style={{ color: '#fff' }}>
@@ -185,23 +185,23 @@ export default async function HomeEvaluationPage({ params }: Props) {
 
       {/* Market snapshot */}
       {(stats.avg_sold_price || stats.avg_dom != null) && (
-        <div style={{ background: '#fff', borderBottom: '1px solid var(--border)', padding: '16px 0' }}>
+        <div style={{ background: '#fff', borderBottom: '1px solid var(--site-rule)', padding: '16px 0' }}>
           <div className="container">
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
               {stats.avg_sold_price && (
-                <div style={{ background: 'var(--off-white)', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 18px' }}>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--accent)' }}>{formatPrice(stats.avg_sold_price)}</div>
+                <div style={{ background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', borderRadius: 8, padding: '10px 18px' }}>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--site-accent-text)' }}>{formatPrice(stats.avg_sold_price)}</div>
                   <div style={{ fontSize: 11, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Avg Sold Price</div>
                 </div>
               )}
               {stats.avg_dom != null && (
-                <div style={{ background: 'var(--off-white)', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 18px' }}>
-                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--accent)' }}>{stats.avg_dom}d</div>
+                <div style={{ background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', borderRadius: 8, padding: '10px 18px' }}>
+                  <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--site-accent-text)' }}>{stats.avg_dom}d</div>
                   <div style={{ fontSize: 11, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Avg Days on Market</div>
                 </div>
               )}
-              <div style={{ background: 'var(--off-white)', border: '1px solid var(--border)', borderRadius: 8, padding: '10px 18px' }}>
-                <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--accent)' }}>{stats.sold_last_30_days}</div>
+              <div style={{ background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', borderRadius: 8, padding: '10px 18px' }}>
+                <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--site-accent-text)' }}>{stats.sold_last_30_days}</div>
                 <div style={{ fontSize: 11, color: '#888', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sold Last 30 Days</div>
               </div>
             </div>
@@ -215,22 +215,22 @@ export default async function HomeEvaluationPage({ params }: Props) {
           <div>
             {/* How it works */}
             <section style={{ marginBottom: 56 }}>
-              <h2 style={{ fontSize: 24, fontWeight: 800, color: 'var(--primary-bg)', marginBottom: 8 }}>How It Works</h2>
-              <p style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 28, lineHeight: 1.7 }}>
+              <h2 style={{ fontSize: 24, fontWeight: 800, color: 'var(--site-ink)', marginBottom: 8 }}>How It Works</h2>
+              <p style={{ fontSize: 14, color: 'var(--site-muted)', marginBottom: 28, lineHeight: 1.7 }}>
                 A Comparative Market Analysis is the most accurate way to know what your home will actually sell for — not what Zillow says.
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
                 {steps.map((s, i) => (
                   <div key={s.n} style={{ display: 'flex', gap: 20, paddingBottom: i < steps.length - 1 ? 28 : 0, position: 'relative' }}>
                     {i < steps.length - 1 && (
-                      <div style={{ position: 'absolute', left: 20, top: 44, bottom: 0, width: 2, background: 'var(--border)' }} />
+                      <div style={{ position: 'absolute', left: 20, top: 44, bottom: 0, width: 2, background: 'var(--site-rule)' }} />
                     )}
                     <div style={{ width: 40, height: 40, borderRadius: '50%', background: agent.theme_color || '#111111', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: 13, color: agent.primary_bg_color || '#14213d', flexShrink: 0 }}>
                       {s.n}
                     </div>
                     <div style={{ paddingTop: 8 }}>
-                      <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--primary-bg)', marginBottom: 6 }}>{s.title}</div>
-                      <p style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.7, margin: 0 }}>{s.body}</p>
+                      <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--site-ink)', marginBottom: 6 }}>{s.title}</div>
+                      <p style={{ fontSize: 14, color: 'var(--site-body)', lineHeight: 1.7, margin: 0 }}>{s.body}</p>
                     </div>
                   </div>
                 ))}
@@ -239,13 +239,13 @@ export default async function HomeEvaluationPage({ params }: Props) {
 
             {/* Why a CMA */}
             <section style={{ marginBottom: 56 }}>
-              <h2 style={{ fontSize: 24, fontWeight: 800, color: 'var(--primary-bg)', marginBottom: 22 }}>Why Get a CMA?</h2>
+              <h2 style={{ fontSize: 24, fontWeight: 800, color: 'var(--site-ink)', marginBottom: 22 }}>Why Get a CMA?</h2>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 16 }}>
                 {whyItems.map(item => (
-                  <div key={item.title} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '20px 22px' }}>
+                  <div key={item.title} style={{ background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 10, padding: '20px 22px' }}>
                     <div style={{ fontSize: 28, marginBottom: 10 }}>{item.icon}</div>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--primary-bg)', marginBottom: 8 }}>{item.title}</div>
-                    <p style={{ fontSize: 13, color: 'var(--text)', lineHeight: 1.65, margin: 0 }}>{item.body}</p>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--site-ink)', marginBottom: 8 }}>{item.title}</div>
+                    <p style={{ fontSize: 13, color: 'var(--site-body)', lineHeight: 1.65, margin: 0 }}>{item.body}</p>
                   </div>
                 ))}
               </div>
@@ -254,24 +254,24 @@ export default async function HomeEvaluationPage({ params }: Props) {
             {/* Recent sales context */}
             {recentSold.length > 0 && (
               <section>
-                <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--primary-bg)', marginBottom: 6 }}>Recent Sales Across the Region</h2>
-                <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 18 }}>Real MLS® sold data — a sample of what comparable properties have actually sold for.</p>
+                <h2 style={{ fontSize: 20, fontWeight: 800, color: 'var(--site-ink)', marginBottom: 6 }}>Recent Sales Across the Region</h2>
+                <p style={{ fontSize: 13, color: 'var(--site-muted)', marginBottom: 18 }}>Real MLS® sold data — a sample of what comparable properties have actually sold for.</p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                   {recentSold.map(s => (
-                    <div key={s.id} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, padding: '14px 18px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+                    <div key={s.id} style={{ background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 8, padding: '14px 18px', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
                       <div>
-                        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text)' }}>{s.address}</div>
-                        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{s.type} · {s.beds} bed · {s.sqft > 0 ? `${s.sqft.toLocaleString()} ft²` : ''}</div>
+                        <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--site-body)' }}>{s.address}</div>
+                        <div style={{ fontSize: 12, color: 'var(--site-muted)' }}>{s.type} · {s.beds} bed · {s.sqft > 0 ? `${s.sqft.toLocaleString()} ft²` : ''}</div>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--accent)' }}>{formatPrice(s.sold_price || s.list_price)}</div>
-                        {s.dom != null && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{s.dom}d on market</div>}
+                        <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--site-accent-text)' }}>{formatPrice(s.sold_price || s.list_price)}</div>
+                        {s.dom != null && <div style={{ fontSize: 11, color: 'var(--site-muted)' }}>{s.dom}d on market</div>}
                       </div>
                     </div>
                   ))}
                 </div>
                 <div style={{ marginTop: 12 }}>
-                  <a href={ap('/sold')} style={{ fontSize: 13, color: 'var(--accent)', fontWeight: 600, textDecoration: 'none' }}>View all recent sales →</a>
+                  <a href={ap('/sold')} style={{ fontSize: 13, color: 'var(--site-accent-text)', fontWeight: 600, textDecoration: 'none' }}>View all recent sales →</a>
                 </div>
               </section>
             )}

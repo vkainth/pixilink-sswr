@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 const statusBadge: Record<string, { bg: string; label: string }> = {
-  Active: { bg: 'var(--accent)', label: 'For Sale' },
+  Active: { bg: 'var(--site-accent)', label: 'For Sale' },
   Sold: { bg: '#1f2937', label: 'Sold' },
 }
 
@@ -471,8 +471,8 @@ export default async function ListingDetailPage({ params }: Props) {
     ...(listing.reoffice ? [['Listed By', listing.reoffice, true] as [string, string, boolean]] : []),
   ]
 
-  const sectionTitle: React.CSSProperties = { fontSize: 18, fontWeight: 800, margin: '0 0 14px', color: 'var(--primary-bg)' }
-  const card: React.CSSProperties = { background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '22px 24px' }
+  const sectionTitle: React.CSSProperties = { fontSize: 18, fontWeight: 800, margin: '0 0 14px', color: 'var(--site-ink)' }
+  const card: React.CSSProperties = { background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 10, padding: '22px 24px' }
   const section: React.CSSProperties = { margin: '0 0 32px' }
 
   const schools = getSchools(listing.subarea, listing.city)
@@ -502,7 +502,7 @@ export default async function ListingDetailPage({ params }: Props) {
     : null
 
   return (
-    <div style={{ background: 'var(--off-white)', minHeight: '100vh', paddingBottom: 24 }}>
+    <div style={{ background: 'var(--site-canvas)', minHeight: '100vh', paddingBottom: 24 }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd(listing, canonicalUrl)) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       {/* Fire-and-forget property view tracker — 401 silently ignored when not logged in */}
@@ -512,8 +512,8 @@ export default async function ListingDetailPage({ params }: Props) {
 
       {/* Gallery */}
       <div className="container" style={{ padding: '20px var(--container-padding) 0' }}>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 12 }}>
-          <a href={ap('/homes-for-sale')} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Homes</a>
+        <div style={{ fontSize: 12, color: 'var(--site-muted)', marginBottom: 12 }}>
+          <a href={ap('/homes-for-sale')} style={{ color: 'var(--site-muted)', textDecoration: 'none' }}>Homes</a>
           {' › '}<span>{listing.city}</span>
           {listing.subarea ? <>{' › '}<span>{listing.subarea}</span></> : null}
         </div>
@@ -527,28 +527,28 @@ export default async function ListingDetailPage({ params }: Props) {
             {/* Status + price + address */}
             <div style={{ display: 'flex', gap: 8, marginBottom: 12, alignItems: 'center', flexWrap: 'wrap' }}>
               <span style={{ background: badge.bg, color: '#fff', fontSize: 11, fontWeight: 800, padding: '4px 12px', borderRadius: 4, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{badge.label}</span>
-              {listing.type && <span style={{ background: 'var(--off-white)', border: '1px solid var(--border)', color: 'var(--text-muted)', fontSize: 11, fontWeight: 600, padding: '4px 12px', borderRadius: 4 }}>{listing.type}</span>}
-              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>MLS® {listing.mls_no}</span>
-              {listing.dom != null && !isSold && <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>· {listing.dom} days on market</span>}
+              {listing.type && <span style={{ background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', color: 'var(--site-muted)', fontSize: 11, fontWeight: 600, padding: '4px 12px', borderRadius: 4 }}>{listing.type}</span>}
+              <span style={{ fontSize: 11, color: 'var(--site-muted)' }}>MLS® {listing.mls_no}</span>
+              {listing.dom != null && !isSold && <span style={{ fontSize: 11, color: 'var(--site-muted)' }}>· {listing.dom} days on market</span>}
               {!isSold && <ListingDetailHeartButton mlsNo={listing.mls_no} />}
               {!isSold && <ListingAlertButton mlsNo={listing.mls_no} isLoggedIn={isLoggedIn} />}
             </div>
 
-            <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', margin: '0 0 4px' }}>{listing.address}, {listing.city} BC</h1>
-            <p style={{ fontSize: 14, color: 'var(--text-muted)', margin: '0 0 8px' }}>{listing.city}{listing.subarea ? `, ${listing.subarea}` : ''}</p>
+            <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--site-body)', margin: '0 0 4px' }}>{listing.address}, {listing.city} BC</h1>
+            <p style={{ fontSize: 14, color: 'var(--site-muted)', margin: '0 0 8px' }}>{listing.city}{listing.subarea ? `, ${listing.subarea}` : ''}</p>
             {isSold && listing.sold_date && (
-              <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: '0 0 20px' }}>Sold {formatDate(listing.sold_date)}</p>
+              <p style={{ fontSize: 13, color: 'var(--site-muted)', margin: '0 0 20px' }}>Sold {formatDate(listing.sold_date)}</p>
             )}
 
             {/* Mobile-only price strip — hidden on desktop via CSS */}
             <div className="listing-mobile-price">
               {guestSoldLocked ? (
-                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--site-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
                   <span>🔒</span>
                   <span>{nextStepUrl ? 'Complete registration to see sold price' : 'Sign in to see sold price'}</span>
                 </div>
               ) : (
-                <div style={{ fontSize: 26, fontWeight: 900, color: 'var(--accent)' }}>{priceLabel}</div>
+                <div style={{ fontSize: 26, fontWeight: 900, color: 'var(--site-accent-text)' }}>{priceLabel}</div>
               )}
             </div>
 
@@ -561,9 +561,9 @@ export default async function ListingDetailPage({ params }: Props) {
                 ...(listing.year_built ? [{ v: String(listing.year_built), l: 'Built', icon: '🏗' }] : []),
                 ...(!guestSoldLocked && psf ? [{ v: psf, l: 'Per ft²', icon: '💲' }] : []),
               ].map(s => (
-                <div key={s.l} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, padding: '14px 12px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--primary-bg)', lineHeight: 1.1 }}>{s.v}</div>
-                  <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 3 }}>{s.l}</div>
+                <div key={s.l} style={{ background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 8, padding: '14px 12px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--site-ink)', lineHeight: 1.1 }}>{s.v}</div>
+                  <div style={{ fontSize: 10, color: 'var(--site-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 3 }}>{s.l}</div>
                 </div>
               ))}
             </div>
@@ -627,9 +627,9 @@ export default async function ListingDetailPage({ params }: Props) {
 
             {/* SEO description block — always visible for sold listings */}
             {isSold && (
-              <div style={{ background: 'var(--off-white)', border: '1px solid var(--border)', borderRadius: 8, padding: '20px 24px', marginBottom: 28 }}>
-                <div style={{ fontSize: 11, color: 'var(--accent)', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 6 }}>Property Details</div>
-                <p style={{ color: 'var(--text-muted)', lineHeight: 1.8, fontSize: 14, margin: 0 }}>
+              <div style={{ background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', borderRadius: 8, padding: '20px 24px', marginBottom: 28 }}>
+                <div style={{ fontSize: 11, color: 'var(--site-accent-text)', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 6 }}>Property Details</div>
+                <p style={{ color: 'var(--site-muted)', lineHeight: 1.8, fontSize: 14, margin: 0 }}>
                   {`This ${listing.beds}-bedroom, ${baths}-bathroom ${listing.type ? listing.type.toLowerCase() : 'property'} at ${listing.address}${listing.subarea ? ` in ${listing.subarea}` : ''}, ${listing.city}${listing.sold_date ? ` sold in ${formatDate(listing.sold_date, { month: 'long', year: 'numeric' })}` : ' is now sold'}.`}
                   {listing.sqft > 0 ? ` The property offers ${listing.sqft.toLocaleString()} sq ft of living space.` : ''}
                   {listing.year_built ? ` Built in ${listing.year_built}.` : ''}
@@ -664,7 +664,7 @@ export default async function ListingDetailPage({ params }: Props) {
               <section style={section}>
                 <h2 style={sectionTitle}>About This Property</h2>
                 <div style={card}>
-                  <p style={{ fontSize: 14, lineHeight: 1.8, color: 'var(--text)', margin: 0, whiteSpace: 'pre-line' }}>{listing.description}</p>
+                  <p style={{ fontSize: 14, lineHeight: 1.8, color: 'var(--site-body)', margin: 0, whiteSpace: 'pre-line' }}>{listing.description}</p>
                 </div>
               </section>
             )}
@@ -676,28 +676,28 @@ export default async function ListingDetailPage({ params }: Props) {
                 <div style={card}>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '10px 28px', marginBottom: (listing.features.length || listing.amenities.length) ? 20 : 0 }}>
                     {detailRows.map(([k, v, muted]) => (
-                      <div key={k} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: 8, fontSize: 13 }}>
-                        <span style={{ color: 'var(--text-muted)' }}>{k}</span>
-                        <span style={{ color: muted ? 'var(--text-muted)' : 'var(--text)', fontWeight: muted ? 400 : 600, fontStyle: muted ? 'italic' : 'normal', textAlign: 'right' }}>{v}</span>
+                      <div key={k} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--site-rule)', paddingBottom: 8, fontSize: 13 }}>
+                        <span style={{ color: 'var(--site-muted)' }}>{k}</span>
+                        <span style={{ color: muted ? 'var(--site-muted)' : 'var(--site-body)', fontWeight: muted ? 400 : 600, fontStyle: muted ? 'italic' : 'normal', textAlign: 'right' }}>{v}</span>
                       </div>
                     ))}
                   </div>
                   {listing.features.length > 0 && (
                     <>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', margin: '4px 0 10px' }}>Features</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--site-body)', margin: '4px 0 10px' }}>Features</div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: listing.amenities.length ? 18 : 0 }}>
                         {listing.features.map(f => (
-                          <span key={f} style={{ background: 'var(--off-white)', border: '1px solid var(--border)', borderRadius: 6, padding: '5px 12px', fontSize: 12, color: 'var(--text)' }}>{f}</span>
+                          <span key={f} style={{ background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', borderRadius: 6, padding: '5px 12px', fontSize: 12, color: 'var(--site-body)' }}>{f}</span>
                         ))}
                       </div>
                     </>
                   )}
                   {listing.amenities.length > 0 && (
                     <>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', margin: '4px 0 10px' }}>Building Amenities</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--site-body)', margin: '4px 0 10px' }}>Building Amenities</div>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                         {listing.amenities.map(a => (
-                          <span key={a} style={{ background: 'rgba(var(--accent-rgb),0.10)', border: '1px solid rgba(var(--accent-rgb),0.3)', borderRadius: 6, padding: '5px 12px', fontSize: 12, color: 'var(--text)' }}>{a}</span>
+                          <span key={a} style={{ background: 'rgba(var(--site-accent-rgb),0.10)', border: '1px solid rgba(var(--site-accent-rgb),0.3)', borderRadius: 6, padding: '5px 12px', fontSize: 12, color: 'var(--site-body)' }}>{a}</span>
                         ))}
                       </div>
                     </>
@@ -708,8 +708,8 @@ export default async function ListingDetailPage({ params }: Props) {
 
             {/* Property summary — SEO paragraph */}
             <section style={{ ...section }}>
-              <div style={{ ...card, background: 'var(--off-white)', border: '1px solid var(--border)' }}>
-                <p style={{ fontSize: 13.5, lineHeight: 1.85, color: 'var(--text-muted)', margin: 0 }}>{summary}</p>
+              <div style={{ ...card, background: 'var(--site-canvas)', border: '1px solid var(--site-rule)' }}>
+                <p style={{ fontSize: 13.5, lineHeight: 1.85, color: 'var(--site-muted)', margin: 0 }}>{summary}</p>
               </div>
             </section>
 
@@ -727,9 +727,9 @@ export default async function ListingDetailPage({ params }: Props) {
                       ['Unfinished', listing.floor_area.unfinished],
                       ['Total', listing.floor_area.total],
                     ] as [string, number | null | undefined][]).filter(([, v]) => v != null).map(([label, val]) => (
-                      <div key={label} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: 8, fontSize: 13 }}>
-                        <span style={{ color: 'var(--text-muted)' }}>{label}</span>
-                        <span style={{ color: 'var(--text)', fontWeight: label === 'Total' ? 800 : 600, textAlign: 'right' }}>{(val as number).toLocaleString()} ft²</span>
+                      <div key={label} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--site-rule)', paddingBottom: 8, fontSize: 13 }}>
+                        <span style={{ color: 'var(--site-muted)' }}>{label}</span>
+                        <span style={{ color: 'var(--site-body)', fontWeight: label === 'Total' ? 800 : 600, textAlign: 'right' }}>{(val as number).toLocaleString()} ft²</span>
                       </div>
                     ))}
                   </div>
@@ -745,26 +745,26 @@ export default async function ListingDetailPage({ params }: Props) {
                   {/* Rooms table */}
                   {(listing.rooms?.length ?? 0) > 0 && (
                     <div style={card}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Rooms</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--site-body)', marginBottom: 12 }}>Rooms</div>
                       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
                         <thead>
                           <tr>
                             {['Floor', 'Type', 'Dimensions'].map(h => (
-                              <th key={h} style={{ textAlign: 'left', color: 'var(--text-muted)', fontWeight: 600, paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>{h}</th>
+                              <th key={h} style={{ textAlign: 'left', color: 'var(--site-muted)', fontWeight: 600, paddingBottom: 8, borderBottom: '1px solid var(--site-rule)' }}>{h}</th>
                             ))}
                           </tr>
                         </thead>
                         <tbody>
                           {listing.rooms!.map((r, i) => (
                             <tr key={i}>
-                              <td style={{ padding: '6px 0', color: 'var(--text)', borderBottom: '1px solid var(--border)', paddingRight: 8 }}>{r.level}</td>
-                              <td style={{ padding: '6px 0', color: 'var(--text)', borderBottom: '1px solid var(--border)', paddingRight: 8 }}>{r.type || '—'}</td>
-                              <td style={{ padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
+                              <td style={{ padding: '6px 0', color: 'var(--site-body)', borderBottom: '1px solid var(--site-rule)', paddingRight: 8 }}>{r.level}</td>
+                              <td style={{ padding: '6px 0', color: 'var(--site-body)', borderBottom: '1px solid var(--site-rule)', paddingRight: 8 }}>{r.type || '—'}</td>
+                              <td style={{ padding: '6px 0', borderBottom: '1px solid var(--site-rule)' }}>
                                 {isLoggedIn
-                                  ? (r.dim1 && r.dim2 ? <span style={{ color: 'var(--text)', fontWeight: 600 }}>{r.dim1} × {r.dim2} ft</span> : <span style={{ color: 'var(--text-muted)' }}>—</span>)
+                                  ? (r.dim1 && r.dim2 ? <span style={{ color: 'var(--site-body)', fontWeight: 600 }}>{r.dim1} × {r.dim2} ft</span> : <span style={{ color: 'var(--site-muted)' }}>—</span>)
                                   : nextStepUrl
-                                  ? <a href={nextStepUrl} style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: 11 }}>Complete registration</a>
-                                  : <a href={ap(`/sign-in?return=${agentPrefix}/listing/${mls}`)} style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: 11 }}>Sign in to view</a>
+                                  ? <a href={nextStepUrl} style={{ color: 'var(--site-accent-text)', textDecoration: 'none', fontSize: 11 }}>Complete registration</a>
+                                  : <a href={ap(`/sign-in?return=${agentPrefix}/listing/${mls}`)} style={{ color: 'var(--site-accent-text)', textDecoration: 'none', fontSize: 11 }}>Sign in to view</a>
                                 }
                               </td>
                             </tr>
@@ -776,26 +776,26 @@ export default async function ListingDetailPage({ params }: Props) {
                   {/* Bathrooms table */}
                   {(listing.baths_detail?.length ?? 0) > 0 && (
                     <div style={card}>
-                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', marginBottom: 12 }}>Bathrooms</div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--site-body)', marginBottom: 12 }}>Bathrooms</div>
                       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
                         <thead>
                           <tr>
                             {['Floor', 'Ensuite', 'Pieces'].map(h => (
-                              <th key={h} style={{ textAlign: 'left', color: 'var(--text-muted)', fontWeight: 600, paddingBottom: 8, borderBottom: '1px solid var(--border)' }}>{h}</th>
+                              <th key={h} style={{ textAlign: 'left', color: 'var(--site-muted)', fontWeight: 600, paddingBottom: 8, borderBottom: '1px solid var(--site-rule)' }}>{h}</th>
                             ))}
                           </tr>
                         </thead>
                         <tbody>
                           {listing.baths_detail!.map((b, i) => (
                             <tr key={i}>
-                              <td style={{ padding: '6px 0', color: 'var(--text)', borderBottom: '1px solid var(--border)', paddingRight: 8 }}>{b.level}</td>
-                              <td style={{ padding: '6px 0', color: 'var(--text)', borderBottom: '1px solid var(--border)', paddingRight: 8 }}>{b.ensuite || '—'}</td>
-                              <td style={{ padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
+                              <td style={{ padding: '6px 0', color: 'var(--site-body)', borderBottom: '1px solid var(--site-rule)', paddingRight: 8 }}>{b.level}</td>
+                              <td style={{ padding: '6px 0', color: 'var(--site-body)', borderBottom: '1px solid var(--site-rule)', paddingRight: 8 }}>{b.ensuite || '—'}</td>
+                              <td style={{ padding: '6px 0', borderBottom: '1px solid var(--site-rule)' }}>
                                 {isLoggedIn
-                                  ? (b.pieces ? <span style={{ color: 'var(--text)', fontWeight: 600 }}>{b.pieces}</span> : <span style={{ color: 'var(--text-muted)' }}>—</span>)
+                                  ? (b.pieces ? <span style={{ color: 'var(--site-body)', fontWeight: 600 }}>{b.pieces}</span> : <span style={{ color: 'var(--site-muted)' }}>—</span>)
                                   : nextStepUrl
-                                  ? <a href={nextStepUrl} style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: 11 }}>Complete registration</a>
-                                  : <a href={ap(`/sign-in?return=${agentPrefix}/listing/${mls}`)} style={{ color: 'var(--accent)', textDecoration: 'none', fontSize: 11 }}>Sign in to view</a>
+                                  ? <a href={nextStepUrl} style={{ color: 'var(--site-accent-text)', textDecoration: 'none', fontSize: 11 }}>Complete registration</a>
+                                  : <a href={ap(`/sign-in?return=${agentPrefix}/listing/${mls}`)} style={{ color: 'var(--site-accent-text)', textDecoration: 'none', fontSize: 11 }}>Sign in to view</a>
                                 }
                               </td>
                             </tr>
@@ -814,10 +814,10 @@ export default async function ListingDetailPage({ params }: Props) {
               <section style={section}>
                 <h2 style={sectionTitle}>Open House</h2>
                 <div style={{ ...card, display: 'flex', alignItems: 'center', gap: 16 }}>
-                  <div style={{ width: 48, height: 48, borderRadius: 10, background: 'rgba(var(--accent-rgb),0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>📅</div>
+                  <div style={{ width: 48, height: 48, borderRadius: 10, background: 'rgba(var(--site-accent-rgb),0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>📅</div>
                   <div>
-                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>{formatDate(listing.open_house.start, { weekday: 'long', month: 'long', day: 'numeric' })}</div>
-                    <div style={{ fontSize: 13, color: 'var(--text-muted)' }}>
+                    <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--site-body)' }}>{formatDate(listing.open_house.start, { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+                    <div style={{ fontSize: 13, color: 'var(--site-muted)' }}>
                       {formatDate(listing.open_house.start, { hour: 'numeric', minute: '2-digit' })} – {formatDate(listing.open_house.finish, { hour: 'numeric', minute: '2-digit' })}
                     </div>
                   </div>
@@ -831,10 +831,10 @@ export default async function ListingDetailPage({ params }: Props) {
                 <h2 style={sectionTitle}>About the Building</h2>
                 <a href={ap(`/building/${listing.building.slug}`)} style={{ ...card, display: 'flex', alignItems: 'center', justifyContent: 'space-between', textDecoration: 'none', gap: 16 }}>
                   <div>
-                    <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>{listing.building.name}</div>
-                    <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>View building details, amenities &amp; all units</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--site-body)' }}>{listing.building.name}</div>
+                    <div style={{ fontSize: 13, color: 'var(--site-muted)', marginTop: 2 }}>View building details, amenities &amp; all units</div>
                   </div>
-                  <span style={{ color: 'var(--accent)', fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap' }}>View Building →</span>
+                  <span style={{ color: 'var(--site-accent-text)', fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap' }}>View Building →</span>
                 </a>
               </section>
             )}
@@ -861,22 +861,22 @@ export default async function ListingDetailPage({ params }: Props) {
                   {schools.map(school => {
                     const lvl = levelColors[school.level] || { bg: '#f3f4f6', color: '#374151' }
                     return (
-                      <div key={school.name} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '14px 16px', background: 'var(--off-white)', borderRadius: 8, border: '1px solid var(--border)' }}>
+                      <div key={school.name} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '14px 16px', background: 'var(--site-canvas)', borderRadius: 8, border: '1px solid var(--site-rule)' }}>
                         <div style={{ width: 36, height: 36, borderRadius: 8, background: lvl.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, flexShrink: 0 }}>🏫</div>
                         <div style={{ minWidth: 0 }}>
-                          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--text)', lineHeight: 1.3 }}>{school.name}</div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--site-body)', lineHeight: 1.3 }}>{school.name}</div>
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4 }}>
                             <span style={{ background: lvl.bg, color: lvl.color, fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 4, letterSpacing: '0.04em' }}>{school.level}</span>
-                            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>~{school.dist}</span>
+                            <span style={{ fontSize: 11, color: 'var(--site-muted)' }}>~{school.dist}</span>
                           </div>
                         </div>
                       </div>
                     )
                   })}
                 </div>
-                <p style={{ fontSize: 11, color: 'var(--text-muted)', margin: '14px 0 0', lineHeight: 1.5 }}>
+                <p style={{ fontSize: 11, color: 'var(--site-muted)', margin: '14px 0 0', lineHeight: 1.5 }}>
                   School distances are approximate. Visit the{' '}
-                  <a href="https://www.surreyschools.ca" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}>
+                  <a href="https://www.surreyschools.ca" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--site-accent-text)' }}>
                     school district website
                   </a>{' '}
                   to confirm catchment areas.
@@ -888,14 +888,14 @@ export default async function ListingDetailPage({ params }: Props) {
             {faqs.length > 0 && (
               <section style={section}>
                 <h2 style={sectionTitle}>Frequently Asked Questions About {listing.address}</h2>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 0, border: '1px solid var(--border)', borderRadius: 10, overflow: 'hidden', background: '#fff' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 0, border: '1px solid var(--site-rule)', borderRadius: 10, overflow: 'hidden', background: '#fff' }}>
                   {faqs.map(({ q, a }, i) => (
-                    <details key={i} style={{ borderBottom: i < faqs.length - 1 ? '1px solid var(--border)' : 'none' }}>
-                      <summary style={{ padding: '16px 20px', fontSize: 14, fontWeight: 600, color: 'var(--text)', cursor: 'pointer', listStyle: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center', userSelect: 'none' }}>
+                    <details key={i} style={{ borderBottom: i < faqs.length - 1 ? '1px solid var(--site-rule)' : 'none' }}>
+                      <summary style={{ padding: '16px 20px', fontSize: 14, fontWeight: 600, color: 'var(--site-body)', cursor: 'pointer', listStyle: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center', userSelect: 'none' }}>
                         <span>{q}</span>
-                        <span style={{ fontSize: 18, color: 'var(--text-muted)', flexShrink: 0, marginLeft: 12, transition: 'transform 0.2s' }}>›</span>
+                        <span style={{ fontSize: 18, color: 'var(--site-muted)', flexShrink: 0, marginLeft: 12, transition: 'transform 0.2s' }}>›</span>
                       </summary>
-                      <div style={{ padding: '0 20px 16px', fontSize: 13.5, color: 'var(--text-muted)', lineHeight: 1.7 }}>{a}</div>
+                      <div style={{ padding: '0 20px 16px', fontSize: 13.5, color: 'var(--site-muted)', lineHeight: 1.7 }}>{a}</div>
                     </details>
                   ))}
                 </div>
@@ -924,7 +924,7 @@ export default async function ListingDetailPage({ params }: Props) {
             {/* Agent CTA panel — sold pages */}
             {isSold && (
               <section style={{ ...section }}>
-                <div style={{ background: 'var(--primary-bg)', borderRadius: 10, padding: '28px 32px', display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
+                <div style={{ background: 'var(--site-ink)', borderRadius: 10, padding: '28px 32px', display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
                   <div style={{ flex: 1 }}>
                     <div style={{ color: '#fff', fontWeight: 800, fontSize: 18, marginBottom: 6 }}>
                       What&apos;s your {listing.subarea || listing.city} home worth?
@@ -947,21 +947,21 @@ export default async function ListingDetailPage({ params }: Props) {
               <section style={section}>
                 <a href={topRealtorUrl} style={{ ...card, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16, textDecoration: 'none' }}>
                   <div>
-                    <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>
+                    <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--site-body)', marginBottom: 3 }}>
                       Thinking of selling in {listing.subarea || listing.city}?
                     </div>
-                    <div style={{ fontSize: 12.5, color: 'var(--text-muted)' }}>
+                    <div style={{ fontSize: 12.5, color: 'var(--site-muted)' }}>
                       See {agent.name.split(' ')[0]}&apos;s credentials, sold results &amp; reviews
                     </div>
                   </div>
-                  <span style={{ color: 'var(--accent)', fontWeight: 700, fontSize: 13, whiteSpace: 'nowrap', flexShrink: 0 }}>Learn more →</span>
+                  <span style={{ color: 'var(--site-accent-text)', fontWeight: 700, fontSize: 13, whiteSpace: 'nowrap', flexShrink: 0 }}>Learn more →</span>
                 </a>
               </section>
             )}
 
             {/* Internal links */}
             <section style={{ ...card }}>
-              <div style={{ fontWeight: 700, marginBottom: 14, fontSize: 14, color: 'var(--text)' }}>Browse More in {listing.subarea || listing.city}</div>
+              <div style={{ fontWeight: 700, marginBottom: 14, fontSize: 14, color: 'var(--site-body)' }}>Browse More in {listing.subarea || listing.city}</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                 {[
                   ...(isSold && listing.subarea ? [
@@ -976,7 +976,7 @@ export default async function ListingDetailPage({ params }: Props) {
                   { l: 'Condo Buildings', h: ap('/buildings') },
                   { l: 'Market Stats', h: ap('/market-report') },
                 ].map(x => (
-                  <a key={x.l} href={x.h} style={{ background: 'var(--off-white)', border: '1px solid var(--border)', color: 'var(--text)', padding: '8px 14px', borderRadius: 6, textDecoration: 'none', fontSize: 13 }}>{x.l}</a>
+                  <a key={x.l} href={x.h} style={{ background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', color: 'var(--site-body)', padding: '8px 14px', borderRadius: 6, textDecoration: 'none', fontSize: 13 }}>{x.l}</a>
                 ))}
               </div>
             </section>
@@ -984,17 +984,17 @@ export default async function ListingDetailPage({ params }: Props) {
 
           {/* SIDEBAR */}
           <div id="contact" className="listing-sidebar" style={{ position: 'sticky', top: 'calc(var(--nav-height, 64px) + 16px)' }}>
-            <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '14px 18px', marginBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+            <div style={{ background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 10, padding: '14px 18px', marginBottom: 14, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
               <div>
                 {guestSoldLocked ? (
-                  <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--site-muted)', display: 'flex', alignItems: 'center', gap: 6 }}>
                     <span>🔒</span>
                     <span>{nextStepUrl ? 'Complete registration to see sold price' : 'Sign in to see sold price'}</span>
                   </div>
                 ) : (
-                  <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--accent)' }}>{priceLabel}</div>
+                  <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--site-accent-text)' }}>{priceLabel}</div>
                 )}
-                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{listing.beds} bd · {baths} ba{listing.sqft > 0 ? ` · ${listing.sqft.toLocaleString()} ft²` : ''}{listing.strata_fee ? ` · $${Math.round(listing.strata_fee)}/mo` : ''}</div>
+                <div style={{ fontSize: 12, color: 'var(--site-muted)', marginTop: 2 }}>{listing.beds} bd · {baths} ba{listing.sqft > 0 ? ` · ${listing.sqft.toLocaleString()} ft²` : ''}{listing.strata_fee ? ` · $${Math.round(listing.strata_fee)}/mo` : ''}</div>
               </div>
               <span style={{ background: badge.bg, color: '#fff', padding: '4px 12px', borderRadius: 12, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>{badge.label}</span>
             </div>
@@ -1016,17 +1016,17 @@ export default async function ListingDetailPage({ params }: Props) {
             )}
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
-              <a href={ap('/homes-for-sale')} style={{ background: '#fff', border: '1px solid var(--border)', color: 'var(--text)', padding: '12px', borderRadius: 10, fontWeight: 600, fontSize: 13, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <a href={ap('/homes-for-sale')} style={{ background: '#fff', border: '1px solid var(--site-rule)', color: 'var(--site-body)', padding: '12px', borderRadius: 10, fontWeight: 600, fontSize: 13, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 16 }}>🔔</span>
-                <span><span style={{ display: 'block', fontWeight: 700 }}>Alert me of new listings</span><span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Get notified when similar homes list</span></span>
+                <span><span style={{ display: 'block', fontWeight: 700 }}>Alert me of new listings</span><span style={{ fontSize: 11, color: 'var(--site-muted)' }}>Get notified when similar homes list</span></span>
               </a>
-              <a href={ap('/home-evaluation')} style={{ background: '#fff', border: '1px solid var(--border)', color: 'var(--text)', padding: '12px', borderRadius: 10, fontWeight: 600, fontSize: 13, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
+              <a href={ap('/home-evaluation')} style={{ background: '#fff', border: '1px solid var(--site-rule)', color: 'var(--site-body)', padding: '12px', borderRadius: 10, fontWeight: 600, fontSize: 13, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 16 }}>🏠</span>
-                <span><span style={{ display: 'block', fontWeight: 700 }}>What&apos;s my home worth?</span><span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Free market valuation from {agent.name.split(' ')[0]}</span></span>
+                <span><span style={{ display: 'block', fontWeight: 700 }}>What&apos;s my home worth?</span><span style={{ fontSize: 11, color: 'var(--site-muted)' }}>Free market valuation from {agent.name.split(' ')[0]}</span></span>
               </a>
             </div>
 
-            <div style={{ marginTop: 14, fontSize: 10.5, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+            <div style={{ marginTop: 14, fontSize: 10.5, color: 'var(--site-muted)', lineHeight: 1.5 }}>
               The data relating to real estate on this website comes in part from the MLS® Reciprocity program of the Real Estate Board of Greater Vancouver and the Fraser Valley Real Estate Board. Listing courtesy of {agent.brokerage}.
             </div>
           </div>

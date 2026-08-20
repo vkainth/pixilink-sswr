@@ -512,14 +512,14 @@ export default async function BuildingDetailPage({ params }: Props) {
     },
   } : null
 
-  const sectionTitle: React.CSSProperties = { fontSize: 20, fontWeight: 700, color: 'var(--primary-bg)', margin: '0 0 16px', fontFamily: "var(--font-display),Georgia,serif" }
-  const card: React.CSSProperties = { background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '22px 24px' }
-  const subCard: React.CSSProperties = { border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', background: '#fff', color: '#1c1c1c' }
-  const subCardHead: React.CSSProperties = { background: 'var(--off-white)', padding: '12px 16px', borderBottom: '1px solid var(--border)' }
-  const subCardTitle: React.CSSProperties = { fontFamily: "var(--font-display),Georgia,serif", fontSize: 15, fontWeight: 700, margin: 0, color: 'var(--primary-bg)' }
+  const sectionTitle: React.CSSProperties = { fontSize: 20, fontWeight: 700, color: 'var(--site-ink)', margin: '0 0 16px', fontFamily: "var(--font-display),Georgia,serif" }
+  const card: React.CSSProperties = { background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 10, padding: '22px 24px' }
+  const subCard: React.CSSProperties = { border: '1px solid var(--site-rule)', borderRadius: 8, overflow: 'hidden', background: '#fff', color: '#1c1c1c' }
+  const subCardHead: React.CSSProperties = { background: 'var(--site-canvas)', padding: '12px 16px', borderBottom: '1px solid var(--site-rule)' }
+  const subCardTitle: React.CSSProperties = { fontFamily: "var(--font-display),Georgia,serif", fontSize: 15, fontWeight: 700, margin: 0, color: 'var(--site-ink)' }
 
   return (
-    <div style={{ background: 'var(--off-white)', minHeight: '100vh' }}>
+    <div style={{ background: 'var(--site-canvas)', minHeight: '100vh' }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(buildingLd) }} />
       {faqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
@@ -536,26 +536,26 @@ export default async function BuildingDetailPage({ params }: Props) {
 
       <div className="container" style={{ padding: '24px var(--container-padding) 0' }}>
         {/* Breadcrumb */}
-        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 14 }}>
-          <a href={ap('/buildings')} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Buildings</a>
+        <div style={{ fontSize: 12, color: 'var(--site-muted)', marginBottom: 14 }}>
+          <a href={ap('/buildings')} style={{ color: 'var(--site-muted)', textDecoration: 'none' }}>Buildings</a>
           <span style={{ margin: '0 8px' }}>›</span>
-          <a href={ap(`/buildings?area=${encodeURIComponent(building.subarea || building.city)}`)} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>{building.subarea || building.city}</a>
+          <a href={ap(`/buildings?area=${encodeURIComponent(building.subarea || building.city)}`)} style={{ color: 'var(--site-muted)', textDecoration: 'none' }}>{building.subarea || building.city}</a>
           <span style={{ margin: '0 8px' }}>›</span>
-          <span style={{ color: 'var(--text)' }}>{displayName}</span>
+          <span style={{ color: 'var(--site-body)' }}>{displayName}</span>
         </div>
 
         {/* Key-fact pills */}
         {pills.length > 0 && (
           <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
             {pills.map(p => (
-              <span key={p} style={{ background: '#fff', border: '1px solid var(--border)', padding: '4px 12px', borderRadius: 12, fontSize: 12, color: 'var(--text-muted)' }}>{p}</span>
+              <span key={p} style={{ background: '#fff', border: '1px solid var(--site-rule)', padding: '4px 12px', borderRadius: 12, fontSize: 12, color: 'var(--site-muted)' }}>{p}</span>
             ))}
           </div>
         )}
 
         {/* H1: name + address, always equal size/weight — some visitors search by name, others by address */}
         <div style={{ marginBottom: 20 }}>
-          <h1 style={{ fontSize: 'clamp(20px,2.5vw,30px)', fontWeight: 800, margin: '0 0 4px', color: 'var(--text)', letterSpacing: '-0.01em', fontFamily: "var(--font-display),Georgia,serif", lineHeight: 1.35 }}>
+          <h1 style={{ fontSize: 'clamp(20px,2.5vw,30px)', fontWeight: 800, margin: '0 0 4px', color: 'var(--site-body)', letterSpacing: '-0.01em', fontFamily: "var(--font-display),Georgia,serif", lineHeight: 1.35 }}>
             {(() => {
               const subareaEndsWithCity = building.subarea && building.city &&
                 building.subarea.toLowerCase().endsWith(building.city.toLowerCase())
@@ -571,7 +571,7 @@ export default async function BuildingDetailPage({ params }: Props) {
             })()}
           </h1>
           {building.tagline && (
-            <div style={{ fontSize: 15, color: 'var(--text-muted)', fontStyle: 'italic', lineHeight: 1.5 }}>
+            <div style={{ fontSize: 15, color: 'var(--site-muted)', fontStyle: 'italic', lineHeight: 1.5 }}>
               {building.tagline}
             </div>
           )}
@@ -588,9 +588,9 @@ export default async function BuildingDetailPage({ params }: Props) {
             ].filter(Boolean).map((s) => {
               const stat = s as { label: string; value: string }
               return (
-                <div key={stat.label} style={{ background: '#fff', border: '1px solid var(--border)', borderLeft: `3px solid ${'var(--accent)'}`, borderRadius: 8, padding: '14px 16px' }}>
-                  <div style={{ fontSize: 10.5, color: 'var(--text-muted)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 5 }}>{stat.label}</div>
-                  <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--accent)' }}>{stat.value}</div>
+                <div key={stat.label} style={{ background: '#fff', border: '1px solid var(--site-rule)', borderLeft: `3px solid ${'var(--site-accent)'}`, borderRadius: 8, padding: '14px 16px' }}>
+                  <div style={{ fontSize: 10.5, color: 'var(--site-muted)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 5 }}>{stat.label}</div>
+                  <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--site-accent-text)' }}>{stat.value}</div>
                 </div>
               )
             })}
@@ -600,15 +600,15 @@ export default async function BuildingDetailPage({ params }: Props) {
         {soldTrend && (
           <section
             aria-label={`Sold price trend at ${displayName}`}
-            style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, padding: '16px 18px', marginBottom: 24 }}
+            style={{ background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 8, padding: '16px 18px', marginBottom: 24 }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
               <div>
-                <div style={{ fontSize: 10.5, color: 'var(--text-muted)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 5 }}>
+                <div style={{ fontSize: 10.5, color: 'var(--site-muted)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 5 }}>
                   Sold Price Trend
                 </div>
                 {/* Stated in text as well as drawn, so the figures survive for crawlers and answer engines. */}
-                <div style={{ fontSize: 14, color: 'var(--text)' }}>
+                <div style={{ fontSize: 14, color: 'var(--site-body)' }}>
                   {soldTrend.count} recorded sales, {formatPrice(soldTrend.firstPrice)} ({soldTrend.firstDate}) → {formatPrice(soldTrend.lastPrice)} ({soldTrend.lastDate}){' '}
                   <strong style={{ color: soldTrend.changePct >= 0 ? '#15803d' : '#b91c1c' }}>
                     {soldTrend.changePct >= 0 ? '+' : ''}{soldTrend.changePct}%
@@ -651,15 +651,15 @@ export default async function BuildingDetailPage({ params }: Props) {
                   ? `${summarySoldCount} unit${summarySoldCount !== 1 ? 's' : ''} ${summarySoldCount !== 1 ? 'have' : 'has'} sold at ${displayName} in the past 6 months, with an average sale price of ${avgFmt}${stats.avg_per_sqft ? ` ($${Math.round(stats.avg_per_sqft).toLocaleString('en-CA')}/sq ft)` : ''}.`
                   : `Units at ${displayName} have recently sold for an average of ${avgFmt}${stats.avg_per_sqft ? ` ($${Math.round(stats.avg_per_sqft).toLocaleString('en-CA')}/sq ft)` : ''}.`
                 return (
-                  <p className="building-sold-summary" style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.7, margin: '0 0 12px' }}>
+                  <p className="building-sold-summary" style={{ fontSize: 14, color: 'var(--site-body)', lineHeight: 1.7, margin: '0 0 12px' }}>
                     {summaryText}
                   </p>
                 )
               })()}
               <SoldGate
                 rows={building.recent_sold}
-                accentColor={'var(--accent)'}
-                primaryBg={'var(--primary-bg)'}
+                accentColor={'var(--site-accent)'}
+                primaryBg={'var(--site-ink)'}
                 totalCount={building.recent_sold.length}
                 slug={slug}
                 agentPrefix={agentPrefix}
@@ -701,9 +701,9 @@ export default async function BuildingDetailPage({ params }: Props) {
             {/* Market Summary — highlighted box */}
             {marketSummary && (
               <section style={{ marginBottom: 36 }}>
-                <div style={{ background: `color-mix(in srgb, ${'var(--accent)'} 10%, #fff)`, borderLeft: `4px solid ${'var(--accent)'}`, padding: '20px 24px', borderRadius: 6 }}>
-                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8, color: 'var(--primary-bg)' }}>Market Summary</div>
-                  <p style={{ margin: 0, color: 'var(--text)', lineHeight: 1.8, fontSize: 14 }}>{marketSummary}</p>
+                <div style={{ background: `color-mix(in srgb, ${'var(--site-accent)'} 10%, #fff)`, borderLeft: `4px solid ${'var(--site-accent)'}`, padding: '20px 24px', borderRadius: 6 }}>
+                  <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 8, color: 'var(--site-ink)' }}>Market Summary</div>
+                  <p style={{ margin: 0, color: 'var(--site-body)', lineHeight: 1.8, fontSize: 14 }}>{marketSummary}</p>
                 </div>
               </section>
             )}
@@ -716,9 +716,9 @@ export default async function BuildingDetailPage({ params }: Props) {
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <tbody>
                       {infoRows.map((r, i) => (
-                        <tr key={r.label} style={{ borderBottom: i < infoRows.length - 1 ? '1px solid var(--border)' : undefined }}>
-                          <td style={{ padding: '12px 18px', fontSize: 12, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', width: '38%', verticalAlign: 'top' }}>{r.label}</td>
-                          <td style={{ padding: '12px 18px', fontSize: 14, color: 'var(--text)' }}>{r.value}</td>
+                        <tr key={r.label} style={{ borderBottom: i < infoRows.length - 1 ? '1px solid var(--site-rule)' : undefined }}>
+                          <td style={{ padding: '12px 18px', fontSize: 12, fontWeight: 700, color: 'var(--site-muted)', textTransform: 'uppercase', letterSpacing: '0.04em', width: '38%', verticalAlign: 'top' }}>{r.label}</td>
+                          <td style={{ padding: '12px 18px', fontSize: 14, color: 'var(--site-body)' }}>{r.value}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -741,11 +741,11 @@ export default async function BuildingDetailPage({ params }: Props) {
                     const pct = item.score
                     const color = pct >= 70 ? '#15803d' : pct >= 50 ? '#b45309' : '#6b7280'
                     return (
-                      <div key={item.label} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '18px 16px', textAlign: 'center' }}>
+                      <div key={item.label} style={{ background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 10, padding: '18px 16px', textAlign: 'center' }}>
                         <div style={{ fontSize: 32, fontWeight: 800, color, lineHeight: 1 }}>
-                          {item.score}<span style={{ fontSize: 14, fontWeight: 400, color: 'var(--text-muted)' }}>/100</span>
+                          {item.score}<span style={{ fontSize: 14, fontWeight: 400, color: 'var(--site-muted)' }}>/100</span>
                         </div>
-                        <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--text-muted)', marginTop: 6 }}>{item.label}</div>
+                        <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--site-muted)', marginTop: 6 }}>{item.label}</div>
                       </div>
                     )
                   })}
@@ -758,7 +758,7 @@ export default async function BuildingDetailPage({ params }: Props) {
               <section style={{ marginBottom: 36 }}>
                 <h2 style={sectionTitle}>About This Building</h2>
                 <div
-                  style={{ color: 'var(--text-muted)', lineHeight: 1.9, fontSize: 15 }}
+                  style={{ color: 'var(--site-muted)', lineHeight: 1.9, fontSize: 15 }}
                   dangerouslySetInnerHTML={{ __html: building.description }}
                 />
               </section>
@@ -768,7 +768,7 @@ export default async function BuildingDetailPage({ params }: Props) {
             {building.neighbourhood_context && (
               <section style={{ marginBottom: 36 }}>
                 <h2 style={sectionTitle}>Location &amp; Neighbourhood</h2>
-                <div style={{ color: 'var(--text-muted)', lineHeight: 1.9, fontSize: 15 }}>
+                <div style={{ color: 'var(--site-muted)', lineHeight: 1.9, fontSize: 15 }}>
                   {building.neighbourhood_context}
                 </div>
               </section>
@@ -778,7 +778,7 @@ export default async function BuildingDetailPage({ params }: Props) {
             {building.agent_take && (
               <section style={{ marginBottom: 36 }}>
                 <h2 style={sectionTitle}>Agent&apos;s Take</h2>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 20, background: 'var(--surface, #fff)', border: '1px solid var(--border)', borderRadius: 12, padding: '20px 22px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 20, background: 'var(--surface, #fff)', border: '1px solid var(--site-rule)', borderRadius: 12, padding: '20px 22px' }}>
                   {[
                     { key: 'desirability', label: 'Desirability' },
                     { key: 'buyer_profile', label: 'Who This Building Suits' },
@@ -793,8 +793,8 @@ export default async function BuildingDetailPage({ params }: Props) {
                     if (!value) return null
                     return (
                       <div key={key}>
-                        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{label}</div>
-                        <div style={{ color: 'var(--text-muted)', lineHeight: 1.8, fontSize: 15 }}>{value}</div>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--site-accent-text)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>{label}</div>
+                        <div style={{ color: 'var(--site-muted)', lineHeight: 1.8, fontSize: 15 }}>{value}</div>
                       </div>
                     )
                   })}
@@ -817,9 +817,9 @@ export default async function BuildingDetailPage({ params }: Props) {
                   ].filter(Boolean).map((s) => {
                     const stat = s as { label: string; value: string }
                     return (
-                      <div key={stat.label} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, padding: '16px' }}>
-                        <div style={{ fontSize: 10.5, color: 'var(--text-muted)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 6 }}>{stat.label}</div>
-                        <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--accent)' }}>{stat.value}</div>
+                      <div key={stat.label} style={{ background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 8, padding: '16px' }}>
+                        <div style={{ fontSize: 10.5, color: 'var(--site-muted)', letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: 6 }}>{stat.label}</div>
+                        <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--site-accent-text)' }}>{stat.value}</div>
                       </div>
                     )
                   })}
@@ -848,12 +848,12 @@ export default async function BuildingDetailPage({ params }: Props) {
                             ? { bg: '#dcfce7', color: '#15803d', label: 'Allowed' }
                             : { bg: '#fee2e2', color: '#b91c1c', label: 'Not Permitted' }
                           return (
-                            <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                            <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--site-rule)', display: 'flex', flexDirection: 'column', gap: 4 }}>
                               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                                 <span style={{ fontWeight: 600, fontSize: 13 }}>Pets</span>
                                 <span style={{ background: badge.bg, color: badge.color, padding: '2px 8px', borderRadius: 10, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>{badge.label}</span>
                               </div>
-                              <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5 }}>{petText}</div>
+                              <div style={{ fontSize: 12, color: 'var(--site-muted)', lineHeight: 1.5 }}>{petText}</div>
                             </div>
                           )
                         })()}
@@ -866,12 +866,12 @@ export default async function BuildingDetailPage({ params }: Props) {
                             ? building.bylaw_restrictions.length > 80 ? building.bylaw_restrictions.slice(0, 80) + '…' : building.bylaw_restrictions
                             : rentalsRestricted ? 'Rental restrictions apply — see strata bylaws.' : 'Rentals permitted per strata bylaws.'
                           return (
-                            <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: 4 }}>
+                            <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--site-rule)', display: 'flex', flexDirection: 'column', gap: 4 }}>
                               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
                                 <span style={{ fontWeight: 600, fontSize: 13 }}>Rentals</span>
                                 <span style={{ background: badge.bg, color: badge.color, padding: '2px 8px', borderRadius: 10, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>{badge.label}</span>
                               </div>
-                              <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5 }}>{detail}</div>
+                              <div style={{ fontSize: 12, color: 'var(--site-muted)', lineHeight: 1.5 }}>{detail}</div>
                             </div>
                           )
                         })()}
@@ -886,7 +886,7 @@ export default async function BuildingDetailPage({ params }: Props) {
                                 <span style={{ fontWeight: 600, fontSize: 13 }}>Short-Term Rentals</span>
                                 <span style={{ background: badge.bg, color: badge.color, padding: '2px 8px', borderRadius: 10, fontSize: 11, fontWeight: 700, whiteSpace: 'nowrap' }}>{badge.label}</span>
                               </div>
-                              <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                              <div style={{ fontSize: 12, color: 'var(--site-muted)', lineHeight: 1.5 }}>
                                 {strRestricted ? 'Short-term rentals (Airbnb/VRBO) not permitted.' : 'Confirm with strata before listing short-term.'}
                               </div>
                             </div>
@@ -902,7 +902,7 @@ export default async function BuildingDetailPage({ params }: Props) {
                         </div>
                         <div style={{ padding: '14px 16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(130px,1fr))', gap: 8 }}>
                           {building.amenities.map(a => (
-                            <div key={a} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--off-white)', border: '1px solid var(--border)', padding: '7px 10px', borderRadius: 6, fontSize: 12 }}>
+                            <div key={a} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', padding: '7px 10px', borderRadius: 6, fontSize: 12 }}>
                               <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span>
                               <span>{a}</span>
                             </div>
@@ -922,7 +922,7 @@ export default async function BuildingDetailPage({ params }: Props) {
                     {building.features_data.type === 'tags' && Array.isArray(building.features_data.items) && (
                       <div style={{ padding: '14px 16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(130px,1fr))', gap: 8 }}>
                         {building.features_data.items.map(f => (
-                          <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--off-white)', border: '1px solid var(--border)', padding: '7px 10px', borderRadius: 6, fontSize: 12 }}>
+                          <div key={f} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', padding: '7px 10px', borderRadius: 6, fontSize: 12 }}>
                             <span style={{ color: '#16a34a', fontWeight: 700 }}>&#10003;</span>
                             <span>{f}</span>
                           </div>
@@ -933,7 +933,7 @@ export default async function BuildingDetailPage({ params }: Props) {
                       <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 16 }}>
                         {building.features_data.sections.map(section => (
                           <div key={section.title}>
-                            <div style={{ fontWeight: 700, fontSize: 12, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>{section.title}</div>
+                            <div style={{ fontWeight: 700, fontSize: 12, color: 'var(--site-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>{section.title}</div>
                             <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 4 }}>
                               {section.items.map(item => (
                                 <li key={item} style={{ display: 'flex', alignItems: 'flex-start', gap: 6, fontSize: 13, lineHeight: 1.4 }}>
@@ -957,7 +957,7 @@ export default async function BuildingDetailPage({ params }: Props) {
                     </div>
                     <div style={{ padding: '14px 16px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(160px,1fr))', gap: 8 }}>
                       {building.maintenance_fee_includes.map(item => (
-                        <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--off-white)', border: '1px solid var(--border)', padding: '8px 10px', borderRadius: 6, fontSize: 12 }}>
+                        <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', padding: '8px 10px', borderRadius: 6, fontSize: 12 }}>
                           <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span>
                           <span>{item}</span>
                         </div>
@@ -974,8 +974,8 @@ export default async function BuildingDetailPage({ params }: Props) {
                 <h2 style={sectionTitle}>Strata Information</h2>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, marginBottom: 12 }} className="strata-grid">
                   {/* Financial Health card */}
-                  <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 20 }}>
-                    <h3 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 15, fontWeight: 700, margin: '0 0 14px', color: 'var(--primary-bg)' }}>Financial Health</h3>
+                  <div style={{ border: '1px solid var(--site-rule)', borderRadius: 8, padding: 20 }}>
+                    <h3 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 15, fontWeight: 700, margin: '0 0 14px', color: 'var(--site-ink)' }}>Financial Health</h3>
                     {([
                       building.strata_no ? ['Strata Plan No.', building.strata_no] : null,
                       ['Contingency Reserve Fund', 'Contact agent for details'],
@@ -983,15 +983,15 @@ export default async function BuildingDetailPage({ params }: Props) {
                       ['Special Levies', 'Inquire with strata'],
                       ['Depreciation Report', 'Available on request'],
                     ] as (string[] | null)[]).filter((x): x is string[] => x !== null).map(([k, v]) => (
-                      <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid var(--border)', fontSize: 13 }}>
-                        <span style={{ color: 'var(--text-muted)' }}>{k}</span>
-                        <span style={{ fontWeight: 600, color: 'var(--text)', textAlign: 'right', maxWidth: 160 }}>{v}</span>
+                      <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid var(--site-rule)', fontSize: 13 }}>
+                        <span style={{ color: 'var(--site-muted)' }}>{k}</span>
+                        <span style={{ fontWeight: 600, color: 'var(--site-body)', textAlign: 'right', maxWidth: 160 }}>{v}</span>
                       </div>
                     ))}
                   </div>
                   {/* Management & Meetings card */}
-                  <div style={{ border: '1px solid var(--border)', borderRadius: 8, padding: 20 }}>
-                    <h3 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 15, fontWeight: 700, margin: '0 0 14px', color: 'var(--primary-bg)' }}>Management &amp; Meetings</h3>
+                  <div style={{ border: '1px solid var(--site-rule)', borderRadius: 8, padding: 20 }}>
+                    <h3 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 15, fontWeight: 700, margin: '0 0 14px', color: 'var(--site-ink)' }}>Management &amp; Meetings</h3>
                     {([
                       building.mgmt_name ? ['Strata Management Co.', building.mgmt_name] : null,
                       ['AGM Schedule', 'Annual — contact strata'],
@@ -999,15 +999,15 @@ export default async function BuildingDetailPage({ params }: Props) {
                       ['Insurance Coverage', 'Full building replacement'],
                       ['Bylaw Last Updated', 'Contact strata for date'],
                     ] as (string[] | null)[]).filter((x): x is string[] => x !== null).map(([k, v]) => (
-                      <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid var(--border)', fontSize: 13 }}>
-                        <span style={{ color: 'var(--text-muted)' }}>{k}</span>
-                        <span style={{ fontWeight: 600, color: 'var(--text)', textAlign: 'right', maxWidth: 160 }}>{v}</span>
+                      <div key={k} style={{ display: 'flex', justifyContent: 'space-between', padding: '9px 0', borderBottom: '1px solid var(--site-rule)', fontSize: 13 }}>
+                        <span style={{ color: 'var(--site-muted)' }}>{k}</span>
+                        <span style={{ fontWeight: 600, color: 'var(--site-body)', textAlign: 'right', maxWidth: 160 }}>{v}</span>
                       </div>
                     ))}
                   </div>
                 </div>
                 {/* Strata docs callout */}
-                <div style={{ background: `color-mix(in srgb, ${'var(--accent)'} 10%, #fff)`, border: `1px solid color-mix(in srgb, ${'var(--accent)'} 30%, #fff)`, borderRadius: 8, padding: '12px 18px', fontSize: 13 }}>
+                <div style={{ background: `color-mix(in srgb, ${'var(--site-accent)'} 10%, #fff)`, border: `1px solid color-mix(in srgb, ${'var(--site-accent)'} 30%, #fff)`, borderRadius: 8, padding: '12px 18px', fontSize: 13 }}>
                   <strong>Note:</strong> Strata documents including full meeting minutes, the depreciation report, and bylaws are available to serious buyers upon request. {firstName} can obtain and review these as part of your due diligence.
                 </div>
               </section>
@@ -1019,9 +1019,9 @@ export default async function BuildingDetailPage({ params }: Props) {
                 <h2 style={sectionTitle}>Quick Answers</h2>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 12 }}>
                   {quickAnswers.map((qa, i) => (
-                    <div key={i} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, padding: '16px 18px' }}>
-                      <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--text)', marginBottom: 6 }}>{qa.q}</div>
-                      <div style={{ fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.65 }}>{qa.a}</div>
+                    <div key={i} style={{ background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 8, padding: '16px 18px' }}>
+                      <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--site-body)', marginBottom: 6 }}>{qa.q}</div>
+                      <div style={{ fontSize: 13, color: 'var(--site-muted)', lineHeight: 1.65 }}>{qa.a}</div>
                     </div>
                   ))}
                 </div>
@@ -1035,11 +1035,11 @@ export default async function BuildingDetailPage({ params }: Props) {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {displayFaqs.map((f, i) => (
                     <details key={i} style={{ ...card, padding: 0, overflow: 'hidden' }}>
-                      <summary style={{ padding: '16px 20px', fontSize: 14, fontWeight: 700, color: 'var(--text)', cursor: 'pointer', listStyle: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <summary style={{ padding: '16px 20px', fontSize: 14, fontWeight: 700, color: 'var(--site-body)', cursor: 'pointer', listStyle: 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span>{f.q}</span>
-                        <span style={{ color: 'var(--accent)', fontSize: 18, flexShrink: 0, marginLeft: 12 }}>+</span>
+                        <span style={{ color: 'var(--site-accent-text)', fontSize: 18, flexShrink: 0, marginLeft: 12 }}>+</span>
                       </summary>
-                      <div style={{ padding: '0 20px 18px', fontSize: 14, lineHeight: 1.75, color: 'var(--text-muted)', borderTop: '1px solid var(--border)' }}>{f.a}</div>
+                      <div style={{ padding: '0 20px 18px', fontSize: 14, lineHeight: 1.75, color: 'var(--site-muted)', borderTop: '1px solid var(--site-rule)' }}>{f.a}</div>
                     </details>
                   ))}
                 </div>
@@ -1051,25 +1051,25 @@ export default async function BuildingDetailPage({ params }: Props) {
               <section style={{ marginBottom: 36 }}>
                 <h2 style={{ ...sectionTitle, marginBottom: 4 }}>Other Buildings in This Complex</h2>
                 {building.complex_name && (
-                  <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>
+                  <div style={{ fontSize: 13, color: 'var(--site-muted)', marginBottom: 16 }}>
                     Part of the {building.complex_name} complex — buildings share common neighbourhood amenities.
                   </div>
                 )}
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 16 }}>
                   {building.sibling_buildings.map(b => (
-                    <div key={b.id} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, padding: '16px 18px' }}>
-                      <div style={{ fontWeight: 800, fontSize: 14, marginBottom: 4, color: 'var(--text)' }}>{buildingDisplayName(b)}</div>
-                      <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 10 }}>{b.address}</div>
+                    <div key={b.id} style={{ background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 8, padding: '16px 18px' }}>
+                      <div style={{ fontWeight: 800, fontSize: 14, marginBottom: 4, color: 'var(--site-body)' }}>{buildingDisplayName(b)}</div>
+                      <div style={{ fontSize: 12, color: 'var(--site-muted)', marginBottom: 10 }}>{b.address}</div>
                       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, fontSize: 12, marginBottom: 12 }}>
-                        {b.year_built && <><div style={{ color: 'var(--text-muted)' }}>Built</div><div style={{ fontWeight: 600 }}>{b.year_built}</div></>}
-                        {b.units && <><div style={{ color: 'var(--text-muted)' }}>Units</div><div style={{ fontWeight: 600 }}>{b.units}</div></>}
-                        <div style={{ color: 'var(--text-muted)' }}>Active Now</div>
-                        <div style={{ fontWeight: 600, color: b.active_listings_count > 0 ? '#16a34a' : 'var(--text-muted)' }}>
+                        {b.year_built && <><div style={{ color: 'var(--site-muted)' }}>Built</div><div style={{ fontWeight: 600 }}>{b.year_built}</div></>}
+                        {b.units && <><div style={{ color: 'var(--site-muted)' }}>Units</div><div style={{ fontWeight: 600 }}>{b.units}</div></>}
+                        <div style={{ color: 'var(--site-muted)' }}>Active Now</div>
+                        <div style={{ fontWeight: 600, color: b.active_listings_count > 0 ? '#16a34a' : 'var(--site-muted)' }}>
                           {b.active_listings_count > 0 ? `${b.active_listings_count} home${b.active_listings_count !== 1 ? 's' : ''}` : 'None'}
                         </div>
                       </div>
                       <a href={ap(`/building/${b.slug}`)}
-                        style={{ display: 'block', background: 'var(--off-white)', border: '1px solid var(--border)', color: 'var(--text)', textAlign: 'center', padding: '8px 0', borderRadius: 6, fontSize: 12, fontWeight: 600, textDecoration: 'none' }}>
+                        style={{ display: 'block', background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', color: 'var(--site-body)', textAlign: 'center', padding: '8px 0', borderRadius: 6, fontSize: 12, fontWeight: 600, textDecoration: 'none' }}>
                         View Building
                       </a>
                     </div>
@@ -1081,7 +1081,7 @@ export default async function BuildingDetailPage({ params }: Props) {
             {/* Mortgage Pre-Qualification */}
             <section style={{ marginBottom: 36 }}>
               <h2 style={{ ...sectionTitle, marginBottom: 4 }}>Mortgage Pre-Qualification</h2>
-              <div style={{ fontSize: 14, color: 'var(--text-muted)', marginBottom: 16 }}>
+              <div style={{ fontSize: 14, color: 'var(--site-muted)', marginBottom: 16 }}>
                 Buying in this building? Get pre-qualified in 4 quick steps.
               </div>
               <W3MortgagePreQual agent={agent} />
@@ -1103,19 +1103,19 @@ export default async function BuildingDetailPage({ params }: Props) {
             {/* What's Nearby */}
             <section style={{ marginBottom: 36 }}>
               <h2 style={sectionTitle}>What's Nearby</h2>
-              <NearbyWidget subarea={building.subarea} city={building.city} accent={'var(--accent)'} />
+              <NearbyWidget subarea={building.subarea} city={building.city} accent={'var(--site-accent)'} />
             </section>
 
             {/* AI Amenities Widget — shown when amenities_widget feature is enabled */}
             {features.amenities_widget && aiAmenityPage && (
               <section style={{ marginBottom: 36 }}>
                 <h2 style={{ ...sectionTitle, marginBottom: 4 }}>Walkability &amp; Amenities</h2>
-                <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>
+                <div style={{ fontSize: 13, color: 'var(--site-muted)', marginBottom: 16 }}>
                   {building.subarea || building.city} neighbourhood lifestyle at a glance.
                 </div>
-                <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, padding: '20px 24px' }}>
+                <div style={{ background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 8, padding: '20px 24px' }}>
                   {(aiAmenityPage.content || '').split(/\n+/).filter(Boolean).map((p, i, arr) => (
-                    <p key={i} style={{ fontSize: 14, color: 'var(--text)', lineHeight: 1.85, margin: i < arr.length - 1 ? '0 0 14px' : 0 }}>
+                    <p key={i} style={{ fontSize: 14, color: 'var(--site-body)', lineHeight: 1.85, margin: i < arr.length - 1 ? '0 0 14px' : 0 }}>
                       {p}
                     </p>
                   ))}
@@ -1127,25 +1127,25 @@ export default async function BuildingDetailPage({ params }: Props) {
             {building.nearby_buildings.length > 0 && (
               <section style={{ marginBottom: 36 }}>
                 <h2 style={sectionTitle}>Nearby Buildings</h2>
-                <div style={{ border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden', fontSize: 14 }}>
+                <div style={{ border: '1px solid var(--site-rule)', borderRadius: 8, overflow: 'hidden', fontSize: 14 }}>
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
-                      <tr style={{ background: 'var(--off-white)' }}>
+                      <tr style={{ background: 'var(--site-canvas)' }}>
                         {['Building Name', 'Address', 'Storeys', 'Built', 'Active'].map(h => (
-                          <th key={h} style={{ padding: '10px 14px', textAlign: 'left', color: 'var(--text-muted)', fontSize: 12, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' }}>{h}</th>
+                          <th key={h} style={{ padding: '10px 14px', textAlign: 'left', color: 'var(--site-muted)', fontSize: 12, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase' }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       {building.nearby_buildings.map((nb, i) => (
-                        <tr key={nb.id} style={{ borderTop: '1px solid var(--border)', background: i % 2 === 0 ? '#fff' : 'var(--off-white)' }}>
+                        <tr key={nb.id} style={{ borderTop: '1px solid var(--site-rule)', background: i % 2 === 0 ? '#fff' : 'var(--site-canvas)' }}>
                           <td style={{ padding: '12px 14px' }}>
-                            <a href={ap(`/building/${nb.slug}`)} style={{ color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>{buildingDisplayName(nb)}</a>
+                            <a href={ap(`/building/${nb.slug}`)} style={{ color: 'var(--site-accent-text)', textDecoration: 'none', fontWeight: 600 }}>{buildingDisplayName(nb)}</a>
                           </td>
-                          <td style={{ padding: '12px 14px', color: 'var(--text-muted)', fontSize: 13 }}>{nb.address}</td>
+                          <td style={{ padding: '12px 14px', color: 'var(--site-muted)', fontSize: 13 }}>{nb.address}</td>
                           <td style={{ padding: '12px 14px' }}>{nb.levels ?? '—'}</td>
                           <td style={{ padding: '12px 14px' }}>{nb.year_built ?? '—'}</td>
-                          <td style={{ padding: '12px 14px', fontWeight: 600, color: nb.active_listings_count > 0 ? '#16a34a' : 'var(--text-muted)' }}>
+                          <td style={{ padding: '12px 14px', fontWeight: 600, color: nb.active_listings_count > 0 ? '#16a34a' : 'var(--site-muted)' }}>
                             {nb.active_listings_count > 0 ? `${nb.active_listings_count} home${nb.active_listings_count !== 1 ? 's' : ''}` : '—'}
                           </td>
                         </tr>
@@ -1161,34 +1161,34 @@ export default async function BuildingDetailPage({ params }: Props) {
               <section style={{ marginBottom: 36 }}>
                 <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
                   <h2 style={sectionTitle}>More Buildings in {subareaLabel}</h2>
-                  <a href={ap(`/buildings/${areaSlug}`)} style={{ fontSize: 13, color: 'var(--accent)', textDecoration: 'none', fontWeight: 600, whiteSpace: 'nowrap' }}>
+                  <a href={ap(`/buildings/${areaSlug}`)} style={{ fontSize: 13, color: 'var(--site-accent-text)', textDecoration: 'none', fontWeight: 600, whiteSpace: 'nowrap' }}>
                     See all {subareaLabel} buildings →
                   </a>
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 16 }}>
                   {nearbyAreaBuildings.map(b => (
-                    <a key={b.id} href={ap(`/building/${b.slug}`)} style={{ display: 'block', background: '#fff', border: '1px solid var(--border)', borderRadius: 8, padding: '16px 18px', textDecoration: 'none', color: 'inherit' }}>
+                    <a key={b.id} href={ap(`/building/${b.slug}`)} style={{ display: 'block', background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 8, padding: '16px 18px', textDecoration: 'none', color: 'inherit' }}>
                       {b.photo_url && (
-                        <div style={{ height: 110, borderRadius: 6, overflow: 'hidden', marginBottom: 12, background: 'var(--off-white)' }}>
+                        <div style={{ height: 110, borderRadius: 6, overflow: 'hidden', marginBottom: 12, background: 'var(--site-canvas)' }}>
                           <img src={b.photo_url} alt={buildingDisplayName(b)} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} loading="lazy" />
                         </div>
                       )}
-                      <div style={{ fontWeight: 800, fontSize: 14, marginBottom: 4, color: 'var(--text)', lineHeight: 1.3 }}>{buildingDisplayName(b)}</div>
+                      <div style={{ fontWeight: 800, fontSize: 14, marginBottom: 4, color: 'var(--site-body)', lineHeight: 1.3 }}>{buildingDisplayName(b)}</div>
                       {b.address && (
-                        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 10 }}>{b.address}</div>
+                        <div style={{ fontSize: 12, color: 'var(--site-muted)', marginBottom: 10 }}>{b.address}</div>
                       )}
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, marginBottom: 12 }}>
                         {b.year_built && (
-                          <span style={{ fontSize: 11, color: 'var(--text-muted)', background: 'var(--off-white)', border: '1px solid var(--border)', padding: '2px 8px', borderRadius: 10 }}>Built {b.year_built}</span>
+                          <span style={{ fontSize: 11, color: 'var(--site-muted)', background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', padding: '2px 8px', borderRadius: 10 }}>Built {b.year_built}</span>
                         )}
                         {b.units && (
-                          <span style={{ fontSize: 11, color: 'var(--text-muted)', background: 'var(--off-white)', border: '1px solid var(--border)', padding: '2px 8px', borderRadius: 10 }}>{b.units} units</span>
+                          <span style={{ fontSize: 11, color: 'var(--site-muted)', background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', padding: '2px 8px', borderRadius: 10 }}>{b.units} units</span>
                         )}
                         {b.active_listings > 0 && (
                           <span style={{ fontSize: 11, fontWeight: 700, color: '#15803d', background: '#dcfce7', border: '1px solid #bbf7d0', padding: '2px 8px', borderRadius: 10 }}>{b.active_listings} active</span>
                         )}
                       </div>
-                      <div style={{ display: 'block', background: 'var(--off-white)', border: '1px solid var(--border)', color: 'var(--accent)', textAlign: 'center', padding: '7px 0', borderRadius: 6, fontSize: 12, fontWeight: 600 }}>
+                      <div style={{ display: 'block', background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', color: 'var(--site-accent-text)', textAlign: 'center', padding: '7px 0', borderRadius: 6, fontSize: 12, fontWeight: 600 }}>
                         View Building
                       </div>
                     </a>
@@ -1198,7 +1198,7 @@ export default async function BuildingDetailPage({ params }: Props) {
             )}
 
             <div style={{ marginTop: 32 }}>
-              <a href={ap('/buildings')} style={{ fontSize: 13, color: 'var(--accent)', textDecoration: 'none', fontWeight: 600 }}>← Back to all buildings</a>
+              <a href={ap('/buildings')} style={{ fontSize: 13, color: 'var(--site-accent-text)', textDecoration: 'none', fontWeight: 600 }}>← Back to all buildings</a>
             </div>
           </div>
 
@@ -1222,15 +1222,15 @@ export default async function BuildingDetailPage({ params }: Props) {
             <AgentSidebar agent={agent} mode="contact" contextLabel={displayName} listingAddress={streetOnly} listingCity={building.city} coAgents={getCoAgents(agent)} />
 
             {topRealtorUrl && (
-              <a href={topRealtorUrl} style={{ display: 'block', background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '18px 20px', textDecoration: 'none' }}>
-                <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--text-muted)', marginBottom: 6 }}>Thinking of selling?</div>
-                <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--primary-bg)', marginBottom: 6, lineHeight: 1.3 }}>
+              <a href={topRealtorUrl} style={{ display: 'block', background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 10, padding: '18px 20px', textDecoration: 'none' }}>
+                <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.07em', color: 'var(--site-muted)', marginBottom: 6 }}>Thinking of selling?</div>
+                <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--site-ink)', marginBottom: 6, lineHeight: 1.3 }}>
                   {firstName} is the top-rated REALTOR® in {subareaLabel}
                 </div>
-                <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5, marginBottom: 12 }}>
+                <div style={{ fontSize: 12, color: 'var(--site-muted)', lineHeight: 1.5, marginBottom: 12 }}>
                   Medallion Club · 5-star reviews · local expertise
                 </div>
-                <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--accent)' }}>See results &amp; reviews →</span>
+                <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--site-accent-text)' }}>See results &amp; reviews →</span>
               </a>
             )}
           </div>

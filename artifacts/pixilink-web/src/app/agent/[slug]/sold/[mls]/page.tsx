@@ -105,8 +105,8 @@ export default async function SoldListingDetailPage({ params }: Props) {
       + ` Get a free valuation from ${agent.name.split(' ')[0]} based on sales like this one.`
     : `Get a free CMA from ${agent.name.split(' ')[0]} based on real recent sales like this one.`
 
-  const card: React.CSSProperties = { background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '22px 24px' }
-  const sectionTitle: React.CSSProperties = { fontSize: 18, fontWeight: 800, margin: '0 0 14px', color: 'var(--primary-bg)' }
+  const card: React.CSSProperties = { background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 10, padding: '22px 24px' }
+  const sectionTitle: React.CSSProperties = { fontSize: 18, fontWeight: 800, margin: '0 0 14px', color: 'var(--site-ink)' }
 
   const detailRows: [string, string][] = [
     ['MLS®', listing.mls_no],
@@ -144,7 +144,7 @@ export default async function SoldListingDetailPage({ params }: Props) {
   }
 
   return (
-    <div style={{ background: 'var(--off-white)', minHeight: '100vh', paddingBottom: 48 }}>
+    <div style={{ background: 'var(--site-canvas)', minHeight: '100vh', paddingBottom: 48 }}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <WelcomeToast />
       <SoldUnlockPrompt
@@ -159,10 +159,10 @@ export default async function SoldListingDetailPage({ params }: Props) {
       />
       {/* Breadcrumb */}
       <div className="container" style={{ padding: '18px var(--container-padding) 0' }}>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-          <a href={ap('/sold')} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>Sold Homes</a>
+        <div style={{ fontSize: 12, color: 'var(--site-muted)' }}>
+          <a href={ap('/sold')} style={{ color: 'var(--site-muted)', textDecoration: 'none' }}>Sold Homes</a>
           {' › '}
-          <a href={ap(`/sold?subarea=${encodeURIComponent(listing.subarea || '')}`)} style={{ color: 'var(--text-muted)', textDecoration: 'none' }}>
+          <a href={ap(`/sold?subarea=${encodeURIComponent(listing.subarea || '')}`)} style={{ color: 'var(--site-muted)', textDecoration: 'none' }}>
             {listing.subarea || listing.city}
           </a>
           {' › '}
@@ -177,7 +177,7 @@ export default async function SoldListingDetailPage({ params }: Props) {
           click through from search and social, not the conversion on the page. */}
       {photos.length > 0 && (
         <div className="container" style={{ padding: '14px var(--container-padding) 0' }}>
-          <div style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', background: 'var(--primary-bg)', aspectRatio: '16/7' }}>
+          <div style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', background: 'var(--site-ink)', aspectRatio: '16/7' }}>
             {isLoggedIn ? (
               <img src={photos[0]} alt={listing.address} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
             ) : (
@@ -217,10 +217,10 @@ export default async function SoldListingDetailPage({ params }: Props) {
             <div style={{ marginBottom: 20 }}>
               {isLoggedIn ? (
                 <>
-                  <div style={{ fontSize: 34, fontWeight: 900, color: 'var(--accent)', lineHeight: 1, marginBottom: 4 }}>
+                  <div style={{ fontSize: 34, fontWeight: 900, color: 'var(--site-accent-text)', lineHeight: 1, marginBottom: 4 }}>
                     {priceLabel}
                     {listing.sold_price && listing.sold_price !== listing.list_price && (
-                      <span style={{ fontSize: 14, color: 'var(--text-muted)', fontWeight: 500, marginLeft: 12 }}>
+                      <span style={{ fontSize: 14, color: 'var(--site-muted)', fontWeight: 500, marginLeft: 12 }}>
                         listed {listPriceLabel}
                       </span>
                     )}
@@ -248,12 +248,12 @@ export default async function SoldListingDetailPage({ params }: Props) {
                   />
                 </div>
               )}
-              <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text)', margin: '0 0 4px' }}>{listing.address}</h1>
-              <p style={{ fontSize: 14, color: 'var(--text-muted)', margin: '0 0 4px' }}>
+              <h1 style={{ fontSize: 22, fontWeight: 700, color: 'var(--site-body)', margin: '0 0 4px' }}>{listing.address}</h1>
+              <p style={{ fontSize: 14, color: 'var(--site-muted)', margin: '0 0 4px' }}>
                 {listing.city}{listing.subarea ? `, ${listing.subarea}` : ''}
               </p>
               {listing.sold_date && (
-                <p style={{ fontSize: 13, color: 'var(--text-muted)', margin: 0 }}>
+                <p style={{ fontSize: 13, color: 'var(--site-muted)', margin: 0 }}>
                   Sold {formatDate(listing.sold_date)}
                 </p>
               )}
@@ -268,9 +268,9 @@ export default async function SoldListingDetailPage({ params }: Props) {
                 ...(listing.year_built ? [{ v: String(listing.year_built), l: 'Built', icon: '🏗' }] : []),
                 ...(psf ? [{ v: psf, l: 'Sold/ft²', icon: '💲' }] : []),
               ].map(s => (
-                <div key={s.l} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 8, padding: '14px 12px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--primary-bg)', lineHeight: 1.1 }}>{s.v}</div>
-                  <div style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 3 }}>{s.l}</div>
+                <div key={s.l} style={{ background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 8, padding: '14px 12px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--site-ink)', lineHeight: 1.1 }}>{s.v}</div>
+                  <div style={{ fontSize: 10, color: 'var(--site-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginTop: 3 }}>{s.l}</div>
                 </div>
               ))}
             </div>
@@ -285,7 +285,7 @@ export default async function SoldListingDetailPage({ params }: Props) {
               <section style={{ marginBottom: 28 }}>
                 <h2 style={sectionTitle}>About This Property</h2>
                 <div style={card}>
-                  <p style={{ fontSize: 14, lineHeight: 1.8, color: 'var(--text)', margin: 0, whiteSpace: 'pre-line' }}>{listing.description}</p>
+                  <p style={{ fontSize: 14, lineHeight: 1.8, color: 'var(--site-body)', margin: 0, whiteSpace: 'pre-line' }}>{listing.description}</p>
                 </div>
               </section>
             )}
@@ -297,9 +297,9 @@ export default async function SoldListingDetailPage({ params }: Props) {
                 <div style={card}>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '10px 28px' }}>
                     {detailRows.map(([k, v]) => (
-                      <div key={k} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border)', paddingBottom: 8, fontSize: 13 }}>
-                        <span style={{ color: 'var(--text-muted)' }}>{k}</span>
-                        <span style={{ color: 'var(--text)', fontWeight: 600, textAlign: 'right' }}>{v}</span>
+                      <div key={k} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--site-rule)', paddingBottom: 8, fontSize: 13 }}>
+                        <span style={{ color: 'var(--site-muted)' }}>{k}</span>
+                        <span style={{ color: 'var(--site-body)', fontWeight: 600, textAlign: 'right' }}>{v}</span>
                       </div>
                     ))}
                   </div>
@@ -313,10 +313,10 @@ export default async function SoldListingDetailPage({ params }: Props) {
                 <h2 style={sectionTitle}>About the Building</h2>
                 <a href={ap(`/building/${listing.building.slug}`)} style={{ ...card, display: 'flex', alignItems: 'center', justifyContent: 'space-between', textDecoration: 'none', gap: 16 }}>
                   <div>
-                    <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>{listing.building.name}</div>
-                    <div style={{ fontSize: 13, color: 'var(--text-muted)', marginTop: 2 }}>View building details, current listings &amp; more sold history</div>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--site-body)' }}>{listing.building.name}</div>
+                    <div style={{ fontSize: 13, color: 'var(--site-muted)', marginTop: 2 }}>View building details, current listings &amp; more sold history</div>
                   </div>
-                  <span style={{ color: 'var(--accent)', fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap' }}>View Building →</span>
+                  <span style={{ color: 'var(--site-accent-text)', fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap' }}>View Building →</span>
                 </a>
               </section>
             )}
@@ -325,7 +325,7 @@ export default async function SoldListingDetailPage({ params }: Props) {
             {listing.similar_active.length > 0 && (
               <section style={{ marginBottom: 28 }}>
                 <h2 style={{ ...sectionTitle, marginBottom: 4 }}>Homes For Sale Nearby</h2>
-                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 14 }}>Comparable homes currently for sale in {listing.subarea || listing.city}</div>
+                <div style={{ fontSize: 12, color: 'var(--site-muted)', marginBottom: 14 }}>Comparable homes currently for sale in {listing.subarea || listing.city}</div>
                 {listing.building ? (
                   <BuildingComparisonTable rows={listing.similar_active} highlightMls={listing.mls_no} slug={slug} />
                 ) : (
@@ -338,16 +338,16 @@ export default async function SoldListingDetailPage({ params }: Props) {
             {listing.similar_sold.length > 0 && (
               <section style={{ marginBottom: 28 }}>
                 <h2 style={{ ...sectionTitle, marginBottom: 4 }}>Other Recent Sales Nearby</h2>
-                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 14 }}>Comparable sales · last 90 days</div>
+                <div style={{ fontSize: 12, color: 'var(--site-muted)', marginBottom: 14 }}>Comparable sales · last 90 days</div>
                 {listing.building ? (
                   <BuildingComparisonTable rows={listing.similar_sold} sold isLoggedIn={isLoggedIn} slug={slug} />
                 ) : (
                   <ListingStrip listings={listing.similar_sold} showSoldPrice={isLoggedIn} />
                 )}
                 {!isLoggedIn && (
-                  <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(var(--accent-rgb),0.07)', border: '1px solid rgba(var(--accent-rgb),0.2)', borderRadius: 8, padding: '10px 16px' }}>
-                    <span style={{ fontSize: 13, color: 'var(--text)' }}>🔒 {nextStepUrl ? 'Complete your registration to see all comparable sold prices' : 'Sign in to see all comparable sold prices'}</span>
-                    <a href={nextStepUrl ?? ap('/sign-in')} style={{ fontSize: 13, fontWeight: 700, color: 'var(--accent)', textDecoration: 'none', whiteSpace: 'nowrap' }}>{nextStepUrl ? 'Complete Registration →' : 'Sign In →'}</a>
+                  <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 12, background: 'rgba(var(--site-accent-rgb),0.07)', border: '1px solid rgba(var(--site-accent-rgb),0.2)', borderRadius: 8, padding: '10px 16px' }}>
+                    <span style={{ fontSize: 13, color: 'var(--site-body)' }}>🔒 {nextStepUrl ? 'Complete your registration to see all comparable sold prices' : 'Sign in to see all comparable sold prices'}</span>
+                    <a href={nextStepUrl ?? ap('/sign-in')} style={{ fontSize: 13, fontWeight: 700, color: 'var(--site-accent-text)', textDecoration: 'none', whiteSpace: 'nowrap' }}>{nextStepUrl ? 'Complete Registration →' : 'Sign In →'}</a>
                   </div>
                 )}
               </section>
@@ -355,7 +355,7 @@ export default async function SoldListingDetailPage({ params }: Props) {
 
             {/* Internal links */}
             <div style={{ ...card }}>
-              <div style={{ fontWeight: 700, marginBottom: 14, fontSize: 14, color: 'var(--text)' }}>Explore More Sold Data</div>
+              <div style={{ fontWeight: 700, marginBottom: 14, fontSize: 14, color: 'var(--site-body)' }}>Explore More Sold Data</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                 {[
                   { l: 'All Sold Homes', h: ap('/sold') },
@@ -365,7 +365,7 @@ export default async function SoldListingDetailPage({ params }: Props) {
                   { l: 'Market Report', h: ap('/market-report') },
                   { l: 'Homes For Sale', h: ap('/homes-for-sale') },
                 ].map(x => (
-                  <a key={x.l} href={x.h} style={{ background: 'var(--off-white)', border: '1px solid var(--border)', color: 'var(--text)', padding: '8px 14px', borderRadius: 6, textDecoration: 'none', fontSize: 13 }}>{x.l}</a>
+                  <a key={x.l} href={x.h} style={{ background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', color: 'var(--site-body)', padding: '8px 14px', borderRadius: 6, textDecoration: 'none', fontSize: 13 }}>{x.l}</a>
                 ))}
               </div>
             </div>
@@ -376,10 +376,10 @@ export default async function SoldListingDetailPage({ params }: Props) {
               sold + !isLoggedIn mode, so the curiosity gap is the CTA. */}
           {buildingSolds.length > 0 && listing.building && (
             <section style={{ marginBottom: 36 }}>
-              <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text)', margin: '0 0 4px' }}>
+              <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--site-body)', margin: '0 0 4px' }}>
                 Other Units Sold at {listing.building.name}
               </h2>
-              <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 12 }}>
+              <div style={{ fontSize: 13, color: 'var(--site-muted)', marginBottom: 12 }}>
                 {buildingSolds.length} other recent sale{buildingSolds.length === 1 ? '' : 's'} in this building
                 {isLoggedIn ? '.' : ' — sign in free to see every sold price.'}
               </div>
@@ -395,18 +395,18 @@ export default async function SoldListingDetailPage({ params }: Props) {
 
           {/* Sidebar */}
           <div className="sold-detail-sidebar">
-            <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '18px 20px', marginBottom: 14 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: 6 }}>Sold Price</div>
+            <div style={{ background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 10, padding: '18px 20px', marginBottom: 14 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--site-muted)', marginBottom: 6 }}>Sold Price</div>
               {isLoggedIn ? (
-                <div style={{ fontSize: 28, fontWeight: 900, color: 'var(--accent)', marginBottom: 4 }}>{priceLabel}</div>
+                <div style={{ fontSize: 28, fontWeight: 900, color: 'var(--site-accent-text)', marginBottom: 4 }}>{priceLabel}</div>
               ) : (
-                <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--accent)', filter: 'blur(7px)', userSelect: 'none', marginBottom: 4 }}>$000,000</div>
+                <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--site-accent-text)', filter: 'blur(7px)', userSelect: 'none', marginBottom: 4 }}>$000,000</div>
               )}
               {listing.sold_date && (
-                <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>Sold {formatDate(listing.sold_date)}</div>
+                <div style={{ fontSize: 12, color: 'var(--site-muted)' }}>Sold {formatDate(listing.sold_date)}</div>
               )}
               {listing.dom != null && (
-                <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>{listing.dom} days on market</div>
+                <div style={{ fontSize: 12, color: 'var(--site-muted)', marginTop: 2 }}>{listing.dom} days on market</div>
               )}
             </div>
 
