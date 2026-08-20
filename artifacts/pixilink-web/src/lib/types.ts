@@ -1020,7 +1020,7 @@ export const STORAGE_BASE = 'https://website.pixilink.com'
 // and no real image path is available at build time to confirm. When a server-side image proxy
 // is added (e.g. a Next.js /api/img route that fetches from the CDN and re-encodes), add
 // Accept: image/webp detection here and route through the proxy.
-export function imgUrl(path: string | null, w: 325 | 400 | 600 | 800 | 900, h?: number): string {
+export function imgUrl(path: string | null, w: 325 | 400 | 600 | 800 | 900 | 1600, h?: number): string {
   if (!path) return ''
   // /api/storage/ is a Laravel API route — keep as an absolute URL via STORAGE_BASE
   if (path.startsWith('/api/storage/')) return `${STORAGE_BASE}${path}`

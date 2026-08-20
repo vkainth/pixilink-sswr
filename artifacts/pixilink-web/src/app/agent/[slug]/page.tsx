@@ -3,7 +3,7 @@ import { headers } from 'next/headers'
 import Image from 'next/image'
 import { getAgent, getListings, getBuildings, getMarketStats, getTestimonials, getTopRealtor, getAwards, getAgentTerritories, agentCanonicalBase, resolveAgentPrefix, getNews, getFaqs, getOwnListings, getReciprocityListings, getMedia, getUnifiedSolds } from '@/lib/api'
 import { normalizeCity } from '@/lib/market'
-import { imgUrl, imgUrlFull, formatPrice, getHeroCredentials, getCoAgents, resolveSiteConfig } from '@/lib/types'
+import { imgUrl, formatPrice, getHeroCredentials, getCoAgents, resolveSiteConfig } from '@/lib/types'
 import type { UnifiedSoldsResponse } from '@/lib/types'
 import { toHomesForSaleHref } from './homes-for-sale/subareaUtils'
 import ListingCard from '@/components/ListingCard'
@@ -311,11 +311,13 @@ export default async function AgentHomePage({ params }: Props) {
 
     const agentPhotoSrc = showcaseHeadshot ? imgUrl(showcaseHeadshot.url, 900) : photoSrc
 
-    // Hero imagery. imgUrlFull rather than imgUrl(…,900): the MLS originals top out at
-    // 1024px wide and the CDN's ?w= simply upscales past that — a ?w=2400 request returns
-    // 2399x1598 with measurably identical edge detail at 3.5x the bytes. So take the
-    // native file and let CSS scale it.
-    const heroPropertySrc = showcaseHero?.url ? imgUrlFull(showcaseHero.url) : null
+    // Hero imagery at 1600px. The CDN's ?w= is a genuine downscale when the source is
+    // bigger (3000px source: 843KB native vs 492KB at 1600, real detail either way) but a
+    // pure upscale when it is smaller — a ?w=2400 request on a 1024px original comes back
+    // 2399x1598 with edge detail matching a local upscale to three decimals, at 3.5x the
+    // bytes. 1600 is the compromise: sharp on a large display, and heroes are meant to be
+    // large originals, so the upscale case is the caller supplying the wrong image.
+    const heroPropertySrc = showcaseHero?.url ? imgUrl(showcaseHero.url, 1600) : null
     // What the wide hero strip shows: the property if there is one, else the portrait.
     const heroImageSrc = heroPropertySrc ?? agentPhotoSrc
     const heroImageAlt = heroPropertySrc ? (showcaseHero?.alt || showcaseHero?.caption || agent.name) : agent.name
