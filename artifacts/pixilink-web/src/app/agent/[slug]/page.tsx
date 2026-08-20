@@ -3,7 +3,7 @@ import { headers } from 'next/headers'
 import Image from 'next/image'
 import { getAgent, getListings, getBuildings, getMarketStats, getTestimonials, getTopRealtor, getAwards, getAgentTerritories, agentCanonicalBase, resolveAgentPrefix, getNews, getFaqs, getOwnListings, getReciprocityListings, getMedia, getUnifiedSolds } from '@/lib/api'
 import { normalizeCity } from '@/lib/market'
-import { imgUrl, formatPrice, getHeroCredentials, getCoAgents, resolveSiteConfig } from '@/lib/types'
+import { imgUrl, imgUrlFull, formatPrice, getHeroCredentials, getCoAgents, resolveSiteConfig } from '@/lib/types'
 import type { UnifiedSoldsResponse } from '@/lib/types'
 import { toHomesForSaleHref } from './homes-for-sale/subareaUtils'
 import ListingCard from '@/components/ListingCard'
@@ -163,6 +163,11 @@ export default async function AgentHomePage({ params }: Props) {
   const reciprocityListings = reciprocityResult.listings
   const isShowcasePreset = cfg.layout_preset === 'showcase'
   const showcaseHeadshot = showcaseMediaResult.find((m: { type?: string }) => m.type === 'headshot') ?? null
+  // A property photo for the hero, if the agent has one. The showcase heroes previously
+  // only ever had the portrait to work with, which is the wrong shape for a full-width
+  // strip — a headshot cropped to 3:2 crops to a face and a lot of wall. Optional by
+  // design: agents without a hero row keep the portrait, so nothing changes for them.
+  const showcaseHero = showcaseMediaResult.find((m: { type?: string }) => m.type === 'hero') ?? null
   const ownSoldListings = showcaseSoldResult.listings
   const ownSoldTotal = showcaseSoldResult.total
 
@@ -306,6 +311,22 @@ export default async function AgentHomePage({ params }: Props) {
 
     const agentPhotoSrc = showcaseHeadshot ? imgUrl(showcaseHeadshot.url, 900) : photoSrc
 
+    // Hero imagery. imgUrlFull rather than imgUrl(…,900): the MLS originals top out at
+    // 1024px wide and the CDN's ?w= simply upscales past that — a ?w=2400 request returns
+    // 2399x1598 with measurably identical edge detail at 3.5x the bytes. So take the
+    // native file and let CSS scale it.
+    const heroPropertySrc = showcaseHero?.url ? imgUrlFull(showcaseHero.url) : null
+    // What the wide hero strip shows: the property if there is one, else the portrait.
+    const heroImageSrc = heroPropertySrc ?? agentPhotoSrc
+    const heroImageAlt = heroPropertySrc ? (showcaseHero?.alt || showcaseHero?.caption || agent.name) : agent.name
+    // photo_focal_x/y describe the PORTRAIT — they mark where the face sits, and hers are
+    // 50/15. Applying that to a property photo crops to the top of the frame, which on a
+    // poolside shot is sky. So the focal point applies only when the portrait is the hero;
+    // a property shot gets centred, and would need its own per-image focal to do better.
+    const heroObjectPosition = heroPropertySrc
+      ? '50% 50%'
+      : `${agent.photo_focal_x ?? 50}% ${agent.photo_focal_y ?? 12}%`
+
     // Compute real stats from data
     const oldestAward = awards.length ? awards[awards.length - 1] : null
     const yearsActive = oldestAward?.year
@@ -374,8 +395,8 @@ export default async function AgentHomePage({ params }: Props) {
           /* ── Full-bleed Cinematic ── */
           <div style={{ background: SC_CHARCOAL }}>
             <div style={{ position: 'relative', minHeight: 'clamp(480px,82vh,900px)', overflow: 'hidden' }}>
-              {agentPhotoSrc ? (
-                <Image src={agentPhotoSrc} alt={agent.name} fill unoptimized priority style={{ objectFit: 'cover', objectPosition: 'center 12%' }} />
+              {heroImageSrc ? (
+                <Image src={heroImageSrc} alt={heroImageAlt} fill unoptimized priority style={{ objectFit: 'cover', objectPosition: heroObjectPosition }} />
               ) : (
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(160deg, var(--site-dark-raised) 0%, var(--site-dark) 55%, var(--site-dark-deep) 100%)' }} />
               )}
@@ -440,9 +461,9 @@ export default async function AgentHomePage({ params }: Props) {
           <div>
             {/* Photo strip */}
             <div style={{ position: 'relative', height: 'clamp(340px,58vh,700px)', overflow: 'hidden', background: '#111' }}>
-              {agentPhotoSrc ? (
+              {heroImageSrc ? (
                 <>
-                  <Image src={agentPhotoSrc} alt={agent.name} fill unoptimized priority style={{ objectFit: 'cover', objectPosition: 'center 10%' }} />
+                  <Image src={heroImageSrc} alt={heroImageAlt} fill unoptimized priority style={{ objectFit: 'cover', objectPosition: heroObjectPosition }} />
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '65%', background: 'linear-gradient(to top, rgba(20,20,22,1.0) 0%, rgba(20,20,22,0.6) 40%, transparent 100%)' }} />
                 </>
               ) : (
@@ -467,7 +488,18 @@ export default async function AgentHomePage({ params }: Props) {
             </div>
             {/* Content band */}
             <div style={{ background: 'linear-gradient(160deg, var(--site-dark-raised) 0%, var(--site-dark) 55%, var(--site-dark-deep) 100%)', borderTop: '1px solid rgba(255,255,255,0.07)' }}>
-              <div className="container sc-editorial-band" style={{ padding: 'clamp(40px,6vw,64px) var(--container-padding)' }}>
+              <div className={`container sc-editorial-band${heroPropertySrc && agentPhotoSrc ? " sc-editorial-band--portrait" : ""}`} style={{ padding: 'clamp(40px,6vw,64px) var(--container-padding)', position: 'relative' }}>
+                {/* Portrait, straddling the strip/band boundary. The wide hero now carries a
+                    property rather than a face, so the agent comes back here as an offset card
+                    — the overlap is the point, it stitches the two bands together. Only shown
+                    when the hero is a property photo; otherwise the strip is already the
+                    portrait and this would repeat it. */}
+                {heroPropertySrc && agentPhotoSrc && (
+                  <div className="sc-editorial-portrait" aria-hidden="true">
+                    <Image src={agentPhotoSrc} alt="" fill unoptimized
+                      style={{ objectFit: 'cover', objectPosition: `${agent.photo_focal_x ?? 50}% ${agent.photo_focal_y ?? 12}%` }} />
+                  </div>
+                )}
                 {/* Left: tagline + bio + CTA */}
                 <div>
                   <p style={{ ...playfairStyle, fontSize: 'clamp(1.05rem,1.7vw,1.4rem)', fontStyle: 'italic', fontWeight: 400, color: 'rgba(255,255,255,0.68)', margin: '0 0 16px', lineHeight: 1.45 }}>
@@ -909,6 +941,22 @@ export default async function AgentHomePage({ params }: Props) {
           .sc-sold-card:hover .sc-sold-card-img { transform: scale(1.04); opacity: 1; }
           /* Suppress the shared layout value-prop CTA — showcase has its own sell section */
           .layout-value-prop { display: none !important; }
+          /* Editorial Stack — portrait overlapping the strip/band boundary.
+             Pulled up by its own height so it sits half over the photo strip; the band's
+             stats column gets padding to clear it. */
+          .sc-editorial-portrait {
+            position: absolute;
+            top: -150px;
+            right: var(--container-padding);
+            width: 168px;
+            height: 210px;
+            overflow: hidden;
+            border: 6px solid var(--site-dark);
+            box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+            z-index: 2;
+          }
+          /* Only the variant that actually renders the card pays for the clearance. */
+          .sc-editorial-band--portrait .sc-editorial-stats { padding-top: 74px; }
           /* Editorial Stack two-column layout */
           .sc-editorial-band {
             display: grid;
@@ -930,6 +978,10 @@ export default async function AgentHomePage({ params }: Props) {
             .sc-sold-grid { grid-template-columns: repeat(2, 1fr); }
             /* Editorial Stack — stack to single column */
             .sc-editorial-band { grid-template-columns: 1fr !important; }
+            /* Below 900px the band is single-column, so an absolutely-placed card would
+               overlap the text. Drop it back into the flow at a smaller size. */
+            .sc-editorial-band--portrait .sc-editorial-stats { padding-top: 28px; }
+            .sc-editorial-portrait { position: static !important; top: auto !important; right: auto !important; width: 116px; height: 145px; margin: -60px 0 20px; border-width: 4px; }
             .sc-editorial-stats { border-left: none !important; padding-left: 0 !important; border-top: 1px solid rgba(255,255,255,0.10); padding-top: 28px; display: flex !important; flex-wrap: wrap; gap: 20px 32px; }
             .sc-editorial-stats > div { border-bottom: none !important; margin-bottom: 0 !important; padding-bottom: 0 !important; }
           }
