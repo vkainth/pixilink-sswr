@@ -142,7 +142,9 @@ export default async function AgentHomePage({ params }: Props) {
     cfg.layout_preset === 'showcase'
       ? getMedia(slug).catch(() => [])
       : Promise.resolve([]),
-    cfg.layout_preset === 'showcase'
+    // Also behind sold_gallery: this feeds the Recently Sold grid and the last-5 asking
+    // ratio, both of which vanish when the section is off.
+    cfg.layout_preset === 'showcase' && cfg.sections.sold_gallery
       ? getOwnListings(slug, { status: 'Sold', limit: 50 })
       : Promise.resolve({ listings: [], total: 0 }),
   ])
@@ -246,7 +248,9 @@ export default async function AgentHomePage({ params }: Props) {
         { '@type': 'City', name: 'White Rock' },
       ]
   const primaryCity = territoryCities[0] || 'Surrey'
-  const heroCredentials = getHeroCredentials(agent)
+  // cfg.sections.credentials empties the list at the source, so all three hero variants
+  // and the JSON-LD award claim follow one switch instead of four render sites.
+  const heroCredentials = cfg.sections.credentials ? getHeroCredentials(agent) : []
   const guideName = agent.settings?.guide_name?.trim() || null
 
   const localBusinessJsonLd = {
@@ -725,7 +729,7 @@ export default async function AgentHomePage({ params }: Props) {
         )}
 
         {/* ── Awards Strip ── */}
-        {awards.length > 0 && (
+        {cfg.sections.achievements && awards.length > 0 && (
           <div data-sc-reveal style={{ background: SC_CHARCOAL, borderTop: '1px solid rgba(255,255,255,0.06)', padding: '36px 0' }}>
             <div className="container">
               <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 20, textAlign: 'center' }}>Awards &amp; Recognition</p>
@@ -743,7 +747,7 @@ export default async function AgentHomePage({ params }: Props) {
         )}
 
         {/* ── Recently Sold (own listings) ── */}
-        {ownSoldListings.length > 0 && (
+        {cfg.sections.sold_gallery && ownSoldListings.length > 0 && (
           <section data-sc-reveal style={{ background: SC_CHARCOAL, padding: 'clamp(56px,8vw,80px) 0' }}>
             <div className="container">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40, gap: 16, flexWrap: 'wrap' }}>
@@ -818,7 +822,7 @@ export default async function AgentHomePage({ params }: Props) {
         )}
 
         {/* ── Testimonials ── */}
-        {testimonials.length > 0 && (
+        {cfg.sections.testimonials !== false && testimonials.length > 0 && (
           <section data-sc-reveal style={{ background: '#fff', padding: 'clamp(56px,8vw,80px) 0' }}>
             <div className="container">
               <div style={{ textAlign: 'center', marginBottom: 48 }}>
@@ -868,6 +872,7 @@ export default async function AgentHomePage({ params }: Props) {
         </section>
 
         {/* ── Home Evaluation CTA ── */}
+        {cfg.sections.cta_home_eval && (
         <section data-sc-reveal style={{ background: SC_OFF_WHITE, padding: 'clamp(56px,8vw,80px) 0', borderBottom: '1px solid #e5e0d8', textAlign: 'center' }}>
           <div className="container" style={{ maxWidth: 640 }}>
             <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD_TEXT, textTransform: 'uppercase', fontWeight: 700, marginBottom: 16 }}>Free Evaluation</p>
@@ -882,9 +887,10 @@ export default async function AgentHomePage({ params }: Props) {
             </a>
           </div>
         </section>
+        )}
 
         {/* ── FAQ ── */}
-        {showcaseFaqs.length > 0 && (
+        {cfg.sections.faqs && showcaseFaqs.length > 0 && (
           <AgentFaqSection faqs={showcaseFaqs} agentName={agent.name} siteUrl={siteUrl} />
         )}
 
