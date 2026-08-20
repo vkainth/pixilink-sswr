@@ -5,7 +5,6 @@ import { getAgent, getListings, getBuildings, getMarketStats, getTestimonials, g
 import { normalizeCity } from '@/lib/market'
 import MotionReveal from '@/components/MotionReveal.client'
 import HeroParallax from '@/components/HeroParallax.client'
-import CountUpStat from '@/components/CountUpStat.client'
 import { imgUrl, secondPhotoUrl, formatPrice, getHeroCredentials, getCoAgents, resolveSiteConfig } from '@/lib/types'
 import type { UnifiedSoldsResponse } from '@/lib/types'
 import { toHomesForSaleHref } from './homes-for-sale/subareaUtils'
@@ -342,7 +341,11 @@ export default async function AgentHomePage({ params }: Props) {
       : null
     const last5Ratio = lastNListToSoldRatio(ownSoldListings, 5)
     const scStats: { v: string; l: string }[] = []
-    if (ownSoldTotal > 0) scStats.push({ v: `${ownSoldTotal}+`, l: 'Homes Sold' })
+    // unifiedSoldCount, not ownSoldTotal: own-listings counts only the listing side, so the
+    // hero read "18+ Homes Sold" while the sold gallery lower down on the same page showed
+    // the unified 43. Same figure the hub preset already uses for this label.
+    const scSoldCount = unifiedSoldCount || ownSoldTotal
+    if (scSoldCount > 0) scStats.push({ v: `${scSoldCount}+`, l: 'Homes Sold' })
     if (awards.length > 0) scStats.push({ v: `${awards.length}`, l: 'Industry Awards' })
     if (yearsActive) scStats.push({ v: `${yearsActive}+`, l: 'Years Experience' })
     if (last5Ratio) scStats.push({ v: `${last5Ratio.ratio}%`, l: 'of Asking Price (Last 5)' })
@@ -458,7 +461,7 @@ export default async function AgentHomePage({ params }: Props) {
                     <div key={s.l} className="sc-stat-item" style={{ display: 'flex', alignItems: 'center' }}>
                       {i > 0 && <div className="sc-stat-divider" style={{ width: 1, height: 40, background: 'rgba(255,255,255,0.09)', flexShrink: 0 }} />}
                       <div className="sc-stat-tile" style={{ textAlign: 'center', padding: '22px 40px' }}>
-                        <div style={{ ...playfairStyle, fontSize: 30, fontWeight: 700, color: '#fff', lineHeight: 1 }}><CountUpStat value={s.v} /></div>
+                        <div style={{ ...playfairStyle, fontSize: 30, fontWeight: 700, color: '#fff', lineHeight: 1 }}>{s.v}</div>
                         <div style={{ fontSize: 9, color: SC_GOLD, textTransform: 'uppercase', letterSpacing: '0.18em', marginTop: 6 }}>{s.l}</div>
                       </div>
                     </div>
@@ -545,7 +548,7 @@ export default async function AgentHomePage({ params }: Props) {
                   <div style={{ borderLeft: '1px solid rgba(255,255,255,0.10)', paddingLeft: 'clamp(28px,4vw,48px)' }} className="sc-editorial-stats">
                     {scStats.map((s, i) => (
                       <div key={s.l} style={{ paddingBottom: i < scStats.length - 1 ? 20 : 0, marginBottom: i < scStats.length - 1 ? 20 : 0, borderBottom: i < scStats.length - 1 ? '1px solid rgba(255,255,255,0.07)' : 'none', display: 'flex', alignItems: 'center', gap: 16 }}>
-                        <div style={{ ...playfairStyle, fontSize: 28, fontWeight: 700, color: '#fff', lineHeight: 1, minWidth: 64 }}><CountUpStat value={s.v} /></div>
+                        <div style={{ ...playfairStyle, fontSize: 28, fontWeight: 700, color: '#fff', lineHeight: 1, minWidth: 64 }}>{s.v}</div>
                         <div style={{ fontSize: 9, color: SC_GOLD, textTransform: 'uppercase', letterSpacing: '0.16em', lineHeight: 1.4 }}>{s.l}</div>
                       </div>
                     ))}
@@ -637,7 +640,7 @@ export default async function AgentHomePage({ params }: Props) {
                     <div key={s.l} className="sc-stat-item" style={{ display: 'flex', alignItems: 'center' }}>
                       {i > 0 && <div className="sc-stat-divider" style={{ width: 1, height: 40, background: 'rgba(255,255,255,0.09)', flexShrink: 0 }} />}
                       <div className="sc-stat-tile" style={{ textAlign: 'center', padding: '22px 40px' }}>
-                        <div style={{ ...playfairStyle, fontSize: 30, fontWeight: 700, color: '#fff', lineHeight: 1 }}><CountUpStat value={s.v} /></div>
+                        <div style={{ ...playfairStyle, fontSize: 30, fontWeight: 700, color: '#fff', lineHeight: 1 }}>{s.v}</div>
                         <div style={{ fontSize: 9, color: SC_GOLD, textTransform: 'uppercase', letterSpacing: '0.18em', marginTop: 6 }}>{s.l}</div>
                       </div>
                     </div>
