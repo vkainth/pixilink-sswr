@@ -187,10 +187,25 @@ export function regionSlugForAgent(internalSlug: string | null | undefined): str
  * Callers must NOT check regionSlugForAgent() themselves — that skips the
  * header and produces /tricity/… links on suburbia.ca, causing 500s.
  */
+// Agents whose site lives on a custom domain. Kept in sync manually with
+// SLUG_CANONICAL_DOMAIN in middleware.ts (middleware cannot import this module —
+// it would drag React's cache() into the edge bundle).
+const DOMAIN_OWNING_SLUGS = new Set(['randy', 'tricity', 'sharene'])
+
 export function resolveAgentPrefix(
   slug: string,
   xAgentPrefix: string | null,
 ): string {
+  // A domain-owning agent has exactly one public rendering context — its custom
+  // domain, where every link is root-relative. The middleware enforces that
+  // invariant by 308ing every other context (region preview, /agent/{slug} on
+  // website.pixilink.com), so '' is correct UNCONDITIONALLY — including renders
+  // where no request headers exist at all. That last case is why this check comes
+  // before the header: build-time prerendering and reused layout output render
+  // headerless (see regionSlugForAgent's doc comment), and the old header-first
+  // logic baked the /agent/{slug} fallback into the shared ISR entry — which is
+  // exactly the poisoned HTML shareneshuster.com was serving.
+  if (DOMAIN_OWNING_SLUGS.has(slug)) return ''
   if (xAgentPrefix !== null) return xAgentPrefix
   const regionSlug = regionSlugForAgent(slug)
   return regionSlug ? `/${regionSlug}` : `/agent/${slug}`

@@ -29,6 +29,8 @@ const DOMAIN_SLUG_MAP: Record<string, string> = {
 // other — shareneshuster.com served links like /sharene/about, which 404 there. The fix
 // is to give a domain-owning agent exactly one rendering context: every preview path
 // 308s here instead of rendering.
+// Kept in sync manually with DOMAIN_OWNING_SLUGS in lib/api.ts (which cannot be
+// imported here — edge bundle).
 const SLUG_CANONICAL_DOMAIN: Record<string, string> = {
   'randy': 'findfraservalleyhomes.com',
   'tricity': 'suburbia.ca',
