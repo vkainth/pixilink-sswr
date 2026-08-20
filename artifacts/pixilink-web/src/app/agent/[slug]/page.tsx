@@ -309,6 +309,9 @@ export default async function AgentHomePage({ params }: Props) {
   if (isShowcasePreset) {
     const SC_CHARCOAL  = 'var(--site-ink)'
     const SC_GOLD      = 'var(--site-accent)'
+    // Accent applied to TEXT on a light background. The raw accent is ~2:1 on the canvas
+    // and fails AA; this is the darkened variant. Sections on SC_CHARCOAL keep SC_GOLD.
+    const SC_GOLD_TEXT = 'var(--site-accent-text)'
     const SC_OFF_WHITE = 'var(--site-canvas)'
     const playfairStyle: React.CSSProperties = { fontFamily: "var(--font-display),Georgia,serif" }
 
@@ -651,7 +654,7 @@ export default async function AgentHomePage({ params }: Props) {
             <div className="container">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 40, gap: 16, flexWrap: 'wrap' }}>
                 <div>
-                  <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>
+                  <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD_TEXT, textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>
                     {hasOwnActive ? 'Active Listings' : 'Available Homes'}
                   </p>
                   <h2 style={{ ...playfairStyle, fontSize: 'clamp(1.6rem,3vw,2.4rem)', fontWeight: 400, color: SC_CHARCOAL, margin: 0 }}>
@@ -816,7 +819,7 @@ export default async function AgentHomePage({ params }: Props) {
           <section data-sc-reveal style={{ background: '#fff', padding: 'clamp(56px,8vw,80px) 0' }}>
             <div className="container">
               <div style={{ textAlign: 'center', marginBottom: 48 }}>
-                <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12 }}>Client Stories</p>
+                <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD_TEXT, textTransform: 'uppercase', fontWeight: 700, marginBottom: 12 }}>Client Stories</p>
                 <h2 style={{ ...playfairStyle, fontSize: 'clamp(1.8rem,3vw,2.5rem)', fontWeight: 400, color: SC_CHARCOAL, margin: 0 }}>
                   What My Clients Say
                 </h2>
@@ -864,7 +867,7 @@ export default async function AgentHomePage({ params }: Props) {
         {/* ── Home Evaluation CTA ── */}
         <section data-sc-reveal style={{ background: SC_OFF_WHITE, padding: 'clamp(56px,8vw,80px) 0', borderBottom: '1px solid #e5e0d8', textAlign: 'center' }}>
           <div className="container" style={{ maxWidth: 640 }}>
-            <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD, textTransform: 'uppercase', fontWeight: 700, marginBottom: 16 }}>Free Evaluation</p>
+            <p style={{ fontSize: 10, letterSpacing: '0.25em', color: SC_GOLD_TEXT, textTransform: 'uppercase', fontWeight: 700, marginBottom: 16 }}>Free Evaluation</p>
             <h2 style={{ ...playfairStyle, fontSize: 'clamp(2rem,3vw,2.8rem)', fontWeight: 400, color: SC_CHARCOAL, marginBottom: 16, lineHeight: 1.2 }}>
               What Is Your Home Worth?
             </h2>
