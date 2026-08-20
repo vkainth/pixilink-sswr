@@ -6,8 +6,10 @@ import { authFetch, nextStepPath, consumeReturnTo, peekReturnTo, parseSourceCont
 import AuthSplitLayout from '@/components/AuthSplitLayout'
 import type { AgentProfile } from '@/lib/types'
 
+// Three steps: form -> phone OTP -> MLS VOW terms (board compliance, always shown).
 const STEPS = [
   { state: 'active' as const },
+  { state: 'inactive' as const },
   { state: 'inactive' as const },
 ]
 
@@ -89,7 +91,7 @@ export default function RegisterForm({ agent, slug, agentPrefix }: { agent: Agen
   }
 
   return (
-    <AuthSplitLayout agent={agent} steps={STEPS} stepLabel="Step 1 of 2 — Create Account">
+    <AuthSplitLayout agent={agent} steps={STEPS} stepLabel="Step 1 of 3 — Create Account">
       <style>{`@media (max-width: 680px) { .auth-name-grid { grid-template-columns: 1fr !important; } }`}</style>
       <h1 style={{ margin: '0 0 4px', fontSize: 24, fontWeight: 800, color: '#1a1a1a', lineHeight: 1.2 }}>
         Create your free account

@@ -6,9 +6,14 @@ import { authFetch } from '@/lib/auth-client'
 import AuthSplitLayout from '@/components/AuthSplitLayout'
 import type { AgentProfile } from '@/lib/types'
 
+// Three steps, not two: a passwordless registration always continues to the MLS VOW
+// terms screen (board compliance - CADREB/FVREB/REBGV), so the count must include it.
+// Previously this showed 2 dots here and 3 on the terms page, so the indicator grew
+// a dot at the end and the label promised "Step 2 of 2" before a third screen.
 const STEPS = [
   { state: 'done' as const },
   { state: 'active' as const },
+  { state: 'inactive' as const },
 ]
 
 type CountryEntry = { label: string; value: string; disabled?: boolean }
@@ -296,7 +301,7 @@ function VerifyPhoneFormInner({ agent, slug, agentPrefix }: { agent: AgentProfil
   // Show spinner while loading user data or while auto-sending
   if (loadingUser || autoSending) {
     return (
-      <AuthSplitLayout agent={agent} steps={STEPS} stepLabel="Step 2 of 2 — Phone Verification">
+      <AuthSplitLayout agent={agent} steps={STEPS} stepLabel="Step 2 of 3 — Phone Verification">
         <div style={{ height: 200, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
           <span style={{ color: '#9ca3af', fontSize: 14 }}>{autoSending ? 'Sending you a code…' : 'Loading…'}</span>
         </div>
@@ -305,7 +310,7 @@ function VerifyPhoneFormInner({ agent, slug, agentPrefix }: { agent: AgentProfil
   }
 
   return (
-    <AuthSplitLayout agent={agent} steps={STEPS} stepLabel="Step 2 of 2 — Phone Verification">
+    <AuthSplitLayout agent={agent} steps={STEPS} stepLabel="Step 2 of 3 — Phone Verification">
       <h1 style={{ margin: '0 0 4px', fontSize: 24, fontWeight: 800, color: '#1a1a1a', lineHeight: 1.2 }}>
         {prefilled ? 'Confirm your phone number' : 'Add your phone number'}
       </h1>
@@ -359,7 +364,7 @@ function VerifyPhoneFormInner({ agent, slug, agentPrefix }: { agent: AgentProfil
 export default function VerifyPhoneForm({ agent, slug, agentPrefix }: { agent: AgentProfile; slug: string; agentPrefix?: string }) {
   return (
     <Suspense fallback={
-      <AuthSplitLayout agent={agent} steps={STEPS} stepLabel="Step 2 of 2 — Phone Verification">
+      <AuthSplitLayout agent={agent} steps={STEPS} stepLabel="Step 2 of 3 — Phone Verification">
         <div style={{ height: 200, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <span style={{ color: '#9ca3af', fontSize: 14 }}>Loading…</span>
         </div>

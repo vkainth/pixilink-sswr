@@ -6,9 +6,14 @@ import { authFetch, nextStepPath, consumeReturnTo } from '@/lib/auth-client'
 import AuthSplitLayout from '@/components/AuthSplitLayout'
 import type { AgentProfile } from '@/lib/types'
 
+// Three steps, not two: a passwordless registration always continues to the MLS VOW
+// terms screen (board compliance - CADREB/FVREB/REBGV), so the count must include it.
+// Previously this showed 2 dots here and 3 on the terms page, so the indicator grew
+// a dot at the end and the label promised "Step 2 of 2" before a third screen.
 const STEPS = [
   { state: 'done' as const },
   { state: 'active' as const },
+  { state: 'inactive' as const },
 ]
 
 function getErrorMsg(data: Record<string, unknown>): string {
@@ -123,7 +128,7 @@ function OtpFormInner({ agent, slug, agentPrefix }: { agent: AgentProfile; slug:
   }
 
   return (
-    <AuthSplitLayout agent={agent} steps={STEPS} stepLabel="Step 2 of 2 — Enter Code">
+    <AuthSplitLayout agent={agent} steps={STEPS} stepLabel="Step 2 of 3 — Enter Code">
       <h1 style={{ margin: '0 0 4px', fontSize: 24, fontWeight: 800, color: '#1a1a1a', lineHeight: 1.2 }}>
         Enter the code
       </h1>
