@@ -16,12 +16,12 @@ interface Props {
   neighbourhoods?: NeighbourhoodSummary[]
 }
 
-// Which agents each slug-gated page actually exists for. These MUST stay in step with
-// the notFound() gates inside the routes themselves — app/agent/[slug]/new-construction
-// (randy + tricity + burnaby) and /luxury-homes + /ocean-view-homes (randy only).
-// The footer previously linked all of them for everyone, so every other agent's footer
-// advertised pages that 404 on their own site.
-const NEW_CONSTRUCTION_SLUGS = new Set(['randy', 'tricity', 'saeed-farhani-ppqu'])
+// /luxury-homes and /ocean-view-homes are still hand-written Randy-only content whose
+// routes notFound() for anyone else, so the footer must not advertise them elsewhere —
+// linking them for everyone is what put two dead links in suburbia.ca's own footer.
+// MUST stay in step with the `slug !== 'randy'` gates in those two routes.
+// (/new-construction used to be listed here too; it is now derived from each agent's own
+// territories and works for every non-showcase agent, so it needs no allowlist.)
 const RANDY_ONLY_SLUG = 'randy'
 
 function toSlug(s: string): string {
@@ -156,15 +156,12 @@ function buildFooterLinks(
     utility: {
       'Search': [
         { label: 'All Homes for Sale', href: '/homes-for-sale' },
-        // Slug-gated pages: these routes notFound() for anyone they were not written
-        // for, so linking them unconditionally put dead links in the footer of every
-        // other site — suburbia.ca was advertising Randy's /luxury-homes and
-        // /ocean-view-homes. Keep these predicates in step with the gates in the
-        // routes themselves (new-construction allows randy + tricity + burnaby).
-        ...(NEW_CONSTRUCTION_SLUGS.has(agent.slug) ? [{ label: 'New Construction', href: '/new-construction' }] : []),
+        { label: 'New Construction', href: '/new-construction' },
         { label: 'Condos for Sale', href: '/condos-for-sale' },
         // /townhomes-for-sale 308s to /townhouses-for-sale; link the canonical directly.
         { label: 'Townhomes for Sale', href: '/townhouses-for-sale' },
+        // Still slug-gated: these two routes notFound() for anyone but Randy, so linking
+        // them unconditionally is what put two dead links in suburbia.ca's own footer.
         ...(agent.slug === RANDY_ONLY_SLUG ? [
           { label: 'Luxury Homes', href: '/luxury-homes' },
           { label: 'Ocean View Homes', href: '/ocean-view-homes' },

@@ -1389,3 +1389,21 @@ export function resolveSiteConfig(agent: Pick<AgentProfile, 'settings'>): Resolv
     },
   }
 }
+
+/** One subarea's new-construction aggregate — see getNewConstructionAreas(). */
+export interface NewConstructionArea {
+  subarea: string
+  city: string
+  new_build_count: number
+  /** Real min/max active list price for new builds in this subarea; null when unpriced. */
+  min_price: number | null
+  max_price: number | null
+  /** Distinct MLS property types present, e.g. ["Apartment","Townhouse"]. */
+  types: string[]
+}
+
+export interface NewConstructionAreas {
+  min_year: number | null
+  total: number
+  areas: NewConstructionArea[]
+}

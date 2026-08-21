@@ -21,12 +21,12 @@ import { useAgentPrefix } from '@/lib/agent-context'
 // shortcut is gone. If you want any of them back in the bar, remove something else too;
 // the row cannot hold more than about eight entries at this font size.
 
-// Agents that actually have the hand-written /new-construction page. Mirrors
-// NEW_CONSTRUCTION_SLUGS in AgentFooter.tsx and the notFound() gate in the route.
-const NEW_CONSTRUCTION_SLUGS = new Set(['randy', 'tricity', 'saeed-farhani-ppqu'])
-
 const BASE_NAV_LINKS = [
   { label: 'Homes for Sale', href: 'homes-for-sale',  flag: null },
+  // /new-construction is no longer three hand-written regional pages behind a slug
+  // allowlist — it derives its areas, counts and prices from whichever territories the
+  // agent covers, so every non-showcase agent has a real page here.
+  { label: 'New Homes',      href: 'new-construction', flag: null },
   { label: 'Featured',       href: 'my-listings',     flag: null },
   { label: 'Buildings',      href: 'buildings',       flag: null },
   { label: 'Neighbourhood',  href: 'neighbourhoods',  flag: null },
@@ -82,25 +82,11 @@ export default function AgentNav({ agent, user, navStyle = 'dark-bar' }: Props) 
 
   const NAV_LINKS = isShowcase
     ? SHOWCASE_NAV_LINKS
-    : (() => {
-        const base = BASE_NAV_LINKS.filter(link => {
-          if ((link as { teamOnly?: boolean }).teamOnly) return hasTeam
-          if (!link.flag) return true
-          return agent.features?.[link.flag] === true
-        })
-        // /new-construction is hand-written regional content that exists for exactly three
-        // agents (its route notFound()s for anyone else), so it is added per-agent rather
-        // than living in BASE_NAV_LINKS — where it would have put a 404 in the nav of every
-        // other site, the same way the footer used to. Keep in step with
-        // NEW_CONSTRUCTION_SLUGS in AgentFooter and the gate in the route itself.
-        // Placed directly after "Homes for Sale" so the two inventory links sit together
-        // rather than leaving "New Homes" orphaned at the end of the bar.
-        if (!NEW_CONSTRUCTION_SLUGS.has(agent.slug)) return base
-        const out = [...base]
-        const afterHomes = out.findIndex(l => l.href === 'homes-for-sale') + 1
-        out.splice(afterHomes || out.length, 0, { label: 'New Homes', href: 'new-construction', flag: null })
-        return out
-      })()
+    : BASE_NAV_LINKS.filter(link => {
+        if ((link as { teamOnly?: boolean }).teamOnly) return hasTeam
+        if (!link.flag) return true
+        return agent.features?.[link.flag] === true
+      })
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY >= 80)

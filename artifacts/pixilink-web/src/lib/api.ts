@@ -8,6 +8,7 @@ import type {
   BuildingDetail,
   ListingDetail,
   NeighbourhoodSummary,
+  NewConstructionAreas,
   NeighbourhoodDetail,
   MonthlyTrendPoint,
   MarketReport,
@@ -616,6 +617,34 @@ export async function getTestimonials(slug: string): Promise<AgentTestimonial[]>
   return FALLBACK_TESTIMONIALS
 }
 
+/**
+ * Per-subarea new-construction aggregates for the agent's OWN territories — real counts,
+ * real price ranges, real property types. Backs /new-construction, which used to hard-code
+ * its areas and prices per region.
+ *
+ * minYear is passed in because the "what counts as a new build" rule lives with the page.
+ * Returns an empty shape on any failure so the page degrades to its live-listing strip
+ * rather than throwing.
+ */
+export async function getNewConstructionAreas(
+  slug: string,
+  minYear: number,
+): Promise<NewConstructionAreas> {
+  try {
+    const res = await laravelFetch(
+      `/api-internal/agent/${slug}/new-construction-areas?min_year=${minYear}`,
+      { next: { revalidate: 300 } },
+    )
+    if (res.ok) {
+      const data = await res.json()
+      if (data && Array.isArray(data.areas)) return data as NewConstructionAreas
+    }
+  } catch {
+    // fall through
+  }
+  return { min_year: minYear, total: 0, areas: [] }
+}
+
 export async function getNeighbourhoods(slug: string): Promise<NeighbourhoodSummary[]> {
   try {
     const res = await laravelFetch(`/api-internal/agent/${slug}/neighbourhoods`, { next: { revalidate: 300 } })
@@ -1014,7 +1043,12 @@ export function agentAreaDisplay(territories: import('./types').AgentTerritory[]
         .filter((c): c is string => !!c)
     ),
   ]
-  return cities.length > 0 ? cities.join(' & ') : 'South Surrey & White Rock'
+  // Comma-separated with a final "&": three or more cities joined purely by "&" read
+  // badly wherever this lands in a heading — suburbia's was "Coquitlam & Port Coquitlam
+  // & Port Moody". Two cities still render as "A & B".
+  if (cities.length === 0) return 'South Surrey & White Rock'
+  if (cities.length <= 2) return cities.join(' & ')
+  return `${cities.slice(0, -1).join(', ')} & ${cities[cities.length - 1]}`
 }
 
 export const authMe = cache(async (token: string): Promise<import('./types').AuthUser | null> => {
