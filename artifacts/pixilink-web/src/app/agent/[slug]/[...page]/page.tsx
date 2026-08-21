@@ -43,9 +43,14 @@ function parseSeoFilter(segment: string): { subarea: string; type?: string; stat
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, page } = await params
-  const hdrs = await headers()
-  const agentPrefix = resolveAgentPrefix(slug, hdrs.get('x-agent-prefix'))
-  const ap = (p: string) => `${agentPrefix}${p}`
+  // No headers() here: this used to read x-agent-prefix into an agentPrefix/ap
+  // pair that the function never referenced — dead code left from the
+  // header-derived prefix scheme, and a needless dynamic access in a route that
+  // Next may render statically. Removed as cleanup only; it was NOT the cause of
+  // the 500s on unmatched paths (that was the [filter]/[city] routes — see the
+  // force-dynamic comment there). Verified by removing this alone and observing
+  // no behaviour change. If this ever genuinely needs a per-agent URL, derive it
+  // from the agent record, never from a request header.
   const pageSlug = page.join('/')
   if (page.length === 1) {
     const filter = parseSeoFilter(page[0])

@@ -1,5 +1,4 @@
 import { playfair } from '@/lib/fonts'
-import { headers } from 'next/headers'
 import { getAgent, getListings, getNeighbourhoodDetail, agentCanonicalBase, resolveAgentPrefix } from '@/lib/api'
 import ListingStrip from '@/components/ListingStrip'
 import ContactSidebarForm from '@/components/ContactSidebarForm'
@@ -14,7 +13,11 @@ interface Props {
   searchParams: Promise<Record<string, string>>
 }
 
-export const revalidate = 300
+// force-dynamic is load-bearing — see the sibling [filter]/[city]/page.tsx comment.
+// Empty generateStaticParams + a dynamic API (searchParams) meant every request
+// was attempted as an on-demand static render, so DynamicServerError escaped as a
+// 500 for every url in this family.
+export const dynamic = 'force-dynamic'
 
 const TYPE_MAP: Record<string, { schema: string; label: string; plural: string; h1Type: string }> = {
   condos:      { schema: 'Apartment', label: 'Condo',     plural: 'Condos',      h1Type: 'Condos & Apartments' },
@@ -63,8 +66,9 @@ export async function generateStaticParams() {
 
 export default async function PropertyTypeCityBedsPage({ params, searchParams }: Props) {
   const { slug, filter, city, beds } = await params
-  const hdrs = await headers()
-  const agentPrefix = resolveAgentPrefix(slug, hdrs.get('x-agent-prefix'))
+  // Header-free by choice, so the prefix comes from the slug and not the request
+  // — see the sibling [filter]/[city]/page.tsx comment.
+  const agentPrefix = resolveAgentPrefix(slug, null)
   const ap = (p: string) => `${agentPrefix}${p}`
   const sp = await searchParams
 

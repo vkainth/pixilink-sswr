@@ -1,5 +1,4 @@
 import { playfair } from '@/lib/fonts'
-import { headers } from 'next/headers'
 import { getAgent, getListings, getNeighbourhoodDetail, agentCanonicalBase, resolveAgentPrefix } from '@/lib/api'
 import ListingStrip from '@/components/ListingStrip'
 import ContactSidebarForm from '@/components/ContactSidebarForm'
@@ -14,7 +13,24 @@ interface Props {
   searchParams: Promise<Record<string, string>>
 }
 
-export const revalidate = 300
+// force-dynamic is load-bearing, not a preference. This route reads searchParams
+// (price/page filters), and generateStaticParams below returns [] — so nothing in
+// this family is rendered at build time, and there is no build-time render for
+// Next to notice the dynamic access on and bail out to dynamic rendering. Every
+// request therefore arrived as an ON-DEMAND STATIC generation, where reading a
+// dynamic API throws DynamicServerError; that error escaped as a 500 rather than
+// a page. The result was that EVERY url in this family 500'd on all three
+// production domains — valid ones like /condos/kerrisdale as much as garbage like
+// /x/y, which is how it surfaced (as unmatched paths returning 500 instead of
+// 404). It was never intermittent and never cache-dependent.
+//
+// Every sibling route with this same shape (empty generateStaticParams + a
+// dynamic API) already sets force-dynamic: buildings/[area], building/[buildingSlug],
+// and all three market-report levels. Routes whose generateStaticParams returns
+// real params are safe without it, because the build-time render triggers the
+// bailout. Do not "restore" revalidate here — it is inert under force-dynamic and
+// would only imply a caching behaviour this route does not have.
+export const dynamic = 'force-dynamic'
 
 const TYPE_MAP: Record<string, { schema: string; label: string; plural: string; h1Type: string }> = {
   condos:      { schema: 'Apartment', label: 'Condo',     plural: 'Condos',      h1Type: 'Condos & Apartments' },
@@ -54,8 +70,15 @@ export async function generateStaticParams() {
 
 export default async function PropertyTypeCityPage({ params, searchParams }: Props) {
   const { slug, filter, city } = await params
-  const hdrs = await headers()
-  const agentPrefix = resolveAgentPrefix(slug, hdrs.get('x-agent-prefix'))
+  // Header-free by choice: passing null takes resolveAgentPrefix's headerless
+  // path — '' for domain-owning agents, a stable per-slug prefix otherwise (see
+  // its doc comment). Deriving the prefix from the slug instead of the request
+  // is what keeps a shared ISR entry from being poisoned across hosts, which is
+  // the bug that broke shareneshuster.com's links earlier. The 500s in this
+  // family were NOT caused by the header read — verified by removing it alone,
+  // which changed nothing; searchParams below is dynamic too. See the
+  // force-dynamic comment at the top for the actual cause.
+  const agentPrefix = resolveAgentPrefix(slug, null)
   const ap = (p: string) => `${agentPrefix}${p}`
   const sp = await searchParams
 
