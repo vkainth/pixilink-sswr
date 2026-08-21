@@ -302,6 +302,14 @@ export interface ListingBuildingRef {
 }
 
 export interface ListingDetail extends AgentListing {
+  /**
+   * True when this listing belongs to the agent whose site is being viewed — matched
+   * server-side against agent_mls_ids (listingDetail in AgentDataController). An agent's
+   * own sold listings are their own track record and are NEVER gated; only other
+   * brokerages' sold data is. Resolved in the API so the rule lives with the data, and it
+   * fails closed, so treat a missing/false value as "not theirs".
+   */
+  is_own_listing?: boolean
   photos: string[]
   description: string | null
   features: string[]

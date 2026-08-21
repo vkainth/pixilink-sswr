@@ -1,7 +1,7 @@
 import { getAgent, getListingDetail, getBuildingDetail, authMe, resolveAgentPrefix } from '@/lib/api'
 import { nextStepPath } from '@/lib/next-step'
 import { cookies, headers } from 'next/headers'
-import { formatPriceFull, pricePerSqft, formatDate } from '@/lib/types'
+import { formatPriceFull, pricePerSqft, formatDate, resolveSiteConfig } from '@/lib/types'
 import ListingStrip from '@/components/ListingStrip'
 import BuildingComparisonTable from '@/components/BuildingComparisonTable'
 import InsightBar from '@/components/InsightBar'
@@ -66,17 +66,57 @@ export default async function SoldListingDetailPage({ params }: Props) {
     ? nextStepPath(slug, user.next_step)
     : undefined
 
+  // THE AGENT'S OWN SOLD LISTINGS ARE NEVER GATED.
+  //
+  // The sign-in wall exists to protect other brokerages' licensed sold data. An agent's
+  // own sales are her own track record — the single most persuasive thing on the site —
+  // and hiding them behind "$000,000" plus three sign-in panels was arguing against the
+  // page's whole purpose: a visitor who wants to know how Sharene's own listings
+  // performed was met with a lock instead of an answer.
+  //
+  // is_own_listing is resolved by the API from agent_mls_ids (see listingDetail) and fails
+  // closed, so `=== true` is deliberate: anything else is treated as somebody else's
+  // listing and stays gated. Comparables further down keep using isLoggedIn, because
+  // those ARE other brokerages' sales.
+  const isOwnListing = listing.is_own_listing === true
+  const showSold = isLoggedIn || isOwnListing
+
+  // Showcase sites do not have the sold-data hub: /sold, /sold?type=…, /market and
+  // /market-report are all requireNotShowcase, so this page was linking to five 404s on
+  // its own site — the entire breadcrumb plus most of the "Explore More Sold Data" chips.
+  // (A homepage-only link crawl cannot see these; they only exist on listing pages.)
+  // /featured-properties is the showcase equivalent and does include her sold homes, so
+  // that is where the sold links point instead.
+  const isShowcase = resolveSiteConfig(agent).layout_preset === 'showcase'
+  const soldIndexHref = ap(isShowcase ? '/featured-properties' : '/sold')
+  const soldIndexLabel = isShowcase ? 'Properties' : 'Sold Homes'
+  const exploreLinks = isShowcase
+    ? [
+        { l: 'All Properties', h: ap('/featured-properties') },
+        { l: 'Homes For Sale', h: ap('/homes-for-sale') },
+        { l: 'What’s My Home Worth?', h: ap('/home-evaluation') },
+        { l: `Contact ${agent.name.split(' ')[0]}`, h: ap('/contact') },
+      ]
+    : [
+        { l: 'All Sold Homes', h: ap('/sold') },
+        { l: 'Condos Sold', h: ap('/sold?type=Apartment') },
+        { l: 'Townhouses Sold', h: ap('/sold?type=Townhouse') },
+        { l: 'Houses Sold', h: ap('/sold?type=House') },
+        { l: 'Market Reports', h: ap('/market/archive') },  // canonical: /market-report 308s here
+        { l: 'Homes For Sale', h: ap('/homes-for-sale') },
+      ]
+
   const soldPrice = listing.sold_price || listing.list_price
-  // Gated figures. The sold price is licensed data behind a sign-in wall, so it must
-  // not reach the page for a guest by ANY route: not rendered, not serialised into a
-  // client component's props, and not reconstructible. $/sqft is the reconstructible
-  // one — 850 ft² beside $665/ft² gives the $565,000 the blur is hiding.
-  const priceLabel = isLoggedIn ? formatPriceFull(soldPrice) : null
-  const listPriceLabel = isLoggedIn ? formatPriceFull(listing.list_price) : null
-  const psf = isLoggedIn ? pricePerSqft(soldPrice, listing.sqft) : null
+  // Gated figures. Another brokerage's sold price is licensed data behind a sign-in wall,
+  // so for those it must not reach the page by ANY route: not rendered, not serialised
+  // into a client component's props, and not reconstructible. $/sqft is the
+  // reconstructible one — 850 ft² beside $665/ft² gives the $565,000 the blur is hiding.
+  const priceLabel = showSold ? formatPriceFull(soldPrice) : null
+  const listPriceLabel = showSold ? formatPriceFull(listing.list_price) : null
+  const psf = showSold ? pricePerSqft(soldPrice, listing.sqft) : null
   const baths = listing.baths % 1 === 0 ? listing.baths.toFixed(0) : listing.baths.toFixed(1)
   const photos = listing.photos?.length ? listing.photos : listing.photo_url ? [listing.photo_url] : []
-  const ratio = isLoggedIn && listing.sold_price && listing.list_price
+  const ratio = showSold && listing.sold_price && listing.list_price
     ? Math.round((listing.sold_price / listing.list_price) * 100)
     : null
   const soldRatio = ratio != null ? ratio.toFixed(1) : null
@@ -98,7 +138,7 @@ export default async function SoldListingDetailPage({ params }: Props) {
   // visitor the single figure the gate exists to withhold. Two or more sales makes the
   // number non-identifying; below that we fall through to the generic sentence.
   // A signed-in visitor can already see the exact price, so the guard only applies to guests.
-  const bAvgIsAggregate = isLoggedIn || (bStats?.sold_count ?? 0) >= 2
+  const bAvgIsAggregate = showSold || (bStats?.sold_count ?? 0) >= 2
   const cmaProof = bAvgIsAggregate && bStats?.avg_sold_price && bName
     ? `Recent sales at ${bName} average ${formatPriceFull(bStats.avg_sold_price)}`
       + `${bStats.avg_dom ? ` in ${Math.round(bStats.avg_dom)} days` : ''}.`
@@ -137,7 +177,7 @@ export default async function SoldListingDetailPage({ params }: Props) {
     // would hand it back to anyone reading the page source. og:image and
     // twitter:image deliberately keep it — that thumbnail is what earns the click
     // from search and social, which is upstream of the conversion, not part of it.
-    ...(isLoggedIn && listing.photo_url ? { image: listing.photo_url } : {}),
+    ...(showSold && listing.photo_url ? { image: listing.photo_url } : {}),
     ...(listing.year_built ? { yearBuilt: listing.year_built } : {}),
     numberOfRooms: listing.beds,
     floorSize: listing.sqft > 0 ? { '@type': 'QuantitativeValue', value: listing.sqft, unitCode: 'FTK' } : undefined,
@@ -150,7 +190,7 @@ export default async function SoldListingDetailPage({ params }: Props) {
       <SoldUnlockPrompt
         slug={slug}
         mls={listing.mls_no}
-        isLoggedIn={isLoggedIn}
+        isLoggedIn={showSold}
         agentPrefix={agentPrefix}
         subarea={listing.subarea}
         buildingSoldCount={buildingSolds.length}
@@ -160,11 +200,18 @@ export default async function SoldListingDetailPage({ params }: Props) {
       {/* Breadcrumb */}
       <div className="container" style={{ padding: '18px var(--container-padding) 0' }}>
         <div style={{ fontSize: 12, color: 'var(--site-muted)' }}>
-          <a href={ap('/sold')} style={{ color: 'var(--site-muted)', textDecoration: 'none' }}>Sold Homes</a>
+          <a href={soldIndexHref} style={{ color: 'var(--site-muted)', textDecoration: 'none' }}>{soldIndexLabel}</a>
           {' › '}
-          <a href={ap(`/sold?subarea=${encodeURIComponent(listing.subarea || '')}`)} style={{ color: 'var(--site-muted)', textDecoration: 'none' }}>
-            {listing.subarea || listing.city}
-          </a>
+          {/* The subarea crumb is a link only where a subarea-filtered sold index
+              exists. On showcase there is none, and a breadcrumb that 404s is worse
+              than plain text. */}
+          {isShowcase ? (
+            <span>{listing.subarea || listing.city}</span>
+          ) : (
+            <a href={ap(`/sold?subarea=${encodeURIComponent(listing.subarea || '')}`)} style={{ color: 'var(--site-muted)', textDecoration: 'none' }}>
+              {listing.subarea || listing.city}
+            </a>
+          )}
           {' › '}
           <span>{listing.address}</span>
         </div>
@@ -178,7 +225,7 @@ export default async function SoldListingDetailPage({ params }: Props) {
       {photos.length > 0 && (
         <div className="container" style={{ padding: '14px var(--container-padding) 0' }}>
           <div style={{ position: 'relative', borderRadius: 10, overflow: 'hidden', background: 'var(--site-ink)', aspectRatio: '16/7' }}>
-            {isLoggedIn ? (
+            {showSold ? (
               <img src={photos[0]} alt={listing.address} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 }} />
             ) : (
               <div style={{
@@ -215,7 +262,22 @@ export default async function SoldListingDetailPage({ params }: Props) {
           <div style={{ minWidth: 0 }}>
             {/* Price + address */}
             <div style={{ marginBottom: 20 }}>
-              {isLoggedIn ? (
+              {/* On the agent's own sale this replaces the lock as the page's trust
+                  anchor: it explains why the price is open and makes the strongest
+                  available claim — she sold this home — before any ask. */}
+              {isOwnListing && (
+                <div style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 12,
+                  background: 'rgba(var(--site-accent-rgb),0.10)',
+                  border: '1px solid rgba(var(--site-accent-rgb),0.30)',
+                  color: 'var(--site-accent-text)',
+                  borderRadius: 999, padding: '6px 14px',
+                  fontSize: 12, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase',
+                }}>
+                  Listed &amp; sold by {agent.name}
+                </div>
+              )}
+              {showSold ? (
                 <>
                   <div style={{ fontSize: 34, fontWeight: 900, color: 'var(--site-accent-text)', lineHeight: 1, marginBottom: 4 }}>
                     {priceLabel}
@@ -355,16 +417,11 @@ export default async function SoldListingDetailPage({ params }: Props) {
 
             {/* Internal links */}
             <div style={{ ...card }}>
-              <div style={{ fontWeight: 700, marginBottom: 14, fontSize: 14, color: 'var(--site-body)' }}>Explore More Sold Data</div>
+              <div style={{ fontWeight: 700, marginBottom: 14, fontSize: 14, color: 'var(--site-body)' }}>
+                {isShowcase ? 'Explore More' : 'Explore More Sold Data'}
+              </div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-                {[
-                  { l: 'All Sold Homes', h: ap('/sold') },
-                  { l: 'Condos Sold', h: ap('/sold?type=Apartment') },
-                  { l: 'Townhouses Sold', h: ap('/sold?type=Townhouse') },
-                  { l: 'Houses Sold', h: ap('/sold?type=House') },
-                  { l: 'Market Report', h: ap('/market-report') },
-                  { l: 'Homes For Sale', h: ap('/homes-for-sale') },
-                ].map(x => (
+                {exploreLinks.map(x => (
                   <a key={x.l} href={x.h} style={{ background: 'var(--site-canvas)', border: '1px solid var(--site-rule)', color: 'var(--site-body)', padding: '8px 14px', borderRadius: 6, textDecoration: 'none', fontSize: 13 }}>{x.l}</a>
                 ))}
               </div>
@@ -395,22 +452,42 @@ export default async function SoldListingDetailPage({ params }: Props) {
 
           {/* Sidebar */}
           <div className="sold-detail-sidebar">
+            {/* Sale-result card. When the price is visible the headline figure is already
+                40px tall in the main column and, on mobile, this sits directly beneath it
+                — so repeating the number was pure duplication in the one slot with the
+                most conversion value. It now reports how the sale PERFORMED, which is the
+                part a visitor cannot work out for themselves and the part that reflects on
+                the agent. The price still appears here when the two are far apart
+                (desktop, where this is a sticky sidebar beside a long page). */}
             <div style={{ background: '#fff', border: '1px solid var(--site-rule)', borderRadius: 10, padding: '18px 20px', marginBottom: 14 }}>
-              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--site-muted)', marginBottom: 6 }}>Sold Price</div>
-              {isLoggedIn ? (
-                <div style={{ fontSize: 28, fontWeight: 900, color: 'var(--site-accent-text)', marginBottom: 4 }}>{priceLabel}</div>
+              <div style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--site-muted)', marginBottom: 6 }}>
+                {showSold && ratio != null ? 'Sale Result' : 'Sold Price'}
+              </div>
+              {showSold ? (
+                <div className="sold-sidebar-price" style={{ fontSize: 28, fontWeight: 900, color: 'var(--site-accent-text)', marginBottom: 4 }}>{priceLabel}</div>
               ) : (
                 <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--site-accent-text)', filter: 'blur(7px)', userSelect: 'none', marginBottom: 4 }}>$000,000</div>
+              )}
+              {showSold && ratio != null && (
+                <div style={{ fontSize: 15, fontWeight: 700, color: ratio >= 100 ? '#15803d' : 'var(--site-body)', marginBottom: 4 }}>
+                  {ratio === 100
+                    ? 'Sold at asking price'
+                    : ratio > 100
+                      ? `Sold ${ratio - 100}% over asking`
+                      : `Sold ${100 - ratio}% under asking`}
+                </div>
               )}
               {listing.sold_date && (
                 <div style={{ fontSize: 12, color: 'var(--site-muted)' }}>Sold {formatDate(listing.sold_date)}</div>
               )}
               {listing.dom != null && (
-                <div style={{ fontSize: 12, color: 'var(--site-muted)', marginTop: 2 }}>{listing.dom} days on market</div>
+                <div style={{ fontSize: 12, color: 'var(--site-muted)', marginTop: 2 }}>
+                  {listing.dom} day{listing.dom === 1 ? '' : 's'} on market
+                </div>
               )}
             </div>
 
-            {!isLoggedIn && (
+            {!showSold && (
               <div style={{ marginBottom: 14 }}>
                 <SoldSignInCard
                   agent={agent}
@@ -446,6 +523,10 @@ export default async function SoldListingDetailPage({ params }: Props) {
         @media (max-width: 900px) {
           .sold-detail-grid { grid-template-columns: 1fr !important; }
           .sold-detail-sidebar { position: static !important; }
+          /* Stacked layout puts this card immediately under the 34px headline price,
+             so the number would appear twice within one screen. Desktop keeps it —
+             there the sidebar is a sticky rail beside a long scrolling page. */
+          .sold-sidebar-price { display: none !important; }
         }
       `}</style>
     </div>

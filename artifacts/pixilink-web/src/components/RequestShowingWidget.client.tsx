@@ -304,4 +304,14 @@ const opt = (active: boolean): React.CSSProperties => ({
 const field: React.CSSProperties = {
   padding: '11px 12px', border: '1px solid #e5e7eb', borderRadius: 7, fontSize: 13,
   background: '#fff', color: '#1a1a1a', fontFamily: 'inherit', outline: 'none',
+  // min-width: 0 is what stops this widget from making the whole page scroll
+  // sideways on a phone. An <input> has an intrinsic default width (roughly 20
+  // characters — about 210px in mobile Safari) and `width: 100%` does NOT reduce
+  // its min-content contribution. Two of these sit in a `1fr 1fr` grid (First/Last
+  // name), so the grid could never be narrower than ~430px + padding. That minimum
+  // propagated up and widened the entire column past the viewport, which is why
+  // every card on the sold page rendered ~65px wider than the screen and the page
+  // panned horizontally. Percentage widths do not fix it; only min-width: 0 does.
+  minWidth: 0,
+  maxWidth: '100%',
 }

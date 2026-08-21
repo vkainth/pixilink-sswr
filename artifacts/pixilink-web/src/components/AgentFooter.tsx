@@ -174,7 +174,7 @@ function buildFooterLinks(
       ],
       'Market': [
         { label: 'Market Stats & Reports', href: '/market' },
-        { label: 'Monthly Archive', href: '/market?tab=archive' },
+        { label: 'Monthly Archive', href: '/market/archive' },  // canonical: ?tab=archive 301s here
         { label: 'Condo Buildings', href: '/buildings' },
         { label: 'Sold Homes', href: '/sold' },
         { label: 'My Listings', href: '/my-listings' },

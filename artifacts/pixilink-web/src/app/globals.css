@@ -164,6 +164,18 @@ button {
 
 input, textarea, select {
   font-family: inherit;
+  /* min-width:0 is a layout fix, not cosmetic. A form control has an intrinsic
+     default width (~20 characters, about 210px in mobile Safari) and `width: 100%`
+     does NOT reduce its min-content contribution. Put two in a `1fr 1fr` grid — as
+     every First/Last name row here does — and that grid can never be narrower than
+     ~430px + padding. On a phone that minimum propagates up through the column and
+     makes the WHOLE PAGE scroll sideways: on the sold-listing page every card
+     rendered ~65px wider than the screen because of the name fields in the
+     Find-Similar widget. Declared once here because the same two-up pattern appears
+     in ~20 components, so fixing it per-component would leave the next one broken.
+     max-width keeps a control with a `size`/`cols` attribute inside its container. */
+  min-width: 0;
+  max-width: 100%;
 }
 
 .container {
