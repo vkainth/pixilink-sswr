@@ -23,11 +23,22 @@ interface Props {
   topRealtor: TopRealtor | null
   testimonials: AgentTestimonial[]
   firstName: string
+  /**
+   * True when the page also renders CredentialRibbon directly beneath this hero. The
+   * ribbon is the dedicated home for brokerage + BCFSA licence, so the card omits its
+   * own licence line rather than printing the same number twice in adjacent blocks.
+   */
+  credentialsRibbonShown?: boolean
 }
 
 export default function HeroSection(props: Props) {
   const heroSoldCount = displaySoldCount(props.agent, props.topRealtor?.sold_count)
-  const { agent, agentPrefix, heroStyle, heroStats, guideName, territoryLabel, topRealtor, testimonials, firstName } = props
+  // Only print the sold count inline when the achievements band is NOT already showing
+  // it. That band renders hero_stats.stat1-4 as a full-width strip immediately below this
+  // hero, so an agent with manual stat tiles was getting the same number twice within one
+  // scroll. Agents without tiles keep the inline mention as their only one.
+  const showInlineSold = heroSoldCount != null && !props.agent.settings?.hero_stats?.stat1_value
+  const { agent, agentPrefix, heroStyle, heroStats, guideName, territoryLabel, topRealtor, testimonials, firstName, credentialsRibbonShown } = props
   const coAgents = getCoAgents(agent)
   const isDualAgent = coAgents.length > 0
   const coAgent = coAgents[0] || null
@@ -56,13 +67,6 @@ export default function HeroSection(props: Props) {
   }
 
   // Default: full-bleed
-  const hs = agent.settings?.hero_stats
-  const tiles = hs ? [
-    hs.stat1_value ? { v: hs.stat1_value, l: hs.stat1_label || '' } : null,
-    hs.stat2_value ? { v: hs.stat2_value, l: hs.stat2_label || '' } : null,
-    hs.stat3_value ? { v: hs.stat3_value, l: hs.stat3_label || '' } : null,
-    hs.stat4_value ? { v: hs.stat4_value, l: hs.stat4_label || '' } : null,
-  ].filter((t): t is { v: string; l: string } => t !== null) : []
 
   return (
     <>
@@ -89,7 +93,7 @@ export default function HeroSection(props: Props) {
                 </h1>
                 {!isDualAgent && (
                   <p style={{ fontSize: 18, color: '#fff', fontWeight: 600, margin: '0 0 6px', letterSpacing: 0.3 }}>
-                    {guideName ? `Powered by ${agent.name} · REALTOR®` : `${agent.name} · REALTOR®`}{heroSoldCount ? ` · ${heroSoldCount.toLocaleString()} homes sold` : ''}
+                    {guideName ? `Powered by ${agent.name} · REALTOR®` : `${agent.name} · REALTOR®`}{showInlineSold ? ` · ${heroSoldCount.toLocaleString()} homes sold` : ''}
                   </p>
                 )}
                 {agent.bio && (
@@ -142,16 +146,13 @@ export default function HeroSection(props: Props) {
                     )}
                   </div>
 
-                  {tiles.length > 0 && (
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 16px', marginBottom: 20 }}>
-                      {tiles.map(tile => (
-                        <div key={tile.l} style={{ textAlign: 'center', background: '#f5f6f8', borderRadius: 8, padding: '10px 8px' }}>
-                          <div style={{ fontSize: tile.v.length > 10 ? 11 : 22, fontWeight: tile.v.length > 10 ? 700 : 800, color: 'var(--accent)', lineHeight: tile.v.length > 10 ? 1.2 : 1, marginTop: tile.v.length > 10 ? 2 : 0 }}>{tile.v}</div>
-                          <div style={{ fontSize: 10, color: '#555', marginTop: 4, textTransform: 'uppercase', letterSpacing: 0.8 }}>{tile.l}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                  {/* No stat tiles here, deliberately. They were built from hero_stats
+                      stat1-4 — the identical source AchievementsBar renders as a full-width
+                      band a few hundred pixels down the same page, so a visitor met
+                      "5,200+ Properties Sold / 33 Years Experience" twice before scrolling
+                      once. This card is for contact: phone, email, evaluation. Career
+                      numbers belong to the achievements band, live MLS numbers to the
+                      Market Snapshot section. */}
 
                   <a href={`tel:${agent.phone}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'var(--accent)', color: '#fff', padding: '13px 0', borderRadius: 7, fontWeight: 700, fontSize: 15, textDecoration: 'none', marginBottom: 9, letterSpacing: 0.2 }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6 6l1.14-.95a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
@@ -167,7 +168,9 @@ export default function HeroSection(props: Props) {
                     Free Home Evaluation →
                   </a>
                   {agent.license_number && (
-                    <div style={{ fontSize: 10, color: '#737373', textAlign: 'center', marginTop: 14 }}>Lic. {agent.license_number}</div>
+                    !credentialsRibbonShown && (
+                      <div style={{ fontSize: 10, color: '#737373', textAlign: 'center', marginTop: 14 }}>Lic. {agent.license_number}</div>
+                    )
                   )}
                 </div>
               </div>
@@ -176,26 +179,26 @@ export default function HeroSection(props: Props) {
         </div>
       </div>
 
-      {/* Trust Band */}
+      {/* Trust Band — only when there is something to put in it. Rendered
+          unconditionally it was a bare dark strip with 28px of padding and no content
+          for any agent without trust_chips. */}
+      {!!agent.settings?.hero_stats?.trust_chips?.length && (
       <div className="trust-band" style={{ background: 'var(--primary-bg)', padding: '14px 0' }}>
         <div className="container">
           <div className="trust-chips" style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center' }}>
-            {(agent.settings?.hero_stats?.trust_chips?.length
-              ? agent.settings.hero_stats.trust_chips.map(chip => {
-                  const isLegacyString = typeof chip === 'string'
-                  const text = isLegacyString ? chip : chip.text
-                  const iconId = isLegacyString ? 'star' : chip.icon
-                  return { icon: <TrustIcon key={text} icon={iconId} size={14} />, text }
-                })
-              : ([
-                  ...(agent.settings?.hero_stats?.stat2_value
-                    ? [{ icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#c9a84c', flexShrink: 0 }}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>, text: `${agent.settings.hero_stats.stat2_value} ${agent.settings.hero_stats.stat2_label || 'Google Reviews'}` }]
-                    : []),
-                  { icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#c9a84c', flexShrink: 0 }}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>, text: '30+ Years · Since 1993' },
-                  { icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#c9a84c', flexShrink: 0 }}><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>, text: "eXp President's Award" },
-                  { icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#c9a84c', flexShrink: 0 }}><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/></svg>, text: 'FVREB Medallion Club' },
-                ] as Array<{ icon: React.ReactNode; text: string }>)
-            ).map(chip => (
+            {(agent.settings?.hero_stats?.trust_chips ?? []).map(chip => {
+              // No hardcoded fallback. This used to fall back to a fixed list —
+              // "30+ Years · Since 1993", "eXp President's Award", "FVREB Medallion Club" —
+              // which are RANDY'S credentials, rendered for any agent who simply had no
+              // trust_chips of their own. It also contradicted the data beside it once he had
+              // real stats ("33 Years Experience" next to "30+ Years"), and repeated the
+              // awards block immediately below. An agent with no chips now gets no chip row,
+              // which is the only honest default: never assert a credential nobody entered.
+              const isLegacyString = typeof chip === 'string'
+              const text = isLegacyString ? chip : chip.text
+              const iconId = isLegacyString ? 'star' : chip.icon
+              return { icon: <TrustIcon key={text} icon={iconId} size={14} />, text }
+            }).map(chip => (
               <div key={chip.text} className="trust-chip" style={{ display: 'flex', alignItems: 'center', gap: 7, background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.14)', borderRadius: 20, padding: '6px 14px', fontSize: 12, fontWeight: 600, color: '#fff', whiteSpace: 'nowrap' }}>
                 {chip.icon}<span>{chip.text}</span>
               </div>
@@ -203,27 +206,16 @@ export default function HeroSection(props: Props) {
           </div>
         </div>
       </div>
-
-      {/* Agent Highlights */}
-      {!!agent.settings?.hero_stats?.highlights?.length && (
-        <div className="agent-highlights" style={{ background: '#fff', padding: '40px 0', borderBottom: '1px solid #e8eaed' }}>
-          <div className="container">
-            <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--primary-bg)', fontWeight: 700, textAlign: 'center', marginBottom: 24 }}>
-              Why Work With {isDualAgent && coAgent ? `${agent.name.split(' ')[0]} & ${coAgent.name.split(' ')[0]}` : (agent.name?.split(' ')[0] || 'Me')}
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 18 }}>
-              {agent.settings.hero_stats.highlights.map((h, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: '16px 18px', border: '1px solid #e8eaed', borderRadius: 8 }}>
-                  <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'var(--primary-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                    <TrustIcon icon={h.icon} size={16} />
-                  </div>
-                  <div style={{ fontSize: 14, fontWeight: 600, color: '#172b4d', lineHeight: 1.4, paddingTop: 6 }}>{h.text}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
       )}
+
+      {/* The "Why Work With X" highlights block used to render here, from
+          hero_stats.highlights. Removed: AgentValuePropCta in the agent layout renders the
+          SAME credentials under a heading that differed only in capitalisation ("Why work
+          with Randy"), on this and every other page — so the homepage carried two
+          near-identical blocks, and suburbia.ca printed "Top 10% of Realtors in GVR" and
+          its five-star line twice. The layout block also holds the phone CTA, so it is the
+          one worth keeping; this was a 40px-padded band spending a full screen-width on two
+          short strings. getHeroCredentials() still feeds the nav subtitle and llms.txt. */}
 
       <style>{`
         /* Desktop only, deliberately: a background-image inside a non-matching media query
@@ -251,6 +243,7 @@ export default function HeroSection(props: Props) {
 
 function HeroSplit({ agent, agentPrefix, heroStats, guideName, territoryLabel, topRealtor, avgRating, ratingsCount, firstName }: Props & { avgRating: number | null; ratingsCount: number }) {
   const heroSoldCount = displaySoldCount(agent, topRealtor?.sold_count)
+  const showInlineSold = heroSoldCount != null && !agent.settings?.hero_stats?.stat1_value
   const ap = (p: string) => `${agentPrefix}${p}`
   const photoSrc = agent.photo_path ? imgUrl(agent.photo_path, 600) : null
   const coAgents = getCoAgents(agent)
@@ -271,7 +264,7 @@ function HeroSplit({ agent, agentPrefix, heroStats, guideName, territoryLabel, t
             </h1>
             {guideName && (
               <p style={{ fontSize: 16, color: 'var(--text-muted)', marginBottom: 6, fontWeight: 500 }}>
-                {agent.name} · REALTOR®{heroSoldCount ? ` · ${heroSoldCount.toLocaleString()} homes sold` : ''}
+                {agent.name} · REALTOR®{showInlineSold ? ` · ${heroSoldCount.toLocaleString()} homes sold` : ''}
               </p>
             )}
             {agent.bio && (
@@ -348,6 +341,7 @@ function HeroSplit({ agent, agentPrefix, heroStats, guideName, territoryLabel, t
 
 function HeroCircleCentered({ agent, agentPrefix, heroStats, guideName, territoryLabel, topRealtor, firstName }: Props) {
   const heroSoldCount = displaySoldCount(agent, topRealtor?.sold_count)
+  const showInlineSold = heroSoldCount != null && !agent.settings?.hero_stats?.stat1_value
   const ap = (p: string) => `${agentPrefix}${p}`
   const photoSrc = agent.photo_path ? avatarUrl(agent.photo_path, 400) : null
   const coAgents = getCoAgents(agent)
@@ -380,7 +374,7 @@ function HeroCircleCentered({ agent, agentPrefix, heroStats, guideName, territor
           {guideName || agent.name}
         </h1>
         <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.65)', marginBottom: 8, fontWeight: 500 }}>
-          {guideName ? `Powered by ${agent.name}` : agent.brokerage}{heroSoldCount ? ` · ${heroSoldCount.toLocaleString()}+ homes sold` : ''}
+          {guideName ? `Powered by ${agent.name}` : agent.brokerage}{showInlineSold ? ` · ${heroSoldCount.toLocaleString()}+ homes sold` : ''}
         </p>
         {agent.bio && <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.70)', marginBottom: 28, lineHeight: 1.7, maxWidth: 540, margin: '0 auto 28px' }}>{agent.bio.split('\n\n')[0]}</p>}
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -436,6 +430,7 @@ function HeroTextOnly({ agent, agentPrefix, heroStats, guideName, territoryLabel
 
 function HeroPhotoStrip({ agent, agentPrefix, heroStats, guideName, territoryLabel, topRealtor, firstName }: Props) {
   const heroSoldCount = displaySoldCount(agent, topRealtor?.sold_count)
+  const showInlineSold = heroSoldCount != null && !agent.settings?.hero_stats?.stat1_value
   const ap = (p: string) => `${agentPrefix}${p}`
   const photoSrc = agent.photo_path ? imgUrl(agent.photo_path, 900) : null
 
@@ -456,7 +451,7 @@ function HeroPhotoStrip({ agent, agentPrefix, heroStats, guideName, territoryLab
                 {guideName || agent.name}
               </h1>
               <p style={{ fontSize: 15, color: 'var(--text-muted)', fontWeight: 500 }}>
-                {guideName ? `${agent.name} · REALTOR®` : agent.brokerage}{heroSoldCount ? ` · ${heroSoldCount.toLocaleString()}+ homes sold` : ''}
+                {guideName ? `${agent.name} · REALTOR®` : agent.brokerage}{showInlineSold ? ` · ${heroSoldCount.toLocaleString()}+ homes sold` : ''}
               </p>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>

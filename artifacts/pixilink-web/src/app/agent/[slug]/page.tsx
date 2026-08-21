@@ -188,13 +188,19 @@ export default async function AgentHomePage({ params }: Props) {
   // repeated it in the JSON-LD. hero_stats.homes_sold wins whenever it is set.
   const advertisedSoldCount = displaySoldCount(agent, unifiedSoldCount)
 
+  // The hero row carries only what nothing else on the page says.
+  //
+  // It used to be "5,200 Homes Sold / 4,596 Homes For Sale / 236 Sold Last 30 Days", and
+  // every one of those three was repeated within a screen or two: the sold count by the
+  // achievements band (and by the hero's own contact card, and by a trust chip), the
+  // for-sale and sold-30-day counts by the Market Snapshot section, which is the block
+  // actually labelled "Live MLS · updated daily" and is where live figures belong. Six
+  // numbers, two facts. Career figures live in the achievements band; live market figures
+  // live in Market Snapshot; the average review score appears nowhere else, so it stays.
   const heroStats: { v: string; l: string }[] = []
-  if (advertisedSoldCount) heroStats.push({ v: advertisedSoldCount.toLocaleString(), l: 'Homes Sold' })
   const ratings = testimonials.map(t => t.rating).filter((r): r is number => typeof r === 'number' && r > 0)
   const avgRating = ratings.length ? ratings.reduce((a, b) => a + b, 0) / ratings.length : null
   if (avgRating) heroStats.push({ v: `${avgRating.toFixed(1)}`, l: `★ Avg Rating (${ratings.length})` })
-  if (stats?.active_count) heroStats.push({ v: stats.active_count.toLocaleString(), l: 'Homes For Sale' })
-  if (stats?.sold_last_30_days) heroStats.push({ v: String(stats.sold_last_30_days), l: 'Sold Last 30 Days' })
 
   // Areas — group buildings by subarea, deduplicate, up to 3
   const areaCounts: Record<string, number> = {}
@@ -1086,6 +1092,7 @@ export default async function AgentHomePage({ params }: Props) {
         topRealtor={topRealtor}
         testimonials={testimonials}
         firstName={firstName}
+        credentialsRibbonShown={cfg.sections.credentials}
       />
 
       {/* ─── Credential Ribbon (showcase preset: licensed_since / brokerage / language strip) ─── */}
