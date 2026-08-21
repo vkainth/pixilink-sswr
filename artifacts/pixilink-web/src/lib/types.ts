@@ -64,8 +64,18 @@ export interface AgentSettings {
   designation: string | null
   /** Year the agent received their real estate licence (e.g. "2005"). */
   licensed_since?: string | null
-  /** Languages the agent speaks (e.g. ["English", "Farsi"]). */
-  languages?: string[] | null
+  /**
+   * Languages the agent speaks. The DB column is `agent_settings.languages
+   * varchar(255)` holding a comma-separated string ("English, Farsi") — that is
+   * the canonical shape, written and read as a plain string by the Laravel side
+   * (team_agents_sidebar.blade.php, tsb_pages.blade.php). It is NOT cast to an
+   * array on the model, so the API returns the raw string. The array member of
+   * this union is only tolerance for a future cast; never assume either form.
+   * ALWAYS read this through agentLanguages() below — typing it as string[] and
+   * calling .filter() on it is what 500'd /llms.txt for the first agent who
+   * ever had a value in this column.
+   */
+  languages?: string | string[] | null
   team_members: Array<{ name: string; title: string; phone: string; email: string; bio: string; photo: string | null }> | null
   achievements: Array<{ label: string }> | null
   co_agent_achievements: Record<string, Array<{ label: string }>> | null
@@ -1097,6 +1107,23 @@ export function formatPriceRange(min: number | null, max: number | null): string
 export function formatPriceFull(p: number | null | undefined): string {
   if (!p) return 'Contact'
   return `$${Math.round(p).toLocaleString('en-CA')}`
+}
+
+/**
+ * Normalizes agent_settings.languages to a clean string[].
+ *
+ * The column is a comma-separated varchar (see AgentSettings.languages), so the
+ * only safe way to consume it is through here. Accepts the string form, a future
+ * array form, null/undefined, and junk (numbers from a bad write) without
+ * throwing — the credential strip and llms.txt must never take a site down over
+ * a cosmetic field.
+ */
+export function agentLanguages(langs: string | string[] | null | undefined): string[] {
+  if (!langs) return []
+  const parts = Array.isArray(langs) ? langs : String(langs).split(',')
+  return parts
+    .map(l => (typeof l === 'string' ? l : String(l)).trim())
+    .filter(l => l.length > 0)
 }
 
 export function pricePerSqft(price: number | null | undefined, sqft: number | null | undefined): string | null {

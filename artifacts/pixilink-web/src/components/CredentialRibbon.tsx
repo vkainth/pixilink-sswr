@@ -1,4 +1,4 @@
-import type { AgentProfile } from '@/lib/types'
+import { agentLanguages, type AgentProfile } from '@/lib/types'
 
 interface Props {
   agent: AgentProfile
@@ -7,7 +7,7 @@ interface Props {
 export default function CredentialRibbon({ agent }: Props) {
   const settings = agent.settings
   const licensedSince = settings?.licensed_since?.trim()
-  const languages = settings?.languages?.filter(Boolean) ?? []
+  const languages = agentLanguages(settings?.languages)
   const licenseNumber = agent.license_number?.trim()
   const brokerage = agent.brokerage?.trim()
 

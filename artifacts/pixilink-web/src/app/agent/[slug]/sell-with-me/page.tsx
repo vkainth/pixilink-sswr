@@ -2,7 +2,7 @@ import React from 'react'
 import { headers } from 'next/headers'
 import Image from 'next/image'
 import { getAgent, getListings, getTestimonials, getTopRealtor, getAgentTerritories, agentCanonicalBase, resolveAgentPrefix } from '@/lib/api'
-import { imgUrl, formatPrice, getHeroCredentials } from '@/lib/types'
+import { agentLanguages, imgUrl, formatPrice, getHeroCredentials } from '@/lib/types'
 import TestimonialsCards from '@/components/TestimonialsCards'
 import { requireShowcase } from '@/lib/showcase'
 import { notFound } from 'next/navigation'
@@ -310,8 +310,7 @@ export default async function SellWithMePage({ params }: Props) {
               })
             }
 
-            const langs = agent.settings?.languages
-            const langsArr: string[] = Array.isArray(langs) ? langs : (langs ? String(langs).split(',').map((s: string) => s.trim()) : [])
+            const langsArr = agentLanguages(agent.settings?.languages)
             if (langsArr.length > 0) {
               rows.push({ label: 'Languages', value: langsArr.join(', ') })
             }

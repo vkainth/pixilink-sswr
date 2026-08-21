@@ -5,7 +5,7 @@ import { getAgent, getListings, getBuildings, getMarketStats, getTestimonials, g
 import { normalizeCity } from '@/lib/market'
 import MotionReveal from '@/components/MotionReveal.client'
 import HeroParallax from '@/components/HeroParallax.client'
-import { imgUrl, secondPhotoUrl, formatPrice, getHeroCredentials, getCoAgents, resolveSiteConfig } from '@/lib/types'
+import { agentLanguages, imgUrl, secondPhotoUrl, formatPrice, getHeroCredentials, getCoAgents, resolveSiteConfig } from '@/lib/types'
 import type { UnifiedSoldsResponse } from '@/lib/types'
 import { toHomesForSaleHref } from './homes-for-sale/subareaUtils'
 import ListingCard from '@/components/ListingCard'
@@ -282,7 +282,12 @@ export default async function AgentHomePage({ params }: Props) {
         bestRating: '5',
       },
     } : {}),
-    ...(agent.settings?.languages?.length ? { knowsLanguage: agent.settings.languages } : {}),
+    ...(() => {
+      // knowsLanguage wants one entry per language, not the raw "English, Farsi"
+      // CSV the column actually stores — that would emit a single bogus Text value.
+      const langs = agentLanguages(agent.settings?.languages)
+      return langs.length ? { knowsLanguage: langs } : {}
+    })(),
     ...(() => {
       const sameAs: string[] = []
       const sl = agent.settings?.social_links

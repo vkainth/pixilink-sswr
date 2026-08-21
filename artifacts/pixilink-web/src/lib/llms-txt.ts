@@ -15,7 +15,7 @@ import type {
   SchoolCatchmentSummary,
   NewsPost,
 } from './types'
-import { getHeroCredentials, resolveSiteConfig } from './types'
+import { agentLanguages, getHeroCredentials, resolveSiteConfig } from './types'
 import { normalizeCity } from './market'
 import { buildSpecializationLine, listToSoldRatio, priceRange, topNeighbourhoods } from './agent-profile'
 
@@ -67,8 +67,8 @@ export function buildAgentLlmsTxt(
   if (agent.brokerage) lines.push(`Brokerage: ${agent.brokerage}`)
   if (agent.license_number) lines.push(`License: ${agent.license_number}`)
   if (agent.settings?.licensed_since) lines.push(`Licensed since: ${agent.settings.licensed_since}`)
-  const langs = agent.settings?.languages?.filter(Boolean)
-  if (langs && langs.length > 0) lines.push(`Languages: ${langs.join(', ')}`)
+  const langs = agentLanguages(agent.settings?.languages)
+  if (langs.length > 0) lines.push(`Languages: ${langs.join(', ')}`)
 
   // Contact
   if (agent.phone) lines.push(`Phone: ${agent.phone}`)
