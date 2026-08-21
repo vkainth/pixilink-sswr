@@ -14,8 +14,16 @@ interface Props {
   params: Promise<{ slug: string }>
 }
 
+// This page is hand-written regional content, so it only exists for the three
+// agents it was written for. Gate on SLUG, never on the canonical domain: the
+// check below used to allow 'southsurreywhiterock.com' and 'randydyck.com', both
+// of which are Randy's LEGACY domains, so the moment his custom_domain became
+// findfraservalleyhomes.com this page started 404ing — while his own nav and
+// footer kept linking to it and his sitemap kept advertising it. A slug cannot
+// go stale when a domain is repointed.
 const BURNABY_SLUG  = 'saeed-farhani-ppqu'
 const TRICITY_SLUG  = 'tricity'
+const RANDY_SLUG    = 'randy'
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
@@ -398,7 +406,8 @@ export default async function NewConstructionPage({ params }: Props) {
 
   const isBurnaby  = slug === BURNABY_SLUG
   const isTriCity  = slug === TRICITY_SLUG
-  if (!isBurnaby && !isTriCity && domain !== 'southsurreywhiterock.com' && domain !== 'randydyck.com') {
+  const isRandy    = slug === RANDY_SLUG
+  if (!isBurnaby && !isTriCity && !isRandy) {
     notFound()
   }
 
