@@ -155,4 +155,47 @@ if [[ $LLMS_DOMAIN_FAIL -ne 0 ]]; then
   exit 1
 fi
 
+# Dead-internal-link check. Three separate "this page is not working" reports in a row
+# (/llms.txt, then the whole /{type}/{city} family, then /new-construction) were all
+# things a crawl of the site's own links would have caught immediately: pages gated off
+# for an agent while the nav, footer or body still linked them. Each homepage carries the
+# full footer, which is where those link lists live, so one page per domain gives good
+# coverage cheaply.
+#
+# A failing link is retried once before being reported, so a transient upstream blip does
+# not fail the deploy. Redirects count as failures on purpose: a 3xx here means we are
+# linking a non-canonical path (that is how the redundant /townhomes-for-sale link
+# surfaced). Query strings and fragments are stripped; Next's own /icon and /apple-icon
+# metadata routes are skipped.
+echo "[$(date)] Checking internal links for dead ends..."
+LINK_FAIL_TOTAL=0
+for LINK_DOMAIN in findfraservalleyhomes.com suburbia.ca shareneshuster.com; do
+  LINK_HREFS=$(curl -sL --max-time 30 "https://${LINK_DOMAIN}/" \
+    | grep -o 'href="/[^"#?]*"' | sed 's/href="//;s/"//' \
+    | sort -u | grep -v '^/_next' | grep -v '/icon$' | grep -v '/apple-icon$')
+  if [[ -z "$LINK_HREFS" ]]; then
+    echo "  [FAIL] ${LINK_DOMAIN}: could not read any links off the homepage" >&2
+    LINK_FAIL_TOTAL=$((LINK_FAIL_TOTAL + 1))
+    continue
+  fi
+  LINK_N=0; LINK_BAD=0
+  for HREF in $LINK_HREFS; do
+    LINK_N=$((LINK_N + 1))
+    CODE=$(curl -s -o /dev/null --max-time 30 -w '%{http_code}' "https://${LINK_DOMAIN}${HREF}")
+    if [[ "$CODE" != "200" ]]; then
+      CODE=$(curl -s -o /dev/null --max-time 30 -w '%{http_code}' "https://${LINK_DOMAIN}${HREF}")
+      if [[ "$CODE" != "200" ]]; then
+        echo "  [FAIL] ${LINK_DOMAIN}${HREF} -> HTTP ${CODE}" >&2
+        LINK_BAD=$((LINK_BAD + 1))
+      fi
+    fi
+  done
+  echo "  [${LINK_DOMAIN}] ${LINK_N} links checked, ${LINK_BAD} bad"
+  LINK_FAIL_TOTAL=$((LINK_FAIL_TOTAL + LINK_BAD))
+done
+if [[ $LINK_FAIL_TOTAL -ne 0 ]]; then
+  echo "ERROR: ${LINK_FAIL_TOTAL} internal link(s) not returning 200 — the sites are linking their own dead pages" >&2
+  exit 1
+fi
+
 echo "[$(date)] === DEPLOY DONE ==="
