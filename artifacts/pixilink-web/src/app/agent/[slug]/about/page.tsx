@@ -63,6 +63,19 @@ export default async function AboutPage({ params }: Props) {
 
   const isShowcasePreset = resolveSiteConfig(agent).layout_preset === 'showcase'
 
+  // Preset-aware destinations. /my-listings, /market, /buyers and /sellers are all
+  // requireNotShowcase-gated, so hardcoding them here meant a showcase agent's own
+  // About page linked to five 404s on her own site (found by crawling every
+  // internal link on all three domains). Point at the showcase equivalent where one
+  // exists and drop the chip entirely where none does — never link a page the
+  // preset has removed.
+  const listingsHref    = ap(isShowcasePreset ? '/featured-properties' : '/my-listings')
+  const sellersHref     = ap(isShowcasePreset ? '/sell-with-me' : '/sellers')
+  const sellersLabel    = isShowcasePreset ? 'Selling Guide →' : 'Sellers Guide →'
+  const recentSalesHref = isShowcasePreset ? null : ap('/my-listings')
+  const marketHref      = isShowcasePreset ? null : ap('/market')
+  const buyersHref      = isShowcasePreset ? null : ap('/buyers')
+
   // Surface palette. The --site-* tokens resolve per preset in lib/site-theme.ts, so the
   // showcase/non-showcase ternary that used to live here is gone for everything except the
   // CTA keys — those point at the dedicated conversion tokens on non-showcase presets and
@@ -239,18 +252,22 @@ export default async function AboutPage({ params }: Props) {
 
               {/* CTAs below both columns */}
               <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                <a href={ap('/my-listings')}
+                <a href={listingsHref}
                   style={{ background: C.ctaPrimary, color: C.ctaPrimaryText, padding: '11px 22px', borderRadius: 6, fontWeight: 700, fontSize: 13, letterSpacing: 1, textTransform: 'uppercase', textDecoration: 'none' }}>
                   Browse Our Homes
                 </a>
-                <a href={ap('/my-listings')}
-                  style={{ border: `1.5px solid ${C.ctaSecBorder}`, color: C.ctaSecText, padding: '11px 22px', borderRadius: 6, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
-                  See Recent Sales
-                </a>
-                <a href={ap('/market')}
-                  style={{ border: `1.5px solid ${C.ctaSecBorder}`, color: C.ctaSecText, padding: '11px 22px', borderRadius: 6, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
-                  View Market Stats
-                </a>
+                {recentSalesHref && (
+                  <a href={recentSalesHref}
+                    style={{ border: `1.5px solid ${C.ctaSecBorder}`, color: C.ctaSecText, padding: '11px 22px', borderRadius: 6, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
+                    See Recent Sales
+                  </a>
+                )}
+                {marketHref && (
+                  <a href={marketHref}
+                    style={{ border: `1.5px solid ${C.ctaSecBorder}`, color: C.ctaSecText, padding: '11px 22px', borderRadius: 6, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
+                    View Market Stats
+                  </a>
+                )}
               </div>
             </div>
           ) : (
@@ -276,18 +293,22 @@ export default async function AboutPage({ params }: Props) {
                   </p>
                 )}
                 <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                  <a href={ap('/my-listings')}
+                  <a href={listingsHref}
                     style={{ background: C.ctaPrimary, color: C.ctaPrimaryText, padding: '11px 22px', borderRadius: 6, fontWeight: 700, fontSize: 13, letterSpacing: 1, textTransform: 'uppercase', textDecoration: 'none' }}>
                     Browse My Homes
                   </a>
-                  <a href={ap('/my-listings')}
-                    style={{ border: `1.5px solid ${C.ctaSecBorder}`, color: C.ctaSecText, padding: '11px 22px', borderRadius: 6, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
-                    See Recent Sales
-                  </a>
-                  <a href={ap('/market')}
-                    style={{ border: `1.5px solid ${C.ctaSecBorder}`, color: C.ctaSecText, padding: '11px 22px', borderRadius: 6, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
-                    View Market Stats
-                  </a>
+                  {recentSalesHref && (
+                    <a href={recentSalesHref}
+                      style={{ border: `1.5px solid ${C.ctaSecBorder}`, color: C.ctaSecText, padding: '11px 22px', borderRadius: 6, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
+                      See Recent Sales
+                    </a>
+                  )}
+                  {marketHref && (
+                    <a href={marketHref}
+                      style={{ border: `1.5px solid ${C.ctaSecBorder}`, color: C.ctaSecText, padding: '11px 22px', borderRadius: 6, fontWeight: 600, fontSize: 13, textDecoration: 'none' }}>
+                      View Market Stats
+                    </a>
+                  )}
                 </div>
               </div>
             </div>
@@ -422,11 +443,13 @@ export default async function AboutPage({ params }: Props) {
 
             {/* Quick navigation links */}
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 48 }}>
-              <a href={ap('/buyers')} style={{ background: '#fff', border: `1px solid ${C.border}`, color: C.body, padding: '9px 16px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 500 }}>
-                Buyers Guide →
-              </a>
-              <a href={ap('/sellers')} style={{ background: '#fff', border: `1px solid ${C.border}`, color: C.body, padding: '9px 16px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 500 }}>
-                Sellers Guide →
+              {buyersHref && (
+                <a href={buyersHref} style={{ background: '#fff', border: `1px solid ${C.border}`, color: C.body, padding: '9px 16px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 500 }}>
+                  Buyers Guide →
+                </a>
+              )}
+              <a href={sellersHref} style={{ background: '#fff', border: `1px solid ${C.border}`, color: C.body, padding: '9px 16px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 500 }}>
+                {sellersLabel}
               </a>
               <a href={ap('/home-evaluation')} style={{ background: '#fff', border: `1px solid ${C.border}`, color: C.body, padding: '9px 16px', borderRadius: 6, textDecoration: 'none', fontSize: 13, fontWeight: 500 }}>
                 Free Home Valuation →

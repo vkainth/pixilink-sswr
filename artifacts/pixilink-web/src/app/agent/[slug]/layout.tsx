@@ -16,7 +16,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { cookies, headers } from 'next/headers'
 import Script from 'next/script'
-import { getAgent, authMe, getAgentTerritories, getListings, getLandingPages, regionSlugForAgent as regionSlugForAgentShared, agentAreaDisplay } from '@/lib/api'
+import { getAgent, authMe, getAgentTerritories, getListings, getLandingPages, getNeighbourhoods, regionSlugForAgent as regionSlugForAgentShared, agentAreaDisplay } from '@/lib/api'
 import { toSubareaSlug, fromSubareaSlug } from './homes-for-sale/subareaUtils'
 import { resolveSiteTheme, siteThemeCssVars } from '@/lib/site-theme'
 import { resolveTheme, getCoAgents, resolveSiteConfig } from '@/lib/types'
@@ -115,11 +115,15 @@ export default async function AgentLayout({ children, params }: Props) {
   const [jar, hdrs] = await Promise.all([cookies(), headers()])
   const sessionToken = jar.get('pxl_session')?.value
 
-  const [agent, user, territories, landingPages] = await Promise.all([
+  // neighbourhoods is fetched for the footer, which links only neighbourhood pages that
+  // actually exist rather than guessing slugs from territory names (see AgentFooter).
+  // Same 300s-revalidate cache the /neighbourhoods page uses, so this is usually a hit.
+  const [agent, user, territories, landingPages, neighbourhoods] = await Promise.all([
     getAgent(slug),
     sessionToken ? authMe(sessionToken) : Promise.resolve(null),
     getAgentTerritories(slug),
     getLandingPages(slug),
+    getNeighbourhoods(slug),
   ])
 
   if (!agent) notFound()
@@ -332,7 +336,7 @@ export default async function AgentLayout({ children, params }: Props) {
                   </div>
                 )}
               </main>
-              <AgentFooter agent={agent} territories={filteredTerritories} landingPages={landingPages} />
+              <AgentFooter agent={agent} territories={filteredTerritories} landingPages={landingPages} neighbourhoods={neighbourhoods} />
               {showStickyBar && (
                 <W4StickyFooter agent={agent} neighbourhood={territories.length > 0 ? agentAreaDisplay(territories) : undefined} />
               )}

@@ -1,7 +1,7 @@
 'use client'
 
 import { playfair } from '@/lib/fonts'
-import type { AgentProfile, AgentTerritory, LandingPage } from '@/lib/types'
+import type { AgentProfile, AgentTerritory, LandingPage, NeighbourhoodSummary } from '@/lib/types'
 import { imgUrl, getCoAgents, resolveSiteConfig } from '@/lib/types'
 import { useAgentPrefix } from '@/lib/agent-context'
 import { usePathname } from 'next/navigation'
@@ -13,7 +13,16 @@ interface Props {
   agent: AgentProfile
   territories: AgentTerritory[]
   landingPages?: LandingPage[]
+  neighbourhoods?: NeighbourhoodSummary[]
 }
+
+// Which agents each slug-gated page actually exists for. These MUST stay in step with
+// the notFound() gates inside the routes themselves — app/agent/[slug]/new-construction
+// (randy + tricity + burnaby) and /luxury-homes + /ocean-view-homes (randy only).
+// The footer previously linked all of them for everyone, so every other agent's footer
+// advertised pages that 404 on their own site.
+const NEW_CONSTRUCTION_SLUGS = new Set(['randy', 'tricity', 'saeed-farhani-ppqu'])
+const RANDY_ONLY_SLUG = 'randy'
 
 function toSlug(s: string): string {
   return s.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
@@ -76,6 +85,7 @@ function buildFooterLinks(
   agent: AgentProfile,
   territories: AgentTerritory[],
   landingPages: LandingPage[],
+  neighbourhoods: NeighbourhoodSummary[],
 ): FooterLinkGroups {
   const firstName = agent.name.split(' ')[0]
   const guideName = agent.settings?.guide_name?.trim() || 'Neighbourhood Guides'
@@ -90,10 +100,27 @@ function buildFooterLinks(
       return true
     })
 
+  // Only link neighbourhoods that actually exist, matching territory names against the
+  // real slugs from /neighbourhoods — the same rule the Top Realtor block below already
+  // follows, and for the same reason. Guessing the slug from the territory name emitted
+  // /neighbourhood/surrey (404: "Surrey" is a city, not a neighbourhood). Note the fix is
+  // NOT "only use subareas": White Rock is a city in Randy's territories and
+  // /neighbourhood/white-rock is a real page, so filtering by subarea would have thrown
+  // away a working link. Existence is the only reliable test. If the neighbourhood list
+  // is unavailable we emit fewer links rather than guessing — degrade, never 404.
+  const realNeighbourhoods = new Map(neighbourhoods.map(n => [n.slug, n]))
+  const neighbourhoodAreaLinks: { label: string; href: string }[] = []
+  for (const name of uniqueAreas) {
+    if (neighbourhoodAreaLinks.length >= 6) break
+    const match = [toSlug(name), toSubareaSlug(name)].find(s => realNeighbourhoods.has(s))
+    if (!match) continue
+    neighbourhoodAreaLinks.push({ label: name, href: `/neighbourhood/${match}` })
+  }
+
   const neighbourhoodLinks: { label: string; href: string }[] = [
     { label: 'All Neighbourhoods', href: '/neighbourhoods' },
     { label: guideName, href: '/guide' },
-    ...uniqueAreas.slice(0, 6).map(name => ({ label: name, href: `/neighbourhood/${toSlug(name)}` })),
+    ...neighbourhoodAreaLinks,
   ]
   if (agent.slug === 'randy') {
     neighbourhoodLinks.push({ label: 'White Rock Lifestyle & Landmarks', href: '/white-rock' })
@@ -129,11 +156,19 @@ function buildFooterLinks(
     utility: {
       'Search': [
         { label: 'All Homes for Sale', href: '/homes-for-sale' },
-        { label: 'New Construction', href: '/new-construction' },
+        // Slug-gated pages: these routes notFound() for anyone they were not written
+        // for, so linking them unconditionally put dead links in the footer of every
+        // other site — suburbia.ca was advertising Randy's /luxury-homes and
+        // /ocean-view-homes. Keep these predicates in step with the gates in the
+        // routes themselves (new-construction allows randy + tricity + burnaby).
+        ...(NEW_CONSTRUCTION_SLUGS.has(agent.slug) ? [{ label: 'New Construction', href: '/new-construction' }] : []),
         { label: 'Condos for Sale', href: '/condos-for-sale' },
-        { label: 'Townhomes for Sale', href: '/townhomes-for-sale' },
-        { label: 'Luxury Homes', href: '/luxury-homes' },
-        { label: 'Ocean View Homes', href: '/ocean-view-homes' },
+        // /townhomes-for-sale 308s to /townhouses-for-sale; link the canonical directly.
+        { label: 'Townhomes for Sale', href: '/townhouses-for-sale' },
+        ...(agent.slug === RANDY_ONLY_SLUG ? [
+          { label: 'Luxury Homes', href: '/luxury-homes' },
+          { label: 'Ocean View Homes', href: '/ocean-view-homes' },
+        ] : []),
         { label: 'Open Houses', href: '/open-houses' },
         ...Object.values(PERSONAS).map(p => ({ label: p.label, href: `/persona/${p.slug}` })),
       ],
@@ -202,7 +237,7 @@ function ColHeading({ children }: { children: React.ReactNode }) {
   )
 }
 
-export default function AgentFooter({ agent, territories, landingPages = [] }: Props) {
+export default function AgentFooter({ agent, territories, landingPages = [], neighbourhoods = [] }: Props) {
   const agentPrefix = useAgentPrefix()
   const ap = (p: string) => agentPrefix + p
   const pathname = usePathname()
@@ -356,7 +391,7 @@ export default function AgentFooter({ agent, territories, landingPages = [] }: P
     )
   }
 
-  const { utility: utilityLinks, area: areaLinks } = buildFooterLinks(agent, territories, landingPages)
+  const { utility: utilityLinks, area: areaLinks } = buildFooterLinks(agent, territories, landingPages, neighbourhoods)
 
   const utilityEntries = Object.entries(utilityLinks)
   const areaEntries = Object.entries(areaLinks)
