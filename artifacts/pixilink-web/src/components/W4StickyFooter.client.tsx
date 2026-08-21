@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useSyncExternalStore } from 'react'
 import { usePathname } from 'next/navigation'
 import type { AgentProfile } from '@/lib/types'
-import { imgUrl, getCoAgents } from '@/lib/types'
+import { imgUrl, avatarUrl, getCoAgents } from '@/lib/types'
 import W2HomeEvaluation from './W2HomeEvaluation.client'
 import RequestShowingWidget from './RequestShowingWidget.client'
 import { getListingData, subscribeListingData } from '@/lib/listing-store'
@@ -22,7 +22,7 @@ export default function W4StickyFooter({ agent, neighbourhood = 'your area' }: P
   const headshotSrc = agent.headshot_path
     ? `/api/resize-img?src=${encodeURIComponent(agent.headshot_path)}&w=72`
     : null
-  const photoSrc = headshotSrc || (agent.photo_path ? imgUrl(agent.photo_path, 400) : null)
+  const photoSrc = headshotSrc || (agent.photo_path ? avatarUrl(agent.photo_path, 150) : null)
   const firstName = agent.name.split(' ')[0]
 
   const coAgents = getCoAgents(agent)
@@ -98,7 +98,7 @@ export default function W4StickyFooter({ agent, neighbourhood = 'your area' }: P
                   </div>
                 )}
                 <img
-                  src={imgUrl(coAgents[0].photo, 400)}
+                  src={avatarUrl(coAgents[0].photo, 400)}
                   alt={coAgents[0].name}
                   style={{ width: 38, height: 38, borderRadius: '50%', objectFit: 'cover', objectPosition: '50% 20%', border: '2px solid rgba(var(--brand-overlay-rgb),0.35)', flexShrink: 0, marginLeft: -13, position: 'relative', zIndex: 1 }}
                 />

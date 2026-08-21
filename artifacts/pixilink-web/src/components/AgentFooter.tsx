@@ -2,7 +2,7 @@
 
 import { playfair } from '@/lib/fonts'
 import type { AgentProfile, AgentTerritory, LandingPage, NeighbourhoodSummary } from '@/lib/types'
-import { imgUrl, getCoAgents, resolveSiteConfig } from '@/lib/types'
+import { imgUrl, avatarUrl, getCoAgents, resolveSiteConfig } from '@/lib/types'
 import { useAgentPrefix } from '@/lib/agent-context'
 import { usePathname } from 'next/navigation'
 import { toSubareaSlug, subareaDisplayName } from '@/app/agent/[slug]/homes-for-sale/subareaUtils'
@@ -242,7 +242,7 @@ export default function AgentFooter({ agent, territories, landingPages = [], nei
   const ap = (p: string) => agentPrefix + p
   const pathname = usePathname()
   const isContactPage = pathname?.endsWith('/contact') ?? false
-  const photoSrc = agent.photo_path ? imgUrl(agent.photo_path, 400) : null
+  const photoSrc = agent.photo_path ? avatarUrl(agent.photo_path, 150) : null
   const coAgents = getCoAgents(agent)
   const year = new Date().getFullYear()
 
@@ -418,7 +418,7 @@ export default function AgentFooter({ agent, territories, landingPages = [], nei
               fontWeight: 600,
               letterSpacing: '0.18em',
               textTransform: 'uppercase',
-              color: 'var(--accent)',
+              color: 'var(--accent-on-dark)',
               marginBottom: 16,
             }}>
               {agent.brokerage}
@@ -526,7 +526,7 @@ export default function AgentFooter({ agent, territories, landingPages = [], nei
                   {coAgents.map(co => (
                     <div key={co.name} style={{ textAlign: 'center' }}>
                       <img
-                        src={imgUrl(co.photo, 400)}
+                        src={avatarUrl(co.photo, 150)}
                         alt={co.name}
                         width={64}
                         height={64}

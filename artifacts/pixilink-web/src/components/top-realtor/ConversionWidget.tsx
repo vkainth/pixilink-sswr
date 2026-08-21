@@ -1,5 +1,5 @@
 import type { AgentProfile, CoAgent, NeighbourhoodWidget } from '@/lib/types'
-import { formatPriceFull, imgUrl } from '@/lib/types'
+import { avatarUrl, formatPriceFull, imgUrl } from '@/lib/types'
 import { marketBadge } from '@/lib/market'
 import PropIcon from '@/components/PropIcon'
 import { regionSlugForAgent } from '@/lib/api'
@@ -49,7 +49,7 @@ export default function ConversionWidget({
   const allAgents: { name: string; photo: string | null; phone: string | null }[] = [
     ...coAgents.map(ca => ({
       name: ca.name,
-      photo: ca.photo ? imgUrl(ca.photo, 400) : null,
+      photo: ca.photo ? avatarUrl(ca.photo, 400) : null,
       phone: ca.phone || null,
     })),
     { name: agent.name, photo: photoSrc, phone: agent.phone ?? null },

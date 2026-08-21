@@ -1056,6 +1056,36 @@ export function imgUrl(path: string | null, w: 325 | 400 | 600 | 800 | 900 | 160
   return `${IMAGE_SERVER}${cleanPath}?w=${w}${h ? `&h=${h}` : ''}`
 }
 
+/**
+ * URL for an agent PORTRAIT at avatar sizes.
+ *
+ * imgUrl() passes absolute URLs straight through, so every agent headshot hosted on our own
+ * storage origin was being served at full size no matter how small it rendered: suburbia
+ * shipped a 334KB PNG and an 89KB JPG for avatars drawn at 36px and 64px, and randy a 159KB
+ * file for 36/80/150px. That was the second largest chunk of homepage image weight after the
+ * sold gallery.
+ *
+ * /api/resize-img re-encodes to WebP with a one-year immutable cache. It only accepts our own
+ * storage origin (an SSRF guard) and it square-crops at up to 400px — which is right for a
+ * portrait in a circle or a card, and wrong for a hero, so this helper is deliberately
+ * separate from imgUrl rather than folded into it. Anything it cannot handle (another origin,
+ * or a width above the route's cap) falls back to the old behaviour unchanged.
+ */
+export function avatarUrl(path: string | null, w: 72 | 150 | 325 | 400 = 400): string {
+  if (!path) return ''
+  const isOwnStorage =
+    path.startsWith('https://website.pixilink.com/storage/') ||
+    path.startsWith('/storage/') ||
+    path.startsWith('/api/storage/')
+  if (isOwnStorage) {
+    const abs = path.startsWith('http') ? path : `${STORAGE_BASE}${path}`
+    // fit=width, NOT the route's default square crop: these portraits are framed by CSS
+    // (objectFit/objectPosition), and squaring them server-side would re-frame every avatar.
+    return `/api/resize-img?src=${encodeURIComponent(abs)}&w=${w}&fit=width`
+  }
+  return imgUrl(path, w)
+}
+
 /** Returns the original CDN URL without any resize query params — use for lightbox full-size display. */
 
 /**
@@ -1157,6 +1187,27 @@ export function formatDate(
  * Shared by the RealEstateAgent JSON-LD `award` field and the llms.txt builder
  * so both machine-readable surfaces stay in sync with the same admin data.
  */
+/**
+ * The sold count to advertise, preferring the agent's own career figure over anything
+ * derived from the local MLS board.
+ *
+ * The board only holds recent history: Randy's registered MLS id returns 26 sales for an
+ * agent who has sold 5,200+ since 1993, so the homepage was headlining "16+ homes sold"
+ * and repeating it in the RealEstateAgent JSON-LD. A career total lives in
+ * hero_stats.homes_sold and is authoritative when set; the MLS-derived number is only a
+ * fallback for agents who have not supplied one.
+ *
+ * Returns null when neither exists, so callers can omit the claim rather than print a zero.
+ */
+export function displaySoldCount(
+  agent: Pick<AgentProfile, 'settings'> | null | undefined,
+  mlsFallback?: number | null,
+): number | null {
+  const career = agent?.settings?.hero_stats?.homes_sold
+  if (typeof career === 'number' && career > 0) return career
+  return mlsFallback && mlsFallback > 0 ? mlsFallback : null
+}
+
 export function getHeroCredentials(agent: Pick<AgentProfile, 'settings'> | null | undefined): string[] {
   const hs = agent?.settings?.hero_stats
   if (!hs) return []

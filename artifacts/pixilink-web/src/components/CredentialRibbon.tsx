@@ -50,12 +50,12 @@ export default function CredentialRibbon({ agent }: Props) {
                   fontWeight: 700,
                   letterSpacing: 1.5,
                   textTransform: 'uppercase',
-                  color: '#767676',
+                  color: '#6e6e6e',
                 }}
               >
                 {item.label}
               </span>
-              <span style={{ fontSize: 10, color: '#767676', letterSpacing: 0.5 }}>·</span>
+              <span style={{ fontSize: 10, color: '#6e6e6e', letterSpacing: 0.5 }}>·</span>
               <span
                 style={{
                   fontSize: 13,

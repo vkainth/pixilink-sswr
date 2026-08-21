@@ -3,22 +3,37 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import type { AgentProfile, AuthUser } from '@/lib/types'
-import { imgUrl, getHeroCredentials, getCoAgents, resolveSiteConfig } from '@/lib/types'
+import { imgUrl, avatarUrl, getHeroCredentials, getCoAgents, resolveSiteConfig } from '@/lib/types'
 import { authFetch } from '@/lib/auth-client'
 import { useAgentPrefix } from '@/lib/agent-context'
 
+// Kept deliberately short. This list renders as a single centred nowrap row between the
+// brand and the sign-in button, so its width is a hard constraint, not a preference: the
+// previous eleven entries needed roughly 1400px of bar before they stopped colliding with
+// the logo, while the hamburger only took over below 1050px. Every laptop between those
+// two numbers — 1280 and 1366 are the two most common widths there are — rendered a menu
+// that visibly collided with the brand, which is the "menu bar is split" report.
+//
+// The four property-type entries (Houses / Apartments / Townhouses / New Homes) collapse
+// into one "Homes for Sale", which is where a visitor browsing inventory wants to land
+// anyway and which carries type filters of its own. The individual type pages still exist,
+// are still in the footer's Search column, and are still in the sitemaps — only the top-bar
+// shortcut is gone. If you want any of them back in the bar, remove something else too;
+// the row cannot hold more than about eight entries at this font size.
+
+// Agents that actually have the hand-written /new-construction page. Mirrors
+// NEW_CONSTRUCTION_SLUGS in AgentFooter.tsx and the notFound() gate in the route.
+const NEW_CONSTRUCTION_SLUGS = new Set(['randy', 'tricity', 'saeed-farhani-ppqu'])
+
 const BASE_NAV_LINKS = [
-  { label: 'Houses',        href: 'houses-for-sale',     flag: null },
-  { label: 'Apartments',    href: 'condos-for-sale',     flag: null },
-  { label: 'Townhouses',    href: 'townhouses-for-sale', flag: null },
-  { label: 'New Homes',     href: 'new-construction',    flag: null },
-  { label: 'Featured',      href: 'my-listings',         flag: null },
-  { label: 'Buildings',     href: 'buildings',           flag: null },
-  { label: 'Neighbourhood', href: 'neighbourhoods',      flag: null },
-  { label: 'Market',        href: 'market',              flag: null },
-  { label: 'Buyers',        href: 'buyers',              flag: null },
-  { label: 'Sellers',       href: 'sellers',             flag: null },
-  { label: 'About',         href: 'about',               flag: null },
+  { label: 'Homes for Sale', href: 'homes-for-sale',  flag: null },
+  { label: 'Featured',       href: 'my-listings',     flag: null },
+  { label: 'Buildings',      href: 'buildings',       flag: null },
+  { label: 'Neighbourhood',  href: 'neighbourhoods',  flag: null },
+  { label: 'Market',         href: 'market',          flag: null },
+  { label: 'Buyers',         href: 'buyers',          flag: null },
+  { label: 'Sellers',        href: 'sellers',         flag: null },
+  { label: 'About',          href: 'about',           flag: null },
 ]
 
 const SHOWCASE_NAV_LINKS = [
@@ -52,7 +67,7 @@ export default function AgentNav({ agent, user, navStyle = 'dark-bar' }: Props) 
   const headshotSrc = agent.headshot_path
     ? `/api/resize-img?src=${encodeURIComponent(agent.headshot_path)}&w=72`
     : null
-  const photoSrc = headshotSrc || (agent.photo_path ? imgUrl(agent.photo_path, 400) : null)
+  const photoSrc = headshotSrc || (agent.photo_path ? avatarUrl(agent.photo_path, 150) : null)
   const photoPosition = '50% 20%'
   const guideName = agent.settings?.guide_name?.trim() || null
   const topCredential = getHeroCredentials(agent)[0] || null
@@ -67,11 +82,25 @@ export default function AgentNav({ agent, user, navStyle = 'dark-bar' }: Props) 
 
   const NAV_LINKS = isShowcase
     ? SHOWCASE_NAV_LINKS
-    : BASE_NAV_LINKS.filter(link => {
-        if ((link as { teamOnly?: boolean }).teamOnly) return hasTeam
-        if (!link.flag) return true
-        return agent.features?.[link.flag] === true
-      })
+    : (() => {
+        const base = BASE_NAV_LINKS.filter(link => {
+          if ((link as { teamOnly?: boolean }).teamOnly) return hasTeam
+          if (!link.flag) return true
+          return agent.features?.[link.flag] === true
+        })
+        // /new-construction is hand-written regional content that exists for exactly three
+        // agents (its route notFound()s for anyone else), so it is added per-agent rather
+        // than living in BASE_NAV_LINKS — where it would have put a 404 in the nav of every
+        // other site, the same way the footer used to. Keep in step with
+        // NEW_CONSTRUCTION_SLUGS in AgentFooter and the gate in the route itself.
+        // Placed directly after "Homes for Sale" so the two inventory links sit together
+        // rather than leaving "New Homes" orphaned at the end of the bar.
+        if (!NEW_CONSTRUCTION_SLUGS.has(agent.slug)) return base
+        const out = [...base]
+        const afterHomes = out.findIndex(l => l.href === 'homes-for-sale') + 1
+        out.splice(afterHomes || out.length, 0, { label: 'New Homes', href: 'new-construction', flag: null })
+        return out
+      })()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY >= 80)
@@ -182,7 +211,7 @@ export default function AgentNav({ agent, user, navStyle = 'dark-bar' }: Props) 
                 {agent.name.charAt(0)}
               </div>
             )}
-            <img src={imgUrl(coAgents[0].photo, 400)} alt={coAgents[0].name} width={36} height={36}
+            <img src={avatarUrl(coAgents[0].photo, 150)} alt={coAgents[0].name} width={36} height={36}
               style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', objectPosition: '50% 20%', border: `2px solid ${photoRingColor}`, flexShrink: 0, marginLeft: -12, position: 'relative', zIndex: 1 }} />
           </div>
         ) : photoSrc ? (
@@ -268,11 +297,11 @@ export default function AgentNav({ agent, user, navStyle = 'dark-bar' }: Props) 
         style={{
           background: 'transparent', color: navTextColor, padding: '8px 18px', borderRadius: 6,
           fontWeight: 600, fontSize: 13, textDecoration: 'none', whiteSpace: 'nowrap',
-          border: isDarkNav ? '1px solid rgba(255,255,255,0.35)' : '1px solid #d1d5db',
+          border: isDarkNav ? '1px solid rgba(255,255,255,0.35)' : '1px solid #949aa3',
           transition: 'border-color 0.15s, color 0.15s',
         }}
         onMouseEnter={e => { e.currentTarget.style.borderColor = isDarkNav ? 'rgba(255,255,255,0.70)' : '#9ca3af'; e.currentTarget.style.color = navLinkActiveColor }}
-        onMouseLeave={e => { e.currentTarget.style.borderColor = isDarkNav ? 'rgba(255,255,255,0.35)' : '#d1d5db'; e.currentTarget.style.color = navTextColor }}>
+        onMouseLeave={e => { e.currentTarget.style.borderColor = isDarkNav ? 'rgba(255,255,255,0.35)' : '#949aa3'; e.currentTarget.style.color = navTextColor }}>
         Sign In
       </a>
     )
@@ -426,7 +455,14 @@ export default function AgentNav({ agent, user, navStyle = 'dark-bar' }: Props) 
       )}
 
       <style>{`
-        @media (max-width: 1050px) {
+        /* Intermediate tier: tighten the row before giving up on it, so the desktop menu
+           survives on 1200-1400px laptops instead of collapsing straight to a hamburger. */
+        @media (max-width: 1400px) {
+          .nav-links-desktop { gap: 16px !important; font-size: 12.5px !important; }
+        }
+        /* Hand over to the hamburger while there is still slack. This was 1050px, which
+           was below the width the row actually needs — the cause of the colliding menu. */
+        @media (max-width: 1200px) {
           .nav-links-desktop { display: none !important; }
           .nav-signin-desktop { display: none !important; }
           .nav-hamburger { display: flex !important; }

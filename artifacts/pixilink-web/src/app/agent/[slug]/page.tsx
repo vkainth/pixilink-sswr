@@ -5,7 +5,7 @@ import { getAgent, getListings, getBuildings, getMarketStats, getTestimonials, g
 import { normalizeCity } from '@/lib/market'
 import MotionReveal from '@/components/MotionReveal.client'
 import HeroParallax from '@/components/HeroParallax.client'
-import { agentLanguages, imgUrl, secondPhotoUrl, formatPrice, getHeroCredentials, getCoAgents, resolveSiteConfig } from '@/lib/types'
+import { agentLanguages, imgUrl, avatarUrl, secondPhotoUrl, formatPrice, getHeroCredentials, getCoAgents, resolveSiteConfig, displaySoldCount } from '@/lib/types'
 import type { UnifiedSoldsResponse } from '@/lib/types'
 import { toHomesForSaleHref } from './homes-for-sale/subareaUtils'
 import ListingCard from '@/components/ListingCard'
@@ -182,8 +182,14 @@ export default async function AgentHomePage({ params }: Props) {
     ? unifiedSoldsData.total_count
     : (topRealtor?.sold_count ?? 0)
 
+  // The number to advertise. The MLS-derived count above only covers what the local board
+  // still holds, which for a long-career agent is a small fraction of the truth — Randy's
+  // homepage headlined "16+ homes sold" for an agent with 5,200+ sales since 1993, and
+  // repeated it in the JSON-LD. hero_stats.homes_sold wins whenever it is set.
+  const advertisedSoldCount = displaySoldCount(agent, unifiedSoldCount)
+
   const heroStats: { v: string; l: string }[] = []
-  if (unifiedSoldCount) heroStats.push({ v: unifiedSoldCount.toLocaleString(), l: 'Homes Sold' })
+  if (advertisedSoldCount) heroStats.push({ v: advertisedSoldCount.toLocaleString(), l: 'Homes Sold' })
   const ratings = testimonials.map(t => t.rating).filter((r): r is number => typeof r === 'number' && r > 0)
   const avgRating = ratings.length ? ratings.reduce((a, b) => a + b, 0) / ratings.length : null
   if (avgRating) heroStats.push({ v: `${avgRating.toFixed(1)}`, l: `★ Avg Rating (${ratings.length})` })
@@ -298,7 +304,7 @@ export default async function AgentHomePage({ params }: Props) {
       if (sl?.youtube) sameAs.push(sl.youtube)
       return sameAs.length ? { sameAs } : {}
     })(),
-    ...(unifiedSoldCount ? { knowsAbout: `${unifiedSoldCount}+ homes sold in ${primaryMarkets}` } : {}),
+    ...(advertisedSoldCount ? { knowsAbout: `${advertisedSoldCount.toLocaleString()}+ homes sold in ${primaryMarkets}` } : {}),
     ...(topRealtor?.awards?.length
       ? { award: topRealtor.awards.map(a => `${a.title}${a.year ? ` (${a.year})` : ''}`) }
       : heroCredentials.length ? { award: heroCredentials } : {}),
@@ -1089,7 +1095,7 @@ export default async function AgentHomePage({ params }: Props) {
 
       {/* ─── Achievements Bar (showcase preset / explicit enable) ─── */}
       {cfg.sections.achievements && (
-        <AchievementsBar agent={agent} soldCount={unifiedSoldCount || topRealtor?.sold_count} avgDom={topRealtor?.avg_dom} />
+        <AchievementsBar agent={agent} soldCount={advertisedSoldCount} avgDom={topRealtor?.avg_dom} />
       )}
 
       {/* ─── Own Active / Reciprocity Listings Strip (showcase preset only) ─── */}
@@ -1143,7 +1149,7 @@ export default async function AgentHomePage({ params }: Props) {
                 {snapshotStats.map(item => (
                   <div key={item.l} className="snapshot-card" style={{ background: '#f7f8fa', border: '1px solid #e8eaed', borderRadius: 8, padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 6 }}>
                     <div style={{ fontSize: 'clamp(28px,3vw,38px)', fontWeight: 800, color: 'var(--primary-bg)', lineHeight: 1 }}>{item.v}</div>
-                    <div style={{ fontSize: 11, color: '#767676', textTransform: 'uppercase', letterSpacing: 1.2 }}>{item.l}</div>
+                    <div style={{ fontSize: 11, color: '#6f6f6f', textTransform: 'uppercase', letterSpacing: 1.2 }}>{item.l}</div>
                   </div>
                 ))}
               </div>
@@ -1283,25 +1289,25 @@ export default async function AgentHomePage({ params }: Props) {
           <div className="container">
             <div className="section-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 28 }}>
               <div>
-                <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 8 }}>Condo Directory</div>
+                <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent-on-dark)', marginBottom: 8 }}>Condo Directory</div>
                 <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(24px,3vw,36px)', fontWeight: 700, margin: 0, color: '#fff' }}>
                   Most Active Buildings
                 </h2>
                 <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', marginTop: 6, marginBottom: 0 }}>Sorted by current active listings</p>
               </div>
-              <a href={ap('/buildings')} style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', textDecoration: 'none', borderBottom: '1px solid var(--accent)', paddingBottom: 2, whiteSpace: 'nowrap' }}>
+              <a href={ap('/buildings')} style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent-on-dark)', textDecoration: 'none', borderBottom: '1px solid var(--accent-on-dark)', paddingBottom: 2, whiteSpace: 'nowrap' }}>
                 Browse all buildings →
               </a>
             </div>
             <div className="buildings-grid">
               {buildings.slice(0, 6).map(b => (
-                <a key={b.id} href={ap(`/building/${b.slug}`)} className="building-card" style={{ display: 'block', textDecoration: 'none', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.20)', borderRadius: 8, padding: '20px 22px', transition: 'background 0.2s, border-color 0.2s' }}>
+                <a key={b.id} href={ap(`/building/${b.slug}`)} className="building-card" style={{ display: 'block', textDecoration: 'none', background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.35)', borderRadius: 8, padding: '20px 22px', transition: 'background 0.2s, border-color 0.2s' }}>
                   <div style={{ fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', color: 'rgba(255,255,255,0.80)', marginBottom: 8, fontWeight: 700 }}>{b.subarea || b.city}</div>
                   <div style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 17, fontWeight: 700, color: '#fff', marginBottom: 4, lineHeight: 1.3 }}>{b.name}</div>
                   {b.address && <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.65)', marginBottom: 12, lineHeight: 1.4 }}>{b.address.split(',')[0]}</div>}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: b.address ? 0 : 12 }}>
                     {b.year_built && <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.70)' }}>Built {b.year_built}</span>}
-                    {b.year_built && b.active_listings > 0 && <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>·</span>}
+                    {b.year_built && b.active_listings > 0 && <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.52)' }}>·</span>}
                     {b.active_listings > 0
                       ? <span style={{ fontSize: 12, color: '#fff', fontWeight: 700 }}>{b.active_listings} active {b.active_listings === 1 ? 'home' : 'homes'}</span>
                       : <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.60)' }}>No active homes</span>
@@ -1335,7 +1341,7 @@ export default async function AgentHomePage({ params }: Props) {
                 <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(26,26,26,0.82) 30%, rgba(26,26,26,0.05) 65%)' }} />
                 <div style={{ position: 'absolute', bottom: 28, left: 28 }}>
                   <div style={{ fontFamily: "var(--font-display),Georgia,serif", color: '#fff', fontWeight: 700, fontSize: 28, marginBottom: 6 }}>{areas[0].name}</div>
-                  <div style={{ color: 'var(--accent)', fontWeight: 600, fontSize: 13 }}>{areas[0].count} active listings</div>
+                  <div style={{ color: 'rgba(255,255,255,0.88)', fontWeight: 600, fontSize: 13 }}>{areas[0].count} active listings</div>
                 </div>
               </a>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
@@ -1345,7 +1351,7 @@ export default async function AgentHomePage({ params }: Props) {
                     <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(26,26,26,0.78) 35%, rgba(26,26,26,0.05) 70%)' }} />
                     <div style={{ position: 'absolute', bottom: 16, left: 18 }}>
                       <div style={{ fontFamily: "var(--font-display),Georgia,serif", color: '#fff', fontWeight: 700, fontSize: 20, marginBottom: 3 }}>{area.name}</div>
-                      <div style={{ color: 'var(--accent)', fontSize: 12, fontWeight: 600 }}>{area.count} active listings</div>
+                      <div style={{ color: 'rgba(255,255,255,0.88)', fontSize: 12, fontWeight: 600 }}>{area.count} active listings</div>
                     </div>
                   </a>
                 ))}
@@ -1412,7 +1418,10 @@ export default async function AgentHomePage({ params }: Props) {
                 {coAgent.photo && (
                   <div>
                     <div style={{ position: 'relative', width: 260, height: 347, borderRadius: 8, overflow: 'hidden', boxShadow: '0 12px 40px rgba(0,0,0,0.12)' }}>
-                      <img src={imgUrl(coAgent.photo, 400)} alt={coAgent.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
+                      {/* lazy + resized: this sits in the About section well below the fold,
+                          but as a plain eager <img> it was browser-preloaded at full size —
+                          the last 89KB of high-priority image weight on suburbia.ca. */}
+                      <img src={avatarUrl(coAgent.photo, 400)} alt={coAgent.name} loading="lazy" decoding="async" width={260} height={347} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top', display: 'block' }} />
                     </div>
                     <div style={{ marginTop: 14 }}>
                       <div style={{ fontWeight: 800, fontSize: 15 }}>{coAgent.name}</div>
@@ -1460,7 +1469,7 @@ export default async function AgentHomePage({ params }: Props) {
       {cfg.sections.cta_home_eval && (
         <section style={{ background: 'var(--primary-bg)', padding: '80px 0', textAlign: 'center' }}>
           <div className="container" style={{ maxWidth: 640 }}>
-            <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent)', marginBottom: 14 }}>Free Service</div>
+            <div style={{ fontSize: 11, letterSpacing: 2.5, textTransform: 'uppercase', color: 'var(--accent-on-dark)', marginBottom: 14 }}>Free Service</div>
             <h2 style={{ fontFamily: "var(--font-display),Georgia,serif", fontSize: 'clamp(26px,3.5vw,42px)', fontWeight: 700, color: '#fff', marginBottom: 16, lineHeight: 1.15 }}>
               What&apos;s Your Home Worth?
             </h2>

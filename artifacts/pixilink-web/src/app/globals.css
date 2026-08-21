@@ -10,6 +10,17 @@
   --accent: #111111;
   --accent-rgb: 17, 17, 17;
 
+  /* Accent for DARK surfaces. --accent above is byte-identical to --primary-bg, so
+     `color: var(--accent)` on a --primary-bg section renders at 1.00:1 — literally
+     invisible. That was not a one-off: four section eyebrows, the achievements stat
+     number, the area-card listing counts and the hero tagline were all painting #111 on
+     #111 or on a near-black photo overlay. Any text on a dark background must use this
+     token (or #fff), never --accent.
+     Gold rather than grey because it keeps the "eyebrow is accented" intent and is already
+     the on-dark accent elsewhere in the codebase (trust-chip icons, the Residencity hub).
+     8.26:1 on #111111, 7.06:1 on the lightest dark surface here (#222222). */
+  --accent-on-dark: #c9a84c;
+
   /* Per-agent brand colours — injected by layout, used ONLY in conversion zones
      (sticky bar, request showing, home evaluation, contact sidebar). */
   --brand-bg: #111111;

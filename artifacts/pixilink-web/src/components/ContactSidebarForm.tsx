@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import type { AgentProfile } from '@/lib/types'
-import { imgUrl } from '@/lib/types'
+import { avatarUrl } from '@/lib/types'
 
 interface CoAgent {
   name: string
@@ -30,7 +30,7 @@ export default function ContactSidebarForm({ agent, listingAddress, mode = 'cont
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
   const [hp, setHp] = useState('')
-  const photoSrc = agent.photo_path ? imgUrl(agent.photo_path, 400) : null
+  const photoSrc = agent.photo_path ? avatarUrl(agent.photo_path, 400) : null
   const firstName = agent.name.split(' ')[0]
 
   const isDualAgent = !!coAgents && coAgents.length > 0
@@ -84,7 +84,7 @@ export default function ContactSidebarForm({ agent, listingAddress, mode = 'cont
                 {agent.name.charAt(0)}
               </div>
             )}
-            <img src={imgUrl(coAgent.photo, 400)} alt={coAgent.name} style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '2px solid #fff', boxShadow: '0 0 0 2px var(--cta-primary)', flexShrink: 0, marginLeft: -16, position: 'relative', zIndex: 1 }} />
+            <img src={avatarUrl(coAgent.photo, 400)} alt={coAgent.name} style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '2px solid #fff', boxShadow: '0 0 0 2px var(--cta-primary)', flexShrink: 0, marginLeft: -16, position: 'relative', zIndex: 1 }} />
           </div>
         ) : photoSrc ? (
           <img src={photoSrc} alt={agent.name} style={{ width: 52, height: 52, borderRadius: '50%', objectFit: 'cover', objectPosition: 'top', border: '2px solid var(--cta-primary)', flexShrink: 0 }} />

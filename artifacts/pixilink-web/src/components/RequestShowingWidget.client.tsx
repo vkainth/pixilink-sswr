@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { markFormStarted, markFormSubmitted } from '@/lib/form-funnel'
 import type { AgentProfile } from '@/lib/types'
-import { imgUrl } from '@/lib/types'
+import { avatarUrl } from '@/lib/types'
 
 interface CoAgent {
   name: string
@@ -32,7 +32,7 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
   const [error, setError] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
-  const photoSrc = agent.photo_path ? imgUrl(agent.photo_path, 400) : null
+  const photoSrc = agent.photo_path ? avatarUrl(agent.photo_path, 400) : null
   const firstName = agent.name.split(' ')[0]
   const isFindSimilar = variant === 'find-similar'
   const areaLabel = subarea || 'the Area'
@@ -131,7 +131,7 @@ export default function RequestShowingWidget({ agent, address, price, mlsNum, va
                 )}
               </div>
               <div style={{ position: 'absolute', left: 34, top: 0, width: 54, height: 54, borderRadius: '50%', border: '2.5px solid rgba(var(--brand-overlay-rgb),0.28)', overflow: 'hidden', zIndex: 1, background: 'rgba(var(--brand-overlay-rgb),0.15)' }}>
-                <img src={imgUrl(coAgent.photo, 400)} alt={coAgent.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 0%' }} />
+                <img src={avatarUrl(coAgent.photo, 400)} alt={coAgent.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 0%' }} />
               </div>
             </div>
           ) : (

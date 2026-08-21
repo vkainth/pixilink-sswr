@@ -29,6 +29,16 @@ export async function GET(req: NextRequest) {
 
   const w = Math.min(Math.max(parseInt(wParam ?? '72', 10) || 72, 16), 400)
 
+  // fit=width preserves the source aspect ratio; the default squares the image.
+  //
+  // The square crop exists for agent.headshot_path, which is a purpose-made square
+  // portrait. agent.photo_path is a TALL portrait (Randy's is 800x1200) whose framing is
+  // done in CSS via objectFit/objectPosition — squaring it server-side with centre gravity
+  // would crop through the subject's face and silently re-frame every avatar on the site.
+  // So callers resizing a photo_path pass fit=width and get the byte saving without any
+  // change to composition.
+  const fitWidth = searchParams.get('fit') === 'width'
+
   let imageBuffer: ArrayBuffer
   try {
     const res = await fetch(srcUrl.toString(), {
@@ -46,7 +56,11 @@ export async function GET(req: NextRequest) {
   let webpArrayBuffer: ArrayBuffer
   try {
     const buf = await sharp(Buffer.from(imageBuffer))
-      .resize(w, w, { fit: 'cover', withoutEnlargement: true })
+      .resize(
+        fitWidth
+          ? { width: w, withoutEnlargement: true }
+          : { width: w, height: w, fit: 'cover', withoutEnlargement: true },
+      )
       .webp({ quality: 82 })
       .toBuffer()
     webpArrayBuffer = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer

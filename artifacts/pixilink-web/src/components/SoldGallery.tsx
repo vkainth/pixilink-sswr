@@ -39,7 +39,10 @@ export default function SoldGallery({ soldListings, agentPrefix, firstName }: Pr
             const isPrivate = isUnified && item.is_private_sale
 
             const photoPath = item.photo_url
-            const photo = photoPath ? imgUrl(photoPath, 600) : null
+            // w=400, not 600. A card is ~293px wide (4 columns inside a 1280px container),
+            // so 600 was requesting roughly four times the pixel area actually displayed.
+            // ListingCard already asks for 400 for the same card size.
+            const photo = photoPath ? imgUrl(photoPath, 400) : null
             const soldPrice = item.sold_price ? formatPrice(item.sold_price) : null
             const rawType = item.type
             const typeLabel = rawType === 'Apartment Unit' ? 'Condo' : rawType === 'House/Single Family' ? 'House' : rawType || ''
@@ -85,7 +88,24 @@ export default function SoldGallery({ soldListings, agentPrefix, firstName }: Pr
               >
                 <div style={{ position: 'relative', height: 200, background: '#f3f4f6' }}>
                   {photo ? (
-                    <img src={photo} alt={address || 'Sold property'} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                    /* This gallery was the single biggest cause of the homepage feeling
+                       slow: 16 plain eager <img> tags meant React emitted a
+                       <link rel="preload" as="image"> for every one of them, so the browser
+                       fetched 979KB of photos at high priority — competing with the hero —
+                       for a section that starts below the fold and whose rows 2-4 are far
+                       below it. Only the first row is eager now; the rest load lazily, and
+                       explicit width/height lets the browser reserve space without them.
+                       The card is a fixed 200px tall, so this changes no layout. */
+                    <img
+                      src={photo}
+                      alt={address || 'Sold property'}
+                      width={400}
+                      height={200}
+                      loading={idx < 4 ? 'eager' : 'lazy'}
+                      fetchPriority={idx < 4 ? 'auto' : 'low'}
+                      decoding="async"
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    />
                   ) : (
                     <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#d1d5db', fontSize: 36 }}>
                       🏠

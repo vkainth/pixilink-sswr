@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import type { AgentProfile } from '@/lib/types'
-import { imgUrl } from '@/lib/types'
+import { avatarUrl } from '@/lib/types'
 
 export type SidebarMode = 'contact' | 'showing' | 'valuation' | 'eval'
 
@@ -42,7 +42,7 @@ export default function AgentSidebar({ agent, mode = 'contact', listingAddress, 
   const [submitError, setSubmitError] = useState('')
   const [form, setForm] = useState({ name: '', phone: '', email: '', message: '', agree: false })
   const [property, setProperty] = useState({ unit: '', address: listingAddress ?? '', city: listingCity ?? '' })
-  const photoSrc = agent.photo_path ? imgUrl(agent.photo_path, 400) : null
+  const photoSrc = agent.photo_path ? avatarUrl(agent.photo_path, 400) : null
   const firstName = agent.name.split(' ')[0]
   const isDual = !!(coAgents && coAgents.length > 0)
   const coAgent = isDual ? coAgents![0] : null
@@ -129,7 +129,7 @@ export default function AgentSidebar({ agent, mode = 'contact', listingAddress, 
                     )}
                   </div>
                   <div style={{ position: 'absolute', left: 28, top: 0, width: 42, height: 42, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.28)', overflow: 'hidden', zIndex: 1, background: 'rgba(255,255,255,0.15)' }}>
-                    <img src={imgUrl(coAgent.photo, 400)} alt={coAgent.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 0%' }} />
+                    <img src={avatarUrl(coAgent.photo, 400)} alt={coAgent.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 0%' }} />
                   </div>
                 </div>
               ) : (

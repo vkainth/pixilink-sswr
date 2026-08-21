@@ -1,5 +1,5 @@
 import type { AgentProfile } from '@/lib/types'
-import { imgUrl } from '@/lib/types'
+import { avatarUrl } from '@/lib/types'
 
 type CoAgent = { name: string; photo: string }
 
@@ -13,8 +13,8 @@ export default function AgentBrandingBand({ agent, ctaHref, coAgents }: Props) {
   const isDual = !!coAgents && coAgents.length > 0
   const coAgent = isDual ? coAgents![0] : null
 
-  const photoSrc = agent.photo_path ? imgUrl(agent.photo_path, 400) : null
-  const coPhotoSrc = coAgent?.photo ? imgUrl(coAgent.photo, 400) : null
+  const photoSrc = agent.photo_path ? avatarUrl(agent.photo_path, 400) : null
+  const coPhotoSrc = coAgent?.photo ? avatarUrl(coAgent.photo, 400) : null
 
   const firstName = agent.name.split(' ')[0]
   const coFirstName = coAgent ? coAgent.name.split(' ')[0] : null

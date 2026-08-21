@@ -45,7 +45,7 @@ export default function AchievementsBar({ agent, soldCount, avgDom }: Props) {
               textAlign: 'center',
               borderRight: i < Math.min(stats.length, 4) - 1 ? '1px solid rgba(255,255,255,0.10)' : 'none',
             }}>
-              <div style={{ fontSize: 'clamp(24px,3vw,36px)', fontWeight: 800, color: 'var(--accent)', lineHeight: 1.1, marginBottom: 6 }}>
+              <div style={{ fontSize: 'clamp(24px,3vw,36px)', fontWeight: 800, color: '#fff', lineHeight: 1.1, marginBottom: 6 }}>
                 {s.v}
               </div>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.70)', textTransform: 'uppercase', letterSpacing: 1.5, fontWeight: 600 }}>

@@ -1,7 +1,11 @@
 import React from 'react'
 import Image from 'next/image'
+// NOTE: sold counts shown to visitors come from displaySoldCount(), never straight from
+// topRealtor.sold_count — the MLS board holds only recent history and under-reports a
+// long-career agent badly (16 vs 5,200 for Randy).
 import type { AgentProfile, AgentTestimonial, TopRealtor } from '@/lib/types'
-import { imgUrl, getCoAgents } from '@/lib/types'
+import { imgUrl, avatarUrl, getCoAgents, displaySoldCount } from '@/lib/types'
+
 import type { ResolvedSiteConfig } from '@/lib/types'
 import { TrustIcon } from '@/lib/trust-icons'
 import HeroPhotoCircle from '@/components/HeroPhotoCircle.client'
@@ -22,14 +26,15 @@ interface Props {
 }
 
 export default function HeroSection(props: Props) {
+  const heroSoldCount = displaySoldCount(props.agent, props.topRealtor?.sold_count)
   const { agent, agentPrefix, heroStyle, heroStats, guideName, territoryLabel, topRealtor, testimonials, firstName } = props
   const coAgents = getCoAgents(agent)
   const isDualAgent = coAgents.length > 0
   const coAgent = coAgents[0] || null
   const ap = (p: string) => `${agentPrefix}${p}`
 
-  const headshotSrc = agent.headshot_path ? imgUrl(agent.headshot_path, 400) : null
-  const photoSrc400 = agent.photo_path ? imgUrl(agent.photo_path, 400) : null
+  const headshotSrc = agent.headshot_path ? avatarUrl(agent.headshot_path, 400) : null
+  const photoSrc400 = agent.photo_path ? avatarUrl(agent.photo_path, 400) : null
   const photoSrc600 = agent.photo_path ? imgUrl(agent.photo_path, 600) : null
   const photoSrc900 = agent.photo_path ? imgUrl(agent.photo_path, 900) : null
   const cardPhotoSrc = headshotSrc || photoSrc400
@@ -61,8 +66,15 @@ export default function HeroSection(props: Props) {
 
   return (
     <>
+      {/* The hero photo is a CSS background inside a min-width query, not an <img>.
+          It used to be `<Image priority unoptimized>`, which the browser preloaded at high
+          priority on EVERY device — including phones, where `.hero-bg-img { display: none }`
+          at 900px meant a 1440x700 photo was downloaded and then never shown. A
+          background-image declared inside a media query that does not match is not
+          fetched at all, so phones now pay nothing for it. It is purely decorative (it sits
+          under a 75%-opaque overlay and carries an empty alt today), so no semantic <img>
+          is owed. */}
       <div className="hero-outer" style={{ position: 'relative', height: 700, overflow: 'hidden' }}>
-        <Image src={HERO_BG} alt="Home exterior" fill priority unoptimized className="hero-bg-img" style={{ objectFit: 'cover' }} />
         <div className="hero-overlay" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(105deg, rgba(var(--brand-bg-rgb),0.75) 40%, rgba(var(--brand-bg-rgb),0.10) 100%)' }} />
 
         <div className="hero-content-wrap" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center' }}>
@@ -76,8 +88,8 @@ export default function HeroSection(props: Props) {
                   {guideName || `${territoryLabel} Real Estate`}
                 </h1>
                 {!isDualAgent && (
-                  <p style={{ fontSize: 18, color: 'var(--accent)', fontWeight: 600, margin: '0 0 6px', letterSpacing: 0.3 }}>
-                    {guideName ? `Powered by ${agent.name} · REALTOR®` : `${agent.name} · REALTOR®`}{topRealtor?.sold_count ? ` · ${topRealtor.sold_count} homes sold` : ''}
+                  <p style={{ fontSize: 18, color: '#fff', fontWeight: 600, margin: '0 0 6px', letterSpacing: 0.3 }}>
+                    {guideName ? `Powered by ${agent.name} · REALTOR®` : `${agent.name} · REALTOR®`}{heroSoldCount ? ` · ${heroSoldCount.toLocaleString()} homes sold` : ''}
                   </p>
                 )}
                 {agent.bio && (
@@ -110,7 +122,7 @@ export default function HeroSection(props: Props) {
                             {agent.name.charAt(0)}
                           </div>
                         )}
-                        <img src={imgUrl(coAgent.photo, 400)} alt={coAgent.name} style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', objectPosition: '50% 15%', border: '3px solid var(--accent)', marginLeft: -30, position: 'relative', zIndex: 1 }} />
+                        <img src={avatarUrl(coAgent.photo, 400)} alt={coAgent.name} style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', objectPosition: '50% 15%', border: '3px solid var(--accent)', marginLeft: -30, position: 'relative', zIndex: 1 }} />
                       </div>
                     ) : cardPhotoSrc ? (
                       <HeroPhotoCircle src={cardPhotoSrc} name={agent.name} objectPosition="50% 8%" />
@@ -146,7 +158,7 @@ export default function HeroSection(props: Props) {
                     {agent.phone}
                   </a>
                   {agent.email && (
-                    <a href={`mailto:${agent.email}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'transparent', color: '#333', padding: '11px 0', borderRadius: 7, fontWeight: 600, fontSize: 13, textDecoration: 'none', marginBottom: 9, border: '1px solid #d1d5db', letterSpacing: 0.2 }}>
+                    <a href={`mailto:${agent.email}`} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: 'transparent', color: '#333', padding: '11px 0', borderRadius: 7, fontWeight: 600, fontSize: 13, textDecoration: 'none', marginBottom: 9, border: '1px solid #949aa3', letterSpacing: 0.2 }}>
                       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                       {agent.email}
                     </a>
@@ -155,7 +167,7 @@ export default function HeroSection(props: Props) {
                     Free Home Evaluation →
                   </a>
                   {agent.license_number && (
-                    <div style={{ fontSize: 10, color: '#aaa', textAlign: 'center', marginTop: 14 }}>Lic. {agent.license_number}</div>
+                    <div style={{ fontSize: 10, color: '#737373', textAlign: 'center', marginTop: 14 }}>Lic. {agent.license_number}</div>
                   )}
                 </div>
               </div>
@@ -214,9 +226,19 @@ export default function HeroSection(props: Props) {
       )}
 
       <style>{`
+        /* Desktop only, deliberately: a background-image inside a non-matching media query
+           is never fetched, which is the whole point — phones used to download this 1440x700
+           photo and then hide it. */
+        @media (min-width: 901px) {
+          .hero-outer {
+            background-image: url('${HERO_BG}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+          }
+        }
         @media (max-width: 900px) {
           .hero-outer { height: auto !important; overflow: visible !important; background: var(--brand-bg) !important; }
-          .hero-bg-img { display: none !important; }
           .hero-overlay { display: none !important; }
           .hero-content-wrap { position: static !important; padding: 40px 0 !important; }
           .hero-grid { grid-template-columns: 1fr !important; }
@@ -228,6 +250,7 @@ export default function HeroSection(props: Props) {
 }
 
 function HeroSplit({ agent, agentPrefix, heroStats, guideName, territoryLabel, topRealtor, avgRating, ratingsCount, firstName }: Props & { avgRating: number | null; ratingsCount: number }) {
+  const heroSoldCount = displaySoldCount(agent, topRealtor?.sold_count)
   const ap = (p: string) => `${agentPrefix}${p}`
   const photoSrc = agent.photo_path ? imgUrl(agent.photo_path, 600) : null
   const coAgents = getCoAgents(agent)
@@ -248,7 +271,7 @@ function HeroSplit({ agent, agentPrefix, heroStats, guideName, territoryLabel, t
             </h1>
             {guideName && (
               <p style={{ fontSize: 16, color: 'var(--text-muted)', marginBottom: 6, fontWeight: 500 }}>
-                {agent.name} · REALTOR®{topRealtor?.sold_count ? ` · ${topRealtor.sold_count} homes sold` : ''}
+                {agent.name} · REALTOR®{heroSoldCount ? ` · ${heroSoldCount.toLocaleString()} homes sold` : ''}
               </p>
             )}
             {agent.bio && (
@@ -298,10 +321,10 @@ function HeroSplit({ agent, agentPrefix, heroStats, guideName, territoryLabel, t
             {isDualAgent && coAgent && agent.photo_path ? (
               <div style={{ display: 'flex', gap: 16 }}>
                 <div style={{ flex: 1, borderRadius: 12, overflow: 'hidden', height: 500, boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}>
-                  <img src={imgUrl(agent.photo_path, 400)} alt={agent.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 10%' }} />
+                  <img src={avatarUrl(agent.photo_path, 400)} alt={agent.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 10%' }} />
                 </div>
                 <div style={{ flex: 1, borderRadius: 12, overflow: 'hidden', height: 500, boxShadow: '0 20px 60px rgba(0,0,0,0.15)', marginTop: 24 }}>
-                  <img src={imgUrl(coAgent.photo, 400)} alt={coAgent.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 10%' }} />
+                  <img src={avatarUrl(coAgent.photo, 400)} alt={coAgent.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 10%' }} />
                 </div>
               </div>
             ) : photoSrc ? (
@@ -324,8 +347,9 @@ function HeroSplit({ agent, agentPrefix, heroStats, guideName, territoryLabel, t
 }
 
 function HeroCircleCentered({ agent, agentPrefix, heroStats, guideName, territoryLabel, topRealtor, firstName }: Props) {
+  const heroSoldCount = displaySoldCount(agent, topRealtor?.sold_count)
   const ap = (p: string) => `${agentPrefix}${p}`
-  const photoSrc = agent.photo_path ? imgUrl(agent.photo_path, 400) : null
+  const photoSrc = agent.photo_path ? avatarUrl(agent.photo_path, 400) : null
   const coAgents = getCoAgents(agent)
   const coAgent = coAgents[0] || null
   const isDualAgent = coAgents.length > 0
@@ -341,7 +365,7 @@ function HeroCircleCentered({ agent, agentPrefix, heroStats, guideName, territor
               ) : (
                 <div style={{ width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 40, fontWeight: 700, color: '#fff', border: '3px solid var(--accent)', position: 'relative', zIndex: 2 }}>{agent.name.charAt(0)}</div>
               )}
-              <img src={imgUrl(coAgent.photo, 400)} alt={coAgent.name} style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', objectPosition: '50% 15%', border: '3px solid var(--accent)', marginLeft: -20, position: 'relative', zIndex: 1 }} />
+              <img src={avatarUrl(coAgent.photo, 400)} alt={coAgent.name} style={{ width: 120, height: 120, borderRadius: '50%', objectFit: 'cover', objectPosition: '50% 15%', border: '3px solid var(--accent)', marginLeft: -20, position: 'relative', zIndex: 1 }} />
             </div>
           ) : photoSrc ? (
             <img src={photoSrc} alt={agent.name} style={{ width: 140, height: 140, borderRadius: '50%', objectFit: 'cover', objectPosition: '50% 15%', border: '4px solid var(--accent)', boxShadow: '0 8px 30px rgba(0,0,0,0.2)' }} />
@@ -356,7 +380,7 @@ function HeroCircleCentered({ agent, agentPrefix, heroStats, guideName, territor
           {guideName || agent.name}
         </h1>
         <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.65)', marginBottom: 8, fontWeight: 500 }}>
-          {guideName ? `Powered by ${agent.name}` : agent.brokerage}{topRealtor?.sold_count ? ` · ${topRealtor.sold_count}+ homes sold` : ''}
+          {guideName ? `Powered by ${agent.name}` : agent.brokerage}{heroSoldCount ? ` · ${heroSoldCount.toLocaleString()}+ homes sold` : ''}
         </p>
         {agent.bio && <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.70)', marginBottom: 28, lineHeight: 1.7, maxWidth: 540, margin: '0 auto 28px' }}>{agent.bio.split('\n\n')[0]}</p>}
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -411,6 +435,7 @@ function HeroTextOnly({ agent, agentPrefix, heroStats, guideName, territoryLabel
 }
 
 function HeroPhotoStrip({ agent, agentPrefix, heroStats, guideName, territoryLabel, topRealtor, firstName }: Props) {
+  const heroSoldCount = displaySoldCount(agent, topRealtor?.sold_count)
   const ap = (p: string) => `${agentPrefix}${p}`
   const photoSrc = agent.photo_path ? imgUrl(agent.photo_path, 900) : null
 
@@ -431,7 +456,7 @@ function HeroPhotoStrip({ agent, agentPrefix, heroStats, guideName, territoryLab
                 {guideName || agent.name}
               </h1>
               <p style={{ fontSize: 15, color: 'var(--text-muted)', fontWeight: 500 }}>
-                {guideName ? `${agent.name} · REALTOR®` : agent.brokerage}{topRealtor?.sold_count ? ` · ${topRealtor.sold_count}+ homes sold` : ''}
+                {guideName ? `${agent.name} · REALTOR®` : agent.brokerage}{heroSoldCount ? ` · ${heroSoldCount.toLocaleString()}+ homes sold` : ''}
               </p>
             </div>
             <div style={{ display: 'flex', gap: 10 }}>

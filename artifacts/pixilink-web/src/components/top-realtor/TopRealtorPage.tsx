@@ -1,6 +1,6 @@
 import { playfair } from '@/lib/fonts'
 import type { AgentProfile, AgentSoldStats, LandingPage, NeighbourhoodWidget } from '@/lib/types'
-import { formatPriceFull, imgUrl, getCoAgents } from '@/lib/types'
+import { formatPriceFull, imgUrl, avatarUrl, getCoAgents } from '@/lib/types'
 import { marketBadge } from '@/lib/market'
 import ConversionWidget from './ConversionWidget'
 import HomeEvalForm from './HomeEvalForm'
@@ -312,7 +312,7 @@ export default function TopRealtorPage({ agent, page, widget, agentSlug, buyers,
       name: ca.name,
       jobTitle: `Realtor — ${ca.title || agent.brokerage}`,
       url: pageUrl,
-      ...(ca.photo ? { image: imgUrl(ca.photo, 400) } : {}),
+      ...(ca.photo ? { image: imgUrl(ca.photo, 400) } : {}),  // JSON-LD image stays absolute: the resizer URL is relative and cache-scoped, which is wrong for structured data
       ...(ca.phone ? { telephone: ca.phone } : {}),
       ...(ca.email ? { email: ca.email } : {}),
       worksFor: { '@type': 'Organization', name: ca.title || agent.brokerage },
@@ -503,7 +503,7 @@ export default function TopRealtorPage({ agent, page, widget, agentSlug, buyers,
                     {ca.photo ? (
                       /* eslint-disable-next-line @next/next/no-img-element */
                       <img
-                        src={imgUrl(ca.photo, 400)}
+                        src={avatarUrl(ca.photo, 400)}
                         alt={`${ca.name} — Top Realtor ${locationName}`}
                         style={{
                           width: 140, height: 140, objectFit: 'cover',
