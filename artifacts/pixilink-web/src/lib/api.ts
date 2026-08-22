@@ -35,17 +35,11 @@ import type {
 } from './types'
 import {
   AGENT_FALLBACKS,
-  FALLBACK_LISTINGS,
-  FALLBACK_SOLD_LISTINGS,
-  FALLBACK_BUILDINGS,
   FALLBACK_STATS,
-  FALLBACK_TESTIMONIALS,
-  FALLBACK_NEIGHBOURHOODS,
   FALLBACK_NEIGHBOURHOOD_DETAILS,
   FALLBACK_MARKET_REPORT,
   FALLBACK_PAGES,
   FALLBACK_AGENT_SLUG,
-  FALLBACK_AWARDS,
   FALLBACK_MEDIA,
   FALLBACK_TEAM,
   FALLBACK_NEWS,
@@ -408,12 +402,12 @@ export async function getListings(slug: string, params: ListingsParams = {}): Pr
   // Never serve fake placeholder listings for meaningfully-filtered queries
   // (suite flags, price range, or subarea). An empty result is honest; fake
   // addresses shown as "houses with suite $800K–$1.1M" is misrepresentation.
-  if (params.noFallback || meaningfullyFiltered) return { listings: [], total: 0 }
-  const fallback = params.status === 'Sold' ? FALLBACK_SOLD_LISTINGS : FALLBACK_LISTINGS
-  const page = params.page ?? 1
-  const limit = params.limit ?? 24
-  const slice = fallback.slice((page - 1) * limit, page * limit)
-  return { listings: slice, total: fallback.length }
+  // The same reasoning applies to UNFILTERED queries, which is where this used to fall
+  // through to a fixed list of Surrey addresses. On any backend hiccup suburbia.ca or
+  // shareneshuster.com would show South Surrey listings as their own inventory — the
+  // cross-agent version of the misrepresentation the comment above already rejects. The
+  // section renders empty instead.
+  return { listings: [], total: 0 }
 }
 
 /**
@@ -542,7 +536,13 @@ export async function getBuildings(slug: string, limit?: number): Promise<AgentB
   } catch {
     // fall through
   }
-  return FALLBACK_BUILDINGS
+  // Never another agent's buildings. This used to return a fixed list of South Surrey buildings — content
+  // belonging to one specific agent, rendered on whichever site had the backend hiccup,
+  // attributed to that site's agent. Surfaced on 2026-08-21 when a cold container made
+  // suburbia.ca render Randy's South Surrey buildings, whose links 404 on that domain.
+  // An absent section is honest; someone else's buildings is not. Same rule getPages()
+  // already follows.
+  return []
 }
 
 /**
@@ -614,7 +614,13 @@ export async function getTestimonials(slug: string): Promise<AgentTestimonial[]>
   } catch {
     // fall through
   }
-  return FALLBACK_TESTIMONIALS
+  // Never another agent's testimonials. This used to return client reviews ('Sandra M.', 'Kevin T.') — content
+  // belonging to one specific agent, rendered on whichever site had the backend hiccup,
+  // attributed to that site's agent. Surfaced on 2026-08-21 when a cold container made
+  // suburbia.ca render Randy's South Surrey buildings, whose links 404 on that domain.
+  // An absent section is honest; someone else's testimonials is not. Same rule getPages()
+  // already follows.
+  return []
 }
 
 /**
@@ -655,7 +661,13 @@ export async function getNeighbourhoods(slug: string): Promise<NeighbourhoodSumm
   } catch {
     // fall through
   }
-  return FALLBACK_NEIGHBOURHOODS
+  // Never another agent's neighbourhoods. This used to return a fixed Surrey area list — content
+  // belonging to one specific agent, rendered on whichever site had the backend hiccup,
+  // attributed to that site's agent. Surfaced on 2026-08-21 when a cold container made
+  // suburbia.ca render Randy's South Surrey buildings, whose links 404 on that domain.
+  // An absent section is honest; someone else's neighbourhoods is not. Same rule getPages()
+  // already follows.
+  return []
 }
 
 export interface PersonaListingsResult {
@@ -787,7 +799,13 @@ export async function getNeighbourhoodSold(slug: string, subareaSlug: string): P
   } catch {
     // fall through
   }
-  return FALLBACK_SOLD_LISTINGS.slice(0, 30)
+  // Never another agent's sold listings. This used to return Surrey addresses as this agent's sales — content
+  // belonging to one specific agent, rendered on whichever site had the backend hiccup,
+  // attributed to that site's agent. Surfaced on 2026-08-21 when a cold container made
+  // suburbia.ca render Randy's South Surrey buildings, whose links 404 on that domain.
+  // An absent section is honest; someone else's sold listings is not. Same rule getPages()
+  // already follows.
+  return []
 }
 
 /**
@@ -998,7 +1016,11 @@ export async function getAwards(slug: string): Promise<AgentAward[]> {
   } catch {
     // fall through
   }
-  return FALLBACK_AWARDS
+  // Never another agent's awards. This returned a fixed RE/MAX list — Diamond Award,
+  // Hall of Fame, Lifetime Achievement — which on a fetch failure would have been
+  // displayed as the credentials of an eXp agent (Randy) or a Heller Murch agent
+  // (Sharene). A fabricated award is worse than a missing one.
+  return []
 }
 
 /**
