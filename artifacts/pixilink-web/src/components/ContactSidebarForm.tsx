@@ -30,6 +30,7 @@ export default function ContactSidebarForm({ agent, listingAddress, mode = 'cont
   const [sent, setSent] = useState(false)
   const [error, setError] = useState('')
   const [hp, setHp] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const photoSrc = agent.photo_path ? avatarUrl(agent.photo_path, 400) : null
   const firstName = agent.name.split(' ')[0]
 
@@ -43,7 +44,12 @@ export default function ContactSidebarForm({ agent, listingAddress, mode = 'cont
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.name || !form.phone || !form.agree) return
+    // Guard against double-submit. Without it a second click while the first request is
+    // still in flight files a second identical lead: 'liam james' landed three times
+    // within one second on 2026-07-18, which is three notification emails and three rows
+    // for one enquiry.
+    if (!form.name || !form.phone || !form.agree || submitting) return
+    setSubmitting(true)
     try {
       const currentPath = typeof window !== 'undefined' ? window.location.pathname + window.location.search : null
       const { parseSourceContext } = await import('@/lib/auth-client')
@@ -65,9 +71,11 @@ export default function ContactSidebarForm({ agent, listingAddress, mode = 'cont
         setSent(true)
       } else {
         setError('Something went wrong. Please try calling directly.')
+        setSubmitting(false)
       }
     } catch {
       setError('Something went wrong. Please try calling directly.')
+      setSubmitting(false)
     }
   }
 
@@ -133,7 +141,7 @@ export default function ContactSidebarForm({ agent, listingAddress, mode = 'cont
               </span>
             </label>
             {error && <div style={{ fontSize: 12, color: '#ef4444', marginBottom: 10 }}>{error}</div>}
-            <button type="submit" disabled={!form.name || !form.phone || !form.agree}
+            <button type="submit" disabled={!form.name || !form.phone || !form.agree || submitting}
               style={{ width: '100%', background: 'var(--cta-primary)', color: 'var(--cta-primary-text)', border: 'none', padding: 13, borderRadius: 6, fontWeight: 700, fontSize: 13, cursor: 'pointer', opacity: form.name && form.phone && form.agree ? 1 : 0.5 }}>
               {mode === 'showing' ? 'Request Showing'
                 : mode === 'valuation' ? 'Request Free CMA'
